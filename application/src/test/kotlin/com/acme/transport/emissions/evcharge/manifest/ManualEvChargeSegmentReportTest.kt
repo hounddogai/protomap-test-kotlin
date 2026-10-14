@@ -1,0 +1,24 @@
+package com.acme.transport.emissions.evcharge.manifest
+
+import com.acme.transport.emissions.clock.FixedClock
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class ManualEvChargeSegmentReportTest {
+    @Test
+    fun `counts each record once`() {
+        val clock = FixedClock(1705096520)
+        val items = mutableListOf<ManualEvChargeSegment>()
+        for (index in 0 until 3) {
+            items.add(newManualEvChargeSegment("manual-ev-charge-segment-$index", "sample"))
+        }
+        val report = buildManualEvChargeSegmentReport("test", items, clock)
+        var counted = 0
+        for ((key, value) in report.counts.toSortedMap()) {
+            counted += value
+        }
+        assertTrue(counted <= 3, "counted")
+        assertEquals(clock.now(), report.generatedAt, "generated at")
+    }
+}

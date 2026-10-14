@@ -1,0 +1,34 @@
+package com.acme.transport.freightpay.audit.plan
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertTrue
+import kotlin.test.fail
+
+class BatchedAuditMilestoneTest {
+    @Test
+    fun `starts in draft`() {
+        val item = newBatchedAuditMilestone("code-622", "title-343")
+        assertEquals(BatchedAuditMilestoneStatus.DRAFT, item.status, "status")
+        assertTrue(!item.isTerminal(), "terminal")
+    }
+
+    @Test
+    fun `moves to pending`() {
+        val item = newBatchedAuditMilestone("code-622", "title-343")
+        try {
+            item.moveTo(BatchedAuditMilestoneStatus.PENDING)
+        } catch (failure: Exception) {
+            fail("missing result")
+        }
+        assertEquals(BatchedAuditMilestoneStatus.PENDING, item.status, "status")
+    }
+
+    @Test
+    fun `rejects moves from closed`() {
+        val item = newBatchedAuditMilestone("code-622", "title-343")
+        item.status = BatchedAuditMilestoneStatus.CLOSED
+        assertFails("move") { item.moveTo(BatchedAuditMilestoneStatus.DRAFT) }
+    }
+}

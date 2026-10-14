@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "DockValidationServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Checks docks against the rules before anything acts on them.
+service DockValidationService {
+  // Validates a dock.
+  rpc ValidateDock(ValidateDockRequest) returns (ValidateDockResponse);
+
+  // Previews a dock.
+  rpc PreviewDock(PreviewDockRequest) returns (PreviewDockResponse);
+
+  // Checks a dock.
+  rpc CheckDockEligibility(CheckDockEligibilityRequest) returns (CheckDockEligibilityResponse);
+
+  // Normalizes a dock.
+  rpc NormalizeDock(NormalizeDockRequest) returns (NormalizeDockResponse);
+
+  // Explains a dock.
+  rpc ExplainDockDecision(ExplainDockDecisionRequest) returns (ExplainDockDecisionResponse);
+
+  // Scores a dock.
+  rpc ScoreDock(ScoreDockRequest) returns (ScoreDockResponse);
+
+  // Lints a dock.
+  rpc LintDocks(LintDocksRequest) returns (LintDocksResponse);
+
+  // Returns a dock.
+  rpc GetDockRules(GetDockRulesRequest) returns (GetDockRulesResponse);
+}
+
+// The request of `ValidateDock`.
+message ValidateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ValidateDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateDock`.
+message ValidateDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ValidateDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewDock`.
+message PreviewDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  PreviewDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewDock`.
+message PreviewDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  PreviewDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckDockEligibility`.
+message CheckDockEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  CheckDockEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckDockEligibility`.
+message CheckDockEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  CheckDockEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeDock`.
+message NormalizeDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  NormalizeDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeDock`.
+message NormalizeDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  NormalizeDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainDockDecision`.
+message ExplainDockDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ExplainDockDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainDockDecision`.
+message ExplainDockDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ExplainDockDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreDock`.
+message ScoreDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ScoreDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreDock`.
+message ScoreDockResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreDockResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  ScoreDockResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintDocks`.
+message LintDocksRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  LintDocksRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintDocks`.
+message LintDocksResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  LintDocksResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDockRules`.
+message GetDockRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDockRules`.
+message GetDockRulesResponse {
+  Dock dock = 1;
+  acme.common.v1.OperationResult result = 2;
+}

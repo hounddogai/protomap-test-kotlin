@@ -1,0 +1,258 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.dispatch.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/dispatch/v1/dispatch.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Dispatch.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/dispatch/v1;dispatchv1";
+option java_multiple_files = true;
+option java_outer_classname = "DispatchOrderWorkflowServiceProto";
+option java_package = "com.acme.dispatch.v1";
+
+// Runs the long-lived workflow that takes a dispatch order from start to finish.
+service DispatchOrderWorkflowService {
+  // Starts a dispatch order.
+  rpc StartDispatchOrderWorkflow(StartDispatchOrderWorkflowRequest) returns (StartDispatchOrderWorkflowResponse);
+
+  // Advances a dispatch order.
+  rpc AdvanceDispatchOrderWorkflow(AdvanceDispatchOrderWorkflowRequest) returns (AdvanceDispatchOrderWorkflowResponse);
+
+  // Retrys a dispatch order.
+  rpc RetryDispatchOrderWorkflow(RetryDispatchOrderWorkflowRequest) returns (RetryDispatchOrderWorkflowResponse);
+
+  // Pauses a dispatch order.
+  rpc PauseDispatchOrderWorkflow(PauseDispatchOrderWorkflowRequest) returns (PauseDispatchOrderWorkflowResponse);
+
+  // Returns a dispatch order.
+  rpc InspectDispatchOrderWorkflow(InspectDispatchOrderWorkflowRequest) returns (InspectDispatchOrderWorkflowResponse);
+
+  // Lists dispatch orders a page at a time.
+  rpc ListDispatchOrderWorkflows(ListDispatchOrderWorkflowsRequest) returns (ListDispatchOrderWorkflowsResponse);
+
+  // Signals a dispatch order.
+  rpc SignalDispatchOrderWorkflow(SignalDispatchOrderWorkflowRequest) returns (SignalDispatchOrderWorkflowResponse);
+}
+
+// The request of `StartDispatchOrderWorkflow`.
+message StartDispatchOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  StartDispatchOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartDispatchOrderWorkflow`.
+message StartDispatchOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  StartDispatchOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceDispatchOrderWorkflow`.
+message AdvanceDispatchOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  AdvanceDispatchOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceDispatchOrderWorkflow`.
+message AdvanceDispatchOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  AdvanceDispatchOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryDispatchOrderWorkflow`.
+message RetryDispatchOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  RetryDispatchOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryDispatchOrderWorkflow`.
+message RetryDispatchOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  RetryDispatchOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseDispatchOrderWorkflow`.
+message PauseDispatchOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  PauseDispatchOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseDispatchOrderWorkflow`.
+message PauseDispatchOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  PauseDispatchOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectDispatchOrderWorkflow`.
+message InspectDispatchOrderWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectDispatchOrderWorkflow`.
+message InspectDispatchOrderWorkflowResponse {
+  DispatchOrder dispatch_order = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListDispatchOrderWorkflows`.
+message ListDispatchOrderWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DispatchOrderStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDispatchOrderWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDispatchOrderWorkflows`.
+message ListDispatchOrderWorkflowsResponse {
+  repeated DispatchOrder dispatch_orders = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalDispatchOrderWorkflow`.
+message SignalDispatchOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  SignalDispatchOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalDispatchOrderWorkflow`.
+message SignalDispatchOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  SignalDispatchOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

@@ -1,0 +1,245 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fleet.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fleet/v1/fleet.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fleet.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fleet/v1;fleetv1";
+option java_multiple_files = true;
+option java_outer_classname = "VehicleGroupQueryServiceProto";
+option java_package = "com.acme.fleet.v1";
+
+// Answers read-only questions about vehicle groups, for screens and reports.
+service VehicleGroupQueryService {
+  // Returns a vehicle group.
+  rpc LookupVehicleGroup(LookupVehicleGroupRequest) returns (LookupVehicleGroupResponse);
+
+  // Lists vehicle groups a page at a time.
+  rpc BrowseVehicleGroups(BrowseVehicleGroupsRequest) returns (BrowseVehicleGroupsResponse);
+
+  // Lists vehicle groups a page at a time.
+  rpc FindVehicleGroups(FindVehicleGroupsRequest) returns (FindVehicleGroupsResponse);
+
+  // Counts vehicle groups by status.
+  rpc CountVehicleGroups(CountVehicleGroupsRequest) returns (CountVehicleGroupsResponse);
+
+  // Returns several vehicle groups at once.
+  rpc ResolveVehicleGroups(ResolveVehicleGroupsRequest) returns (ResolveVehicleGroupsResponse);
+
+  // Streams every matching vehicle group.
+  rpc ExportVehicleGroups(ExportVehicleGroupsRequest) returns (stream ExportVehicleGroupsResponse);
+
+  // Summarizes a vehicle group.
+  rpc SummarizeVehicleGroups(SummarizeVehicleGroupsRequest) returns (SummarizeVehicleGroupsResponse);
+
+  // Lists vehicle groups a page at a time.
+  rpc SuggestVehicleGroups(SuggestVehicleGroupsRequest) returns (SuggestVehicleGroupsResponse);
+
+  // Returns a vehicle group.
+  rpc PeekVehicleGroup(PeekVehicleGroupRequest) returns (PeekVehicleGroupResponse);
+}
+
+// The request of `LookupVehicleGroup`.
+message LookupVehicleGroupRequest {
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `LookupVehicleGroup`.
+message LookupVehicleGroupResponse {
+  VehicleGroup vehicle_group = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `BrowseVehicleGroups`.
+message BrowseVehicleGroupsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  BrowseVehicleGroupsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `BrowseVehicleGroups`.
+message BrowseVehicleGroupsResponse {
+  repeated VehicleGroup vehicle_groups = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `FindVehicleGroups`.
+message FindVehicleGroupsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  FindVehicleGroupsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `FindVehicleGroups`.
+message FindVehicleGroupsResponse {
+  repeated VehicleGroup vehicle_groups = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountVehicleGroups`.
+message CountVehicleGroupsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountVehicleGroupsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountVehicleGroups`.
+message CountVehicleGroupsResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResolveVehicleGroups`.
+message ResolveVehicleGroupsRequest {
+  acme.common.v1.RequestContext context = 1;
+  repeated string vehicle_group_ids = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `ResolveVehicleGroups`.
+message ResolveVehicleGroupsResponse {
+  repeated VehicleGroup vehicle_groups = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExportVehicleGroups`.
+message ExportVehicleGroupsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  ExportVehicleGroupsRequest.Filter filter = 2;
+  string format = 3;
+  google.protobuf.FieldMask fields = 4;
+  string destination_uri = 5;
+}
+
+// The response of `ExportVehicleGroups`.
+message ExportVehicleGroupsResponse {
+  VehicleGroup vehicle_group = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SummarizeVehicleGroups`.
+message SummarizeVehicleGroupsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  SummarizeVehicleGroupsRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SummarizeVehicleGroups`.
+message SummarizeVehicleGroupsResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SuggestVehicleGroups`.
+message SuggestVehicleGroupsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  SuggestVehicleGroupsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `SuggestVehicleGroups`.
+message SuggestVehicleGroupsResponse {
+  repeated VehicleGroup vehicle_groups = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PeekVehicleGroup`.
+message PeekVehicleGroupRequest {
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `PeekVehicleGroup`.
+message PeekVehicleGroupResponse {
+  VehicleGroup vehicle_group = 1;
+  acme.common.v1.OperationResult result = 2;
+}

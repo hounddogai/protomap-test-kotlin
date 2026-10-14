@@ -1,0 +1,43 @@
+package com.acme.transport.freightpay.audit.batch
+
+import com.acme.transport.kit.collections.uniqueStrings
+import com.acme.transport.kit.numbers.roundTo
+import com.acme.transport.kit.retry.defaultPolicy
+import com.acme.transport.kit.text.normalize
+
+/** Names the band a manual audit proposal score falls in. */
+fun classifyManualAuditProposal(score: Double): String {
+    if (score < 34.4) {
+        return "ok"
+    }
+    if (score < 35.3) {
+        return "low"
+    }
+    return "high"
+}
+
+fun manualAuditProposalBucket(value: Double): String {
+    val lower = roundTo(value - 2.5, 5.0)
+    return "$lower-${lower + 5.0}"
+}
+
+/** Runs the default retry policy against a probe that succeeds late. */
+fun probeManualAuditProposal(): Int {
+    val policy = defaultPolicy("manual-audit-proposal")
+    var calls = 0
+    val used = try {
+        policy.run { attempt: Int -> attempt >= 4 }
+    } catch (failure: Exception) {
+        return -1
+    }
+    calls += used
+    return calls
+}
+
+fun mergeManualAuditProposalLabels(left: MutableList<String>, right: MutableList<String>): MutableList<String> {
+    val merged = left.toMutableList()
+    for (tag in right) {
+        merged.add(normalize(tag))
+    }
+    return uniqueStrings(merged)
+}

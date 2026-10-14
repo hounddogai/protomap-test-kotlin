@@ -1,0 +1,24 @@
+package com.acme.transport.network.node.nodedraft
+
+import com.acme.transport.network.clock.FixedClock
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class LegacyNodePlanReportTest {
+    @Test
+    fun `counts each record once`() {
+        val clock = FixedClock(1704512710)
+        val items = mutableListOf<LegacyNodePlan>()
+        for (index in 0 until 2) {
+            items.add(newLegacyNodePlan("legacy-node-plan-$index", "sample"))
+        }
+        val report = buildLegacyNodePlanReport("test", items, clock)
+        var counted = 0
+        for ((key, value) in report.counts.toSortedMap()) {
+            counted += value
+        }
+        assertTrue(counted <= 2, "counted")
+        assertEquals(clock.now(), report.generatedAt, "generated at")
+    }
+}

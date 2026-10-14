@@ -1,0 +1,14 @@
+package com.acme.transport.lastmile.attempt.segment
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class AttemptSegmentViewTest {
+    @Test
+    fun `shows the status in capitals`() {
+        val item = newAttemptSegment("code-8", "name-115")
+        val view = toAttemptSegmentView(item)
+        assertEquals("${item.status}".uppercase(), view.statusLabel, "status label")
+        assertEquals(2, toAttemptSegmentViews(mutableListOf<AttemptSegment>(item, item)).size, "views")
+    }
+}

@@ -1,0 +1,284 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelPolicySyncServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Keeps fuel policies in step with the systems of record in other regions.
+service FuelPolicySyncService {
+  // Syncs a fuel policy.
+  rpc SyncFuelPolicies(SyncFuelPoliciesRequest) returns (SyncFuelPoliciesResponse);
+
+  // Pushs a fuel policy.
+  rpc PushFuelPolicy(PushFuelPolicyRequest) returns (PushFuelPolicyResponse);
+
+  // Pulls a fuel policy.
+  rpc PullFuelPolicies(PullFuelPoliciesRequest) returns (PullFuelPoliciesResponse);
+
+  // Reconciles a fuel policy.
+  rpc ReconcileFuelPolicies(ReconcileFuelPoliciesRequest) returns (ReconcileFuelPoliciesResponse);
+
+  // Exchanges changes of fuel policies with a peer.
+  rpc StreamFuelPolicyChanges(stream StreamFuelPolicyChangesRequest) returns (stream StreamFuelPolicyChangesResponse);
+
+  // Resolves a fuel policy.
+  rpc ResolveFuelPolicyConflict(ResolveFuelPolicyConflictRequest) returns (ResolveFuelPolicyConflictResponse);
+
+  // Returns a fuel policy.
+  rpc GetFuelPolicySyncState(GetFuelPolicySyncStateRequest) returns (GetFuelPolicySyncStateResponse);
+
+  // Lists fuel policies a page at a time.
+  rpc ListFuelPolicyConflicts(ListFuelPolicyConflictsRequest) returns (ListFuelPolicyConflictsResponse);
+}
+
+// The request of `SyncFuelPolicies`.
+message SyncFuelPoliciesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  SyncFuelPoliciesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SyncFuelPolicies`.
+message SyncFuelPoliciesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  SyncFuelPoliciesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PushFuelPolicy`.
+message PushFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  PushFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PushFuelPolicy`.
+message PushFuelPolicyResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  PushFuelPolicyResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PullFuelPolicies`.
+message PullFuelPoliciesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  PullFuelPoliciesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PullFuelPolicies`.
+message PullFuelPoliciesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  PullFuelPoliciesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReconcileFuelPolicies`.
+message ReconcileFuelPoliciesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  ReconcileFuelPoliciesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ReconcileFuelPolicies`.
+message ReconcileFuelPoliciesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ReconcileFuelPoliciesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `StreamFuelPolicyChanges`.
+message StreamFuelPolicyChangesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    FuelPolicy change = 2;
+    StreamFuelPolicyChangesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `StreamFuelPolicyChanges`.
+message StreamFuelPolicyChangesResponse {
+  FuelPolicy fuel_policy = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ResolveFuelPolicyConflict`.
+message ResolveFuelPolicyConflictRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  ResolveFuelPolicyConflictRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResolveFuelPolicyConflict`.
+message ResolveFuelPolicyConflictResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ResolveFuelPolicyConflictResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelPolicySyncState`.
+message GetFuelPolicySyncStateRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelPolicySyncState`.
+message GetFuelPolicySyncStateResponse {
+  FuelPolicy fuel_policy = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListFuelPolicyConflicts`.
+message ListFuelPolicyConflictsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelPolicyStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListFuelPolicyConflictsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListFuelPolicyConflicts`.
+message ListFuelPolicyConflictsResponse {
+  repeated FuelPolicy fuel_policies = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}

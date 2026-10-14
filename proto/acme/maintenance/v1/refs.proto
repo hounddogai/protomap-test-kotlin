@@ -1,0 +1,35 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "RefsProto";
+option java_package = "com.acme.maintenance.v1";
+
+// A reference to a work order of the maintenance domain.
+message WorkOrderRef {
+  string work_order_id = 1;
+  string display_name = 2;
+  int32 priority = 3;
+}
+
+// A reference to a service schedule of the maintenance domain.
+message ServiceScheduleRef {
+  string service_schedule_id = 1;
+  string display_name = 2;
+  google.protobuf.Timestamp starts_at = 3;
+}
+
+// A reference to a part of the maintenance domain.
+message PartRef {
+  string part_id = 1;
+  string display_name = 2;
+  string code = 3;
+}

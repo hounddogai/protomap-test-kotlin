@@ -1,0 +1,278 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.dispatch.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/dispatch/v1/dispatch.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Dispatch.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/dispatch/v1;dispatchv1";
+option java_multiple_files = true;
+option java_outer_classname = "DispatchOrderApprovalServiceProto";
+option java_package = "com.acme.dispatch.v1";
+
+// Routes dispatch orders through approval, with escalation and delegation.
+service DispatchOrderApprovalService {
+  // Submits a dispatch order.
+  rpc SubmitDispatchOrder(SubmitDispatchOrderRequest) returns (SubmitDispatchOrderResponse);
+
+  // Approves a dispatch order.
+  rpc ApproveDispatchOrder(ApproveDispatchOrderRequest) returns (ApproveDispatchOrderResponse);
+
+  // Rejects a dispatch order.
+  rpc RejectDispatchOrder(RejectDispatchOrderRequest) returns (RejectDispatchOrderResponse);
+
+  // Escalates a dispatch order.
+  rpc EscalateDispatchOrder(EscalateDispatchOrderRequest) returns (EscalateDispatchOrderResponse);
+
+  // Lists dispatch orders a page at a time.
+  rpc ListPendingDispatchOrders(ListPendingDispatchOrdersRequest) returns (ListPendingDispatchOrdersResponse);
+
+  // Delegates a dispatch order.
+  rpc DelegateDispatchOrderApproval(DelegateDispatchOrderApprovalRequest) returns (DelegateDispatchOrderApprovalResponse);
+
+  // Comments a dispatch order.
+  rpc CommentDispatchOrderApproval(CommentDispatchOrderApprovalRequest) returns (CommentDispatchOrderApprovalResponse);
+}
+
+// The request of `SubmitDispatchOrder`.
+message SubmitDispatchOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  SubmitDispatchOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDispatchOrder`.
+message SubmitDispatchOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  SubmitDispatchOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDispatchOrder`.
+message ApproveDispatchOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  ApproveDispatchOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDispatchOrder`.
+message ApproveDispatchOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  ApproveDispatchOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDispatchOrder`.
+message RejectDispatchOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  RejectDispatchOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDispatchOrder`.
+message RejectDispatchOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  RejectDispatchOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateDispatchOrder`.
+message EscalateDispatchOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  EscalateDispatchOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateDispatchOrder`.
+message EscalateDispatchOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  EscalateDispatchOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingDispatchOrders`.
+message ListPendingDispatchOrdersRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DispatchOrderStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingDispatchOrdersRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingDispatchOrders`.
+message ListPendingDispatchOrdersResponse {
+  repeated DispatchOrder dispatch_orders = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDispatchOrderApproval`.
+message DelegateDispatchOrderApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  DelegateDispatchOrderApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDispatchOrderApproval`.
+message DelegateDispatchOrderApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  DelegateDispatchOrderApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CommentDispatchOrderApproval`.
+message CommentDispatchOrderApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_order_id = 2;
+  DispatchOrder dispatch_order = 3;
+  CommentDispatchOrderApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentDispatchOrderApproval`.
+message CommentDispatchOrderApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchOrder dispatch_order = 1;
+  CommentDispatchOrderApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

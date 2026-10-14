@@ -1,0 +1,219 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TripLogLifecycleServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Moves a trip log between the states of its lifecycle.
+service TripLogLifecycleService {
+  // Activates a trip log.
+  rpc ActivateTripLog(ActivateTripLogRequest) returns (ActivateTripLogResponse);
+
+  // Suspends a trip log.
+  rpc SuspendTripLog(SuspendTripLogRequest) returns (SuspendTripLogResponse);
+
+  // Reinstates a trip log.
+  rpc ReinstateTripLog(ReinstateTripLogRequest) returns (ReinstateTripLogResponse);
+
+  // Terminates a trip log.
+  rpc TerminateTripLog(TerminateTripLogRequest) returns (TerminateTripLogResponse);
+
+  // Renews a trip log.
+  rpc RenewTripLog(RenewTripLogRequest) returns (RenewTripLogResponse);
+
+  // Returns a trip log.
+  rpc GetTripLogLifecycle(GetTripLogLifecycleRequest) returns (GetTripLogLifecycleResponse);
+}
+
+// The request of `ActivateTripLog`.
+message ActivateTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  ActivateTripLogRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateTripLog`.
+message ActivateTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ActivateTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendTripLog`.
+message SuspendTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  SuspendTripLogRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendTripLog`.
+message SuspendTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  SuspendTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateTripLog`.
+message ReinstateTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  ReinstateTripLogRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateTripLog`.
+message ReinstateTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ReinstateTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TerminateTripLog`.
+message TerminateTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TerminateTripLogRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TerminateTripLog`.
+message TerminateTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  TerminateTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RenewTripLog`.
+message RenewTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  RenewTripLogRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `RenewTripLog`.
+message RenewTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  RenewTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetTripLogLifecycle`.
+message GetTripLogLifecycleRequest {
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTripLogLifecycle`.
+message GetTripLogLifecycleResponse {
+  TripLog trip_log = 1;
+  acme.common.v1.OperationResult result = 2;
+}

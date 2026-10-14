@@ -1,0 +1,139 @@
+package com.acme.transport.crewing.restbreak.threshold
+
+import com.acme.transport.crewing.cache.TtlCache
+import com.acme.transport.crewing.cache.newTtlCache
+import com.acme.transport.crewing.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps capped rest break agreements by code. */
+interface CappedRestBreakAgreementStore {
+    fun find(code: String): CappedRestBreakAgreement?
+    fun save(item: CappedRestBreakAgreement)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<CappedRestBreakAgreement>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryCappedRestBreakAgreementStore(
+    var items: MutableMap<String, CappedRestBreakAgreement>,
+    var order: MutableList<String>,
+) : CappedRestBreakAgreementStore {
+    override fun find(code: String): CappedRestBreakAgreement? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: CappedRestBreakAgreement) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<CappedRestBreakAgreement> {
+        val out = mutableListOf<CappedRestBreakAgreement>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryCappedRestBreakAgreementStore(): CappedRestBreakAgreementStore {
+    return MemoryCappedRestBreakAgreementStore(
+        mutableMapOf<String, CappedRestBreakAgreement>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedCappedRestBreakAgreementStore(
+    var inner: CappedRestBreakAgreementStore,
+    var cache: TtlCache<CappedRestBreakAgreement>,
+    var hits: Int,
+    var misses: Int,
+) : CappedRestBreakAgreementStore {
+    override fun find(code: String): CappedRestBreakAgreement? {
+        val hit = (cache.get(code) as CappedRestBreakAgreement?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: CappedRestBreakAgreement) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<CappedRestBreakAgreement> = inner.list()
+}
+
+fun newCachedCappedRestBreakAgreementStore(inner: CappedRestBreakAgreementStore, ttl: Int, clock: Clock): CappedRestBreakAgreementStore {
+    return CachedCappedRestBreakAgreementStore(
+        inner = inner,
+        cache = newTtlCache<CappedRestBreakAgreement>(256, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects capped rest break agreements. Empty fields match all. */
+data class CappedRestBreakAgreementQuery(
+    var label: String,
+    var minLoadKg: Double,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: CappedRestBreakAgreement): Boolean {
+        if (label != "" && normalize(item.label) != normalize(label)) {
+            return false
+        }
+        if (item.loadKg < minLoadKg) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<CappedRestBreakAgreement>): MutableList<CappedRestBreakAgreement> {
+        val matched = filter(items) { candidate: CappedRestBreakAgreement -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findCappedRestBreakAgreements(store: CappedRestBreakAgreementStore, query: CappedRestBreakAgreementQuery): MutableList<CappedRestBreakAgreement> {
+    return query.apply(store.list())
+}

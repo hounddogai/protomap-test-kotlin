@@ -1,0 +1,241 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TelemetryReadingWorkflowServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Runs the long-lived workflow that takes a telemetry reading from start to finish.
+service TelemetryReadingWorkflowService {
+  // Starts a telemetry reading.
+  rpc StartTelemetryReadingWorkflow(StartTelemetryReadingWorkflowRequest) returns (StartTelemetryReadingWorkflowResponse);
+
+  // Advances a telemetry reading.
+  rpc AdvanceTelemetryReadingWorkflow(AdvanceTelemetryReadingWorkflowRequest) returns (AdvanceTelemetryReadingWorkflowResponse);
+
+  // Retrys a telemetry reading.
+  rpc RetryTelemetryReadingWorkflow(RetryTelemetryReadingWorkflowRequest) returns (RetryTelemetryReadingWorkflowResponse);
+
+  // Pauses a telemetry reading.
+  rpc PauseTelemetryReadingWorkflow(PauseTelemetryReadingWorkflowRequest) returns (PauseTelemetryReadingWorkflowResponse);
+
+  // Resumes a telemetry reading.
+  rpc ResumeTelemetryReadingWorkflow(ResumeTelemetryReadingWorkflowRequest) returns (ResumeTelemetryReadingWorkflowResponse);
+
+  // Lists telemetry readings a page at a time.
+  rpc ListTelemetryReadingWorkflows(ListTelemetryReadingWorkflowsRequest) returns (ListTelemetryReadingWorkflowsResponse);
+}
+
+// The request of `StartTelemetryReadingWorkflow`.
+message StartTelemetryReadingWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  StartTelemetryReadingWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartTelemetryReadingWorkflow`.
+message StartTelemetryReadingWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  StartTelemetryReadingWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceTelemetryReadingWorkflow`.
+message AdvanceTelemetryReadingWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  AdvanceTelemetryReadingWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceTelemetryReadingWorkflow`.
+message AdvanceTelemetryReadingWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  AdvanceTelemetryReadingWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryTelemetryReadingWorkflow`.
+message RetryTelemetryReadingWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  RetryTelemetryReadingWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryTelemetryReadingWorkflow`.
+message RetryTelemetryReadingWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  RetryTelemetryReadingWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseTelemetryReadingWorkflow`.
+message PauseTelemetryReadingWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  PauseTelemetryReadingWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseTelemetryReadingWorkflow`.
+message PauseTelemetryReadingWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  PauseTelemetryReadingWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeTelemetryReadingWorkflow`.
+message ResumeTelemetryReadingWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  ResumeTelemetryReadingWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeTelemetryReadingWorkflow`.
+message ResumeTelemetryReadingWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ResumeTelemetryReadingWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListTelemetryReadingWorkflows`.
+message ListTelemetryReadingWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TelemetryReadingStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListTelemetryReadingWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListTelemetryReadingWorkflows`.
+message ListTelemetryReadingWorkflowsResponse {
+  repeated TelemetryReading telemetry_readings = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}

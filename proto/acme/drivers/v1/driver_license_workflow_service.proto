@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.drivers.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/drivers/v1/drivers.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Drivers.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/drivers/v1;driversv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverLicenseWorkflowServiceProto";
+option java_package = "com.acme.drivers.v1";
+
+// Runs the long-lived workflow that takes a driver license from start to finish.
+service DriverLicenseWorkflowService {
+  // Starts a driver license.
+  rpc StartDriverLicenseWorkflow(StartDriverLicenseWorkflowRequest) returns (StartDriverLicenseWorkflowResponse);
+
+  // Advances a driver license.
+  rpc AdvanceDriverLicenseWorkflow(AdvanceDriverLicenseWorkflowRequest) returns (AdvanceDriverLicenseWorkflowResponse);
+
+  // Cancels a driver license.
+  rpc CancelDriverLicenseWorkflow(CancelDriverLicenseWorkflowRequest) returns (CancelDriverLicenseWorkflowResponse);
+
+  // Retrys a driver license.
+  rpc RetryDriverLicenseWorkflow(RetryDriverLicenseWorkflowRequest) returns (RetryDriverLicenseWorkflowResponse);
+
+  // Pauses a driver license.
+  rpc PauseDriverLicenseWorkflow(PauseDriverLicenseWorkflowRequest) returns (PauseDriverLicenseWorkflowResponse);
+
+  // Resumes a driver license.
+  rpc ResumeDriverLicenseWorkflow(ResumeDriverLicenseWorkflowRequest) returns (ResumeDriverLicenseWorkflowResponse);
+
+  // Returns a driver license.
+  rpc InspectDriverLicenseWorkflow(InspectDriverLicenseWorkflowRequest) returns (InspectDriverLicenseWorkflowResponse);
+
+  // Signals a driver license.
+  rpc SignalDriverLicenseWorkflow(SignalDriverLicenseWorkflowRequest) returns (SignalDriverLicenseWorkflowResponse);
+}
+
+// The request of `StartDriverLicenseWorkflow`.
+message StartDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  StartDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartDriverLicenseWorkflow`.
+message StartDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  StartDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceDriverLicenseWorkflow`.
+message AdvanceDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  AdvanceDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceDriverLicenseWorkflow`.
+message AdvanceDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  AdvanceDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelDriverLicenseWorkflow`.
+message CancelDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  CancelDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelDriverLicenseWorkflow`.
+message CancelDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  CancelDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryDriverLicenseWorkflow`.
+message RetryDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  RetryDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryDriverLicenseWorkflow`.
+message RetryDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  RetryDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseDriverLicenseWorkflow`.
+message PauseDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  PauseDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseDriverLicenseWorkflow`.
+message PauseDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  PauseDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeDriverLicenseWorkflow`.
+message ResumeDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  ResumeDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeDriverLicenseWorkflow`.
+message ResumeDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  ResumeDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectDriverLicenseWorkflow`.
+message InspectDriverLicenseWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectDriverLicenseWorkflow`.
+message InspectDriverLicenseWorkflowResponse {
+  DriverLicense driver_license = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `SignalDriverLicenseWorkflow`.
+message SignalDriverLicenseWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  SignalDriverLicenseWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalDriverLicenseWorkflow`.
+message SignalDriverLicenseWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  SignalDriverLicenseWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

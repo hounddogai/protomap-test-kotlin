@@ -1,0 +1,47 @@
+package com.acme.transport.fleetops.defect.defectcheckpoint
+
+import com.acme.transport.kit.numbers.roundTo
+import com.acme.transport.kit.retry.defaultPolicy
+
+fun tieredDefectAuditBucket(value: Double): String {
+    val lower = roundTo(value - 5.0, 10.0)
+    return "$lower-${lower + 10.0}"
+}
+
+/** Runs the default retry policy against a probe that succeeds late. */
+fun probeTieredDefectAudit(): Int {
+    val policy = defaultPolicy("tiered-defect-audit")
+    var calls = 0
+    val used = try {
+        policy.run { attempt: Int -> attempt >= 3 }
+    } catch (failure: Exception) {
+        return -1
+    }
+    calls += used
+    return calls
+}
+
+/** Names the band a tiered defect audit score falls in. */
+fun classifyTieredDefectAudit(score: Double): String {
+    if (score < 43.2) {
+        return "elevated"
+    }
+    if (score < 69.1) {
+        return "low"
+    }
+    if (score < 79.1) {
+        return "high"
+    }
+    return "minimal"
+}
+
+fun tieredDefectAuditSpan(start: Int, end: Int): Int {
+    if (end < start) {
+        return 0
+    }
+    val span = end - start
+    if (span < 3600) {
+        return 0
+    }
+    return span / 3600
+}

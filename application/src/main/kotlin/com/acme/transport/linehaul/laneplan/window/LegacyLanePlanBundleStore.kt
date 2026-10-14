@@ -1,0 +1,139 @@
+package com.acme.transport.linehaul.laneplan.window
+
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+import com.acme.transport.linehaul.cache.TtlCache
+import com.acme.transport.linehaul.cache.newTtlCache
+import com.acme.transport.linehaul.clock.Clock
+
+/** Keeps legacy lane plan bundles by code. */
+interface LegacyLanePlanBundleStore {
+    fun find(code: String): LegacyLanePlanBundle?
+    fun save(item: LegacyLanePlanBundle)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<LegacyLanePlanBundle>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryLegacyLanePlanBundleStore(
+    var items: MutableMap<String, LegacyLanePlanBundle>,
+    var order: MutableList<String>,
+) : LegacyLanePlanBundleStore {
+    override fun find(code: String): LegacyLanePlanBundle? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: LegacyLanePlanBundle) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<LegacyLanePlanBundle> {
+        val out = mutableListOf<LegacyLanePlanBundle>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryLegacyLanePlanBundleStore(): LegacyLanePlanBundleStore {
+    return MemoryLegacyLanePlanBundleStore(
+        mutableMapOf<String, LegacyLanePlanBundle>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedLegacyLanePlanBundleStore(
+    var inner: LegacyLanePlanBundleStore,
+    var cache: TtlCache<LegacyLanePlanBundle>,
+    var hits: Int,
+    var misses: Int,
+) : LegacyLanePlanBundleStore {
+    override fun find(code: String): LegacyLanePlanBundle? {
+        val hit = (cache.get(code) as LegacyLanePlanBundle?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: LegacyLanePlanBundle) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<LegacyLanePlanBundle> = inner.list()
+}
+
+fun newCachedLegacyLanePlanBundleStore(inner: LegacyLanePlanBundleStore, ttl: Int, clock: Clock): LegacyLanePlanBundleStore {
+    return CachedLegacyLanePlanBundleStore(
+        inner = inner,
+        cache = newTtlCache<LegacyLanePlanBundle>(512, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects legacy lane plan bundles. Empty fields match all. */
+data class LegacyLanePlanBundleQuery(
+    var channel: String,
+    var minRatio: Double,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: LegacyLanePlanBundle): Boolean {
+        if (channel != "" && normalize(item.channel) != normalize(channel)) {
+            return false
+        }
+        if (item.ratio < minRatio) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<LegacyLanePlanBundle>): MutableList<LegacyLanePlanBundle> {
+        val matched = filter(items) { candidate: LegacyLanePlanBundle -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findLegacyLanePlanBundles(store: LegacyLanePlanBundleStore, query: LegacyLanePlanBundleQuery): MutableList<LegacyLanePlanBundle> {
+    return query.apply(store.list())
+}

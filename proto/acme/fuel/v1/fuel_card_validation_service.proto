@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelCardValidationServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Checks fuel cards against the rules before anything acts on them.
+service FuelCardValidationService {
+  // Validates a fuel card.
+  rpc ValidateFuelCard(ValidateFuelCardRequest) returns (ValidateFuelCardResponse);
+
+  // Previews a fuel card.
+  rpc PreviewFuelCard(PreviewFuelCardRequest) returns (PreviewFuelCardResponse);
+
+  // Checks a fuel card.
+  rpc CheckFuelCardEligibility(CheckFuelCardEligibilityRequest) returns (CheckFuelCardEligibilityResponse);
+
+  // Normalizes a fuel card.
+  rpc NormalizeFuelCard(NormalizeFuelCardRequest) returns (NormalizeFuelCardResponse);
+
+  // Explains a fuel card.
+  rpc ExplainFuelCardDecision(ExplainFuelCardDecisionRequest) returns (ExplainFuelCardDecisionResponse);
+
+  // Scores a fuel card.
+  rpc ScoreFuelCard(ScoreFuelCardRequest) returns (ScoreFuelCardResponse);
+
+  // Lints a fuel card.
+  rpc LintFuelCards(LintFuelCardsRequest) returns (LintFuelCardsResponse);
+
+  // Returns a fuel card.
+  rpc GetFuelCardRules(GetFuelCardRulesRequest) returns (GetFuelCardRulesResponse);
+}
+
+// The request of `ValidateFuelCard`.
+message ValidateFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  ValidateFuelCardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateFuelCard`.
+message ValidateFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ValidateFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewFuelCard`.
+message PreviewFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  PreviewFuelCardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewFuelCard`.
+message PreviewFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  PreviewFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckFuelCardEligibility`.
+message CheckFuelCardEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  CheckFuelCardEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckFuelCardEligibility`.
+message CheckFuelCardEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  CheckFuelCardEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeFuelCard`.
+message NormalizeFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  NormalizeFuelCardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeFuelCard`.
+message NormalizeFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  NormalizeFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainFuelCardDecision`.
+message ExplainFuelCardDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  ExplainFuelCardDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainFuelCardDecision`.
+message ExplainFuelCardDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ExplainFuelCardDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreFuelCard`.
+message ScoreFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  ScoreFuelCardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreFuelCard`.
+message ScoreFuelCardResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreFuelCardResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelCard fuel_card = 1;
+  ScoreFuelCardResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintFuelCards`.
+message LintFuelCardsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  LintFuelCardsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintFuelCards`.
+message LintFuelCardsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  LintFuelCardsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelCardRules`.
+message GetFuelCardRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelCardRules`.
+message GetFuelCardRulesResponse {
+  FuelCard fuel_card = 1;
+  acme.common.v1.OperationResult result = 2;
+}

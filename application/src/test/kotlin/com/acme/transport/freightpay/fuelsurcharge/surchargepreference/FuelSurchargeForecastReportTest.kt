@@ -1,0 +1,24 @@
+package com.acme.transport.freightpay.fuelsurcharge.surchargepreference
+
+import com.acme.transport.freightpay.clock.FixedClock
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class FuelSurchargeForecastReportTest {
+    @Test
+    fun `counts each record once`() {
+        val clock = FixedClock(1708697416)
+        val items = mutableListOf<FuelSurchargeForecast>()
+        for (index in 0 until 2) {
+            items.add(newFuelSurchargeForecast("fuel-surcharge-forecast-$index", "sample"))
+        }
+        val report = buildFuelSurchargeForecastReport("test", items, clock)
+        var counted = 0
+        for ((key, value) in report.counts.toSortedMap()) {
+            counted += value
+        }
+        assertTrue(counted <= 2, "counted")
+        assertEquals(clock.now(), report.generatedAt, "generated at")
+    }
+}

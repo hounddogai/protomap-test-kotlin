@@ -1,0 +1,245 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.deliveries.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/deliveries/v1/deliveries.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Deliveries.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/deliveries/v1;deliveriesv1";
+option java_multiple_files = true;
+option java_outer_classname = "ProofOfDeliveryQueryServiceProto";
+option java_package = "com.acme.deliveries.v1";
+
+// Answers read-only questions about proof of deliveries, for screens and reports.
+service ProofOfDeliveryQueryService {
+  // Returns a proof of delivery.
+  rpc LookupProofOfDelivery(LookupProofOfDeliveryRequest) returns (LookupProofOfDeliveryResponse);
+
+  // Lists proof of deliveries a page at a time.
+  rpc BrowseProofOfDeliveries(BrowseProofOfDeliveriesRequest) returns (BrowseProofOfDeliveriesResponse);
+
+  // Lists proof of deliveries a page at a time.
+  rpc FindProofOfDeliveries(FindProofOfDeliveriesRequest) returns (FindProofOfDeliveriesResponse);
+
+  // Counts proof of deliveries by status.
+  rpc CountProofOfDeliveries(CountProofOfDeliveriesRequest) returns (CountProofOfDeliveriesResponse);
+
+  // Returns several proof of deliveries at once.
+  rpc ResolveProofOfDeliveries(ResolveProofOfDeliveriesRequest) returns (ResolveProofOfDeliveriesResponse);
+
+  // Streams every matching proof of delivery.
+  rpc ExportProofOfDeliveries(ExportProofOfDeliveriesRequest) returns (stream ExportProofOfDeliveriesResponse);
+
+  // Summarizes a proof of delivery.
+  rpc SummarizeProofOfDeliveries(SummarizeProofOfDeliveriesRequest) returns (SummarizeProofOfDeliveriesResponse);
+
+  // Lists proof of deliveries a page at a time.
+  rpc SuggestProofOfDeliveries(SuggestProofOfDeliveriesRequest) returns (SuggestProofOfDeliveriesResponse);
+
+  // Returns a proof of delivery.
+  rpc PeekProofOfDelivery(PeekProofOfDeliveryRequest) returns (PeekProofOfDeliveryResponse);
+}
+
+// The request of `LookupProofOfDelivery`.
+message LookupProofOfDeliveryRequest {
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `LookupProofOfDelivery`.
+message LookupProofOfDeliveryResponse {
+  ProofOfDelivery proof_of_delivery = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `BrowseProofOfDeliveries`.
+message BrowseProofOfDeliveriesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  BrowseProofOfDeliveriesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `BrowseProofOfDeliveries`.
+message BrowseProofOfDeliveriesResponse {
+  repeated ProofOfDelivery proof_of_deliveries = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `FindProofOfDeliveries`.
+message FindProofOfDeliveriesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  FindProofOfDeliveriesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `FindProofOfDeliveries`.
+message FindProofOfDeliveriesResponse {
+  repeated ProofOfDelivery proof_of_deliveries = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountProofOfDeliveries`.
+message CountProofOfDeliveriesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountProofOfDeliveriesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountProofOfDeliveries`.
+message CountProofOfDeliveriesResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResolveProofOfDeliveries`.
+message ResolveProofOfDeliveriesRequest {
+  acme.common.v1.RequestContext context = 1;
+  repeated string proof_of_delivery_ids = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `ResolveProofOfDeliveries`.
+message ResolveProofOfDeliveriesResponse {
+  repeated ProofOfDelivery proof_of_deliveries = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExportProofOfDeliveries`.
+message ExportProofOfDeliveriesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  ExportProofOfDeliveriesRequest.Filter filter = 2;
+  string format = 3;
+  google.protobuf.FieldMask fields = 4;
+  string destination_uri = 5;
+}
+
+// The response of `ExportProofOfDeliveries`.
+message ExportProofOfDeliveriesResponse {
+  ProofOfDelivery proof_of_delivery = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SummarizeProofOfDeliveries`.
+message SummarizeProofOfDeliveriesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  SummarizeProofOfDeliveriesRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SummarizeProofOfDeliveries`.
+message SummarizeProofOfDeliveriesResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SuggestProofOfDeliveries`.
+message SuggestProofOfDeliveriesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  SuggestProofOfDeliveriesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `SuggestProofOfDeliveries`.
+message SuggestProofOfDeliveriesResponse {
+  repeated ProofOfDelivery proof_of_deliveries = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PeekProofOfDelivery`.
+message PeekProofOfDeliveryRequest {
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `PeekProofOfDelivery`.
+message PeekProofOfDeliveryResponse {
+  ProofOfDelivery proof_of_delivery = 1;
+  acme.common.v1.OperationResult result = 2;
+}

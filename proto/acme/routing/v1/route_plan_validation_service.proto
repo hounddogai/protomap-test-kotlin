@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "RoutePlanValidationServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Checks route plans against the rules before anything acts on them.
+service RoutePlanValidationService {
+  // Validates a route plan.
+  rpc ValidateRoutePlan(ValidateRoutePlanRequest) returns (ValidateRoutePlanResponse);
+
+  // Previews a route plan.
+  rpc PreviewRoutePlan(PreviewRoutePlanRequest) returns (PreviewRoutePlanResponse);
+
+  // Checks a route plan.
+  rpc CheckRoutePlanEligibility(CheckRoutePlanEligibilityRequest) returns (CheckRoutePlanEligibilityResponse);
+
+  // Normalizes a route plan.
+  rpc NormalizeRoutePlan(NormalizeRoutePlanRequest) returns (NormalizeRoutePlanResponse);
+
+  // Explains a route plan.
+  rpc ExplainRoutePlanDecision(ExplainRoutePlanDecisionRequest) returns (ExplainRoutePlanDecisionResponse);
+
+  // Scores a route plan.
+  rpc ScoreRoutePlan(ScoreRoutePlanRequest) returns (ScoreRoutePlanResponse);
+
+  // Lints a route plan.
+  rpc LintRoutePlans(LintRoutePlansRequest) returns (LintRoutePlansResponse);
+
+  // Returns a route plan.
+  rpc GetRoutePlanRules(GetRoutePlanRulesRequest) returns (GetRoutePlanRulesResponse);
+}
+
+// The request of `ValidateRoutePlan`.
+message ValidateRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  ValidateRoutePlanRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateRoutePlan`.
+message ValidateRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ValidateRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewRoutePlan`.
+message PreviewRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  PreviewRoutePlanRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewRoutePlan`.
+message PreviewRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  PreviewRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckRoutePlanEligibility`.
+message CheckRoutePlanEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  CheckRoutePlanEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckRoutePlanEligibility`.
+message CheckRoutePlanEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  CheckRoutePlanEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeRoutePlan`.
+message NormalizeRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  NormalizeRoutePlanRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeRoutePlan`.
+message NormalizeRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  NormalizeRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainRoutePlanDecision`.
+message ExplainRoutePlanDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  ExplainRoutePlanDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainRoutePlanDecision`.
+message ExplainRoutePlanDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ExplainRoutePlanDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreRoutePlan`.
+message ScoreRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  ScoreRoutePlanRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreRoutePlan`.
+message ScoreRoutePlanResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreRoutePlanResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  RoutePlan route_plan = 1;
+  ScoreRoutePlanResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintRoutePlans`.
+message LintRoutePlansRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  LintRoutePlansRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintRoutePlans`.
+message LintRoutePlansResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  LintRoutePlansResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetRoutePlanRules`.
+message GetRoutePlanRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetRoutePlanRules`.
+message GetRoutePlanRulesResponse {
+  RoutePlan route_plan = 1;
+  acme.common.v1.OperationResult result = 2;
+}

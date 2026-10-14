@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "DockApprovalServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Routes docks through approval, with escalation and delegation.
+service DockApprovalService {
+  // Submits a dock.
+  rpc SubmitDock(SubmitDockRequest) returns (SubmitDockResponse);
+
+  // Approves a dock.
+  rpc ApproveDock(ApproveDockRequest) returns (ApproveDockResponse);
+
+  // Rejects a dock.
+  rpc RejectDock(RejectDockRequest) returns (RejectDockResponse);
+
+  // Escalates a dock.
+  rpc EscalateDock(EscalateDockRequest) returns (EscalateDockResponse);
+
+  // Lists docks a page at a time.
+  rpc ListPendingDocks(ListPendingDocksRequest) returns (ListPendingDocksResponse);
+
+  // Delegates a dock.
+  rpc DelegateDockApproval(DelegateDockApprovalRequest) returns (DelegateDockApprovalResponse);
+
+  // Recalls a dock.
+  rpc RecallDock(RecallDockRequest) returns (RecallDockResponse);
+
+  // Returns a dock.
+  rpc GetDockApprovalStatus(GetDockApprovalStatusRequest) returns (GetDockApprovalStatusResponse);
+
+  // Comments a dock.
+  rpc CommentDockApproval(CommentDockApprovalRequest) returns (CommentDockApprovalResponse);
+}
+
+// The request of `SubmitDock`.
+message SubmitDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  SubmitDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDock`.
+message SubmitDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  SubmitDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDock`.
+message ApproveDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ApproveDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDock`.
+message ApproveDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ApproveDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDock`.
+message RejectDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  RejectDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDock`.
+message RejectDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  RejectDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateDock`.
+message EscalateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  EscalateDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateDock`.
+message EscalateDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  EscalateDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingDocks`.
+message ListPendingDocksRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DockStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingDocksRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingDocks`.
+message ListPendingDocksResponse {
+  repeated Dock docks = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDockApproval`.
+message DelegateDockApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  DelegateDockApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDockApproval`.
+message DelegateDockApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  DelegateDockApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallDock`.
+message RecallDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  RecallDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallDock`.
+message RecallDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  RecallDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDockApprovalStatus`.
+message GetDockApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDockApprovalStatus`.
+message GetDockApprovalStatusResponse {
+  Dock dock = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentDockApproval`.
+message CommentDockApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  CommentDockApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentDockApproval`.
+message CommentDockApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  CommentDockApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

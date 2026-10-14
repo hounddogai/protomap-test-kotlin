@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "RouteApprovalServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Routes routes through approval, with escalation and delegation.
+service RouteApprovalService {
+  // Submits a route.
+  rpc SubmitRoute(SubmitRouteRequest) returns (SubmitRouteResponse);
+
+  // Approves a route.
+  rpc ApproveRoute(ApproveRouteRequest) returns (ApproveRouteResponse);
+
+  // Rejects a route.
+  rpc RejectRoute(RejectRouteRequest) returns (RejectRouteResponse);
+
+  // Escalates a route.
+  rpc EscalateRoute(EscalateRouteRequest) returns (EscalateRouteResponse);
+
+  // Lists routes a page at a time.
+  rpc ListPendingRoutes(ListPendingRoutesRequest) returns (ListPendingRoutesResponse);
+
+  // Delegates a route.
+  rpc DelegateRouteApproval(DelegateRouteApprovalRequest) returns (DelegateRouteApprovalResponse);
+
+  // Recalls a route.
+  rpc RecallRoute(RecallRouteRequest) returns (RecallRouteResponse);
+
+  // Returns a route.
+  rpc GetRouteApprovalStatus(GetRouteApprovalStatusRequest) returns (GetRouteApprovalStatusResponse);
+
+  // Comments a route.
+  rpc CommentRouteApproval(CommentRouteApprovalRequest) returns (CommentRouteApprovalResponse);
+}
+
+// The request of `SubmitRoute`.
+message SubmitRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  SubmitRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitRoute`.
+message SubmitRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  SubmitRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveRoute`.
+message ApproveRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  ApproveRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveRoute`.
+message ApproveRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  ApproveRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectRoute`.
+message RejectRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  RejectRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectRoute`.
+message RejectRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  RejectRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateRoute`.
+message EscalateRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  EscalateRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateRoute`.
+message EscalateRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  EscalateRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingRoutes`.
+message ListPendingRoutesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated RouteStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingRoutesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingRoutes`.
+message ListPendingRoutesResponse {
+  repeated Route routes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateRouteApproval`.
+message DelegateRouteApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  DelegateRouteApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateRouteApproval`.
+message DelegateRouteApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  DelegateRouteApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallRoute`.
+message RecallRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  RecallRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallRoute`.
+message RecallRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  RecallRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetRouteApprovalStatus`.
+message GetRouteApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetRouteApprovalStatus`.
+message GetRouteApprovalStatusResponse {
+  Route route = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentRouteApproval`.
+message CommentRouteApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  CommentRouteApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentRouteApproval`.
+message CommentRouteApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  CommentRouteApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

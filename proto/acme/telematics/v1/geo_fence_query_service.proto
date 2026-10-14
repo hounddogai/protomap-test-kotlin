@@ -1,0 +1,245 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "GeoFenceQueryServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Answers read-only questions about geo fences, for screens and reports.
+service GeoFenceQueryService {
+  // Returns a geo fence.
+  rpc LookupGeoFence(LookupGeoFenceRequest) returns (LookupGeoFenceResponse);
+
+  // Lists geo fences a page at a time.
+  rpc BrowseGeoFences(BrowseGeoFencesRequest) returns (BrowseGeoFencesResponse);
+
+  // Lists geo fences a page at a time.
+  rpc FindGeoFences(FindGeoFencesRequest) returns (FindGeoFencesResponse);
+
+  // Counts geo fences by status.
+  rpc CountGeoFences(CountGeoFencesRequest) returns (CountGeoFencesResponse);
+
+  // Returns several geo fences at once.
+  rpc ResolveGeoFences(ResolveGeoFencesRequest) returns (ResolveGeoFencesResponse);
+
+  // Streams every matching geo fence.
+  rpc ExportGeoFences(ExportGeoFencesRequest) returns (stream ExportGeoFencesResponse);
+
+  // Summarizes a geo fence.
+  rpc SummarizeGeoFences(SummarizeGeoFencesRequest) returns (SummarizeGeoFencesResponse);
+
+  // Lists geo fences a page at a time.
+  rpc SuggestGeoFences(SuggestGeoFencesRequest) returns (SuggestGeoFencesResponse);
+
+  // Returns a geo fence.
+  rpc PeekGeoFence(PeekGeoFenceRequest) returns (PeekGeoFenceResponse);
+}
+
+// The request of `LookupGeoFence`.
+message LookupGeoFenceRequest {
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `LookupGeoFence`.
+message LookupGeoFenceResponse {
+  GeoFence geo_fence = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `BrowseGeoFences`.
+message BrowseGeoFencesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated GeoFenceStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  BrowseGeoFencesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `BrowseGeoFences`.
+message BrowseGeoFencesResponse {
+  repeated GeoFence geo_fences = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `FindGeoFences`.
+message FindGeoFencesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated GeoFenceStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  FindGeoFencesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `FindGeoFences`.
+message FindGeoFencesResponse {
+  repeated GeoFence geo_fences = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountGeoFences`.
+message CountGeoFencesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated GeoFenceStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountGeoFencesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountGeoFences`.
+message CountGeoFencesResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResolveGeoFences`.
+message ResolveGeoFencesRequest {
+  acme.common.v1.RequestContext context = 1;
+  repeated string geo_fence_ids = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `ResolveGeoFences`.
+message ResolveGeoFencesResponse {
+  repeated GeoFence geo_fences = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExportGeoFences`.
+message ExportGeoFencesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated GeoFenceStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  ExportGeoFencesRequest.Filter filter = 2;
+  string format = 3;
+  google.protobuf.FieldMask fields = 4;
+  string destination_uri = 5;
+}
+
+// The response of `ExportGeoFences`.
+message ExportGeoFencesResponse {
+  GeoFence geo_fence = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SummarizeGeoFences`.
+message SummarizeGeoFencesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  SummarizeGeoFencesRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SummarizeGeoFences`.
+message SummarizeGeoFencesResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SuggestGeoFences`.
+message SuggestGeoFencesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated GeoFenceStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  SuggestGeoFencesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `SuggestGeoFences`.
+message SuggestGeoFencesResponse {
+  repeated GeoFence geo_fences = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PeekGeoFence`.
+message PeekGeoFenceRequest {
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `PeekGeoFence`.
+message PeekGeoFenceResponse {
+  GeoFence geo_fence = 1;
+  acme.common.v1.OperationResult result = 2;
+}

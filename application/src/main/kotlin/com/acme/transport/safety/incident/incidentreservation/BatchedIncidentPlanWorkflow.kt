@@ -1,0 +1,69 @@
+package com.acme.transport.safety.incident.incidentreservation
+
+import com.acme.transport.kit.flags.Registry
+import com.acme.transport.safety.clock.Clock
+
+/** Moves batched incident plans through their life cycle and keeps a journal of what it did. */
+data class BatchedIncidentPlanService(
+    var store: BatchedIncidentPlanStore,
+    var validator: BatchedIncidentPlanValidator,
+    var clock: Clock,
+    var journal: MutableList<String>,
+    var engine: BatchedIncidentPlanEngine,
+) {
+    private fun note(message: String) {
+        journal.add("${clock.now()} $message")
+    }
+
+    fun start(code: String) {
+        val item = store.find(code) ?: error("batched incident plan $code not found")
+        validator.requireValid(item)
+        item.moveTo(BatchedIncidentPlanStatus.GRANTED)
+        store.save(item)
+        note("$code is granted")
+    }
+
+    fun complete(code: String, reason: String) {
+        val item = store.find(code) ?: error("batched incident plan $code not found")
+        if (item.isTerminal()) {
+            note("$code already closed")
+            return
+        }
+        item.moveTo(BatchedIncidentPlanStatus.EXPIRED)
+        store.save(item)
+        note("$code is expired: $reason")
+    }
+
+    fun evaluate(code: String): Double {
+        val item = store.find(code) ?: error("batched incident plan $code not found")
+        val result = engine.compute(item)
+        note("$code evaluated at $result")
+        return result
+    }
+
+    fun scan(cutoff: Int): Int {
+        var changed = 0
+        for (item in store.list()) {
+            if (item.isTerminal()) {
+                continue
+            }
+            val problems = validator.validate(item)
+            if (problems.size == 0) {
+                continue
+            }
+            note("${item.code} needs attention: ${problems.joinToString(", ")}")
+            changed += 1
+        }
+        return changed
+    }
+}
+
+fun newBatchedIncidentPlanService(store: BatchedIncidentPlanStore, clock: Clock, flags: Registry): BatchedIncidentPlanService {
+    return BatchedIncidentPlanService(
+        store = store,
+        validator = defaultBatchedIncidentPlanValidator(),
+        clock = clock,
+        journal = mutableListOf<String>(),
+        engine = defaultBatchedIncidentPlanEngine(flags),
+    )
+}

@@ -1,0 +1,139 @@
+package com.acme.transport.lastmile.parcel.rollup
+
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+import com.acme.transport.lastmile.cache.TtlCache
+import com.acme.transport.lastmile.cache.newTtlCache
+import com.acme.transport.lastmile.clock.Clock
+
+/** Keeps adaptive parcel reservations by code. */
+interface AdaptiveParcelReservationStore {
+    fun find(code: String): AdaptiveParcelReservation?
+    fun save(item: AdaptiveParcelReservation)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<AdaptiveParcelReservation>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryAdaptiveParcelReservationStore(
+    var items: MutableMap<String, AdaptiveParcelReservation>,
+    var order: MutableList<String>,
+) : AdaptiveParcelReservationStore {
+    override fun find(code: String): AdaptiveParcelReservation? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: AdaptiveParcelReservation) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<AdaptiveParcelReservation> {
+        val out = mutableListOf<AdaptiveParcelReservation>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryAdaptiveParcelReservationStore(): AdaptiveParcelReservationStore {
+    return MemoryAdaptiveParcelReservationStore(
+        mutableMapOf<String, AdaptiveParcelReservation>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedAdaptiveParcelReservationStore(
+    var inner: AdaptiveParcelReservationStore,
+    var cache: TtlCache<AdaptiveParcelReservation>,
+    var hits: Int,
+    var misses: Int,
+) : AdaptiveParcelReservationStore {
+    override fun find(code: String): AdaptiveParcelReservation? {
+        val hit = (cache.get(code) as AdaptiveParcelReservation?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: AdaptiveParcelReservation) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<AdaptiveParcelReservation> = inner.list()
+}
+
+fun newCachedAdaptiveParcelReservationStore(inner: AdaptiveParcelReservationStore, ttl: Int, clock: Clock): AdaptiveParcelReservationStore {
+    return CachedAdaptiveParcelReservationStore(
+        inner = inner,
+        cache = newTtlCache<AdaptiveParcelReservation>(512, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects adaptive parcel reservations. Empty fields match all. */
+data class AdaptiveParcelReservationQuery(
+    var region: String,
+    var minCost: Double,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: AdaptiveParcelReservation): Boolean {
+        if (region != "" && normalize(item.region) != normalize(region)) {
+            return false
+        }
+        if (item.cost < minCost) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<AdaptiveParcelReservation>): MutableList<AdaptiveParcelReservation> {
+        val matched = filter(items) { candidate: AdaptiveParcelReservation -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findAdaptiveParcelReservations(store: AdaptiveParcelReservationStore, query: AdaptiveParcelReservationQuery): MutableList<AdaptiveParcelReservation> {
+    return query.apply(store.list())
+}

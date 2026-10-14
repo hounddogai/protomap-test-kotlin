@@ -1,0 +1,260 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.dispatch.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/dispatch/v1/dispatch.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Dispatch.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/dispatch/v1;dispatchv1";
+option java_multiple_files = true;
+option java_outer_classname = "DispatchAssignmentValidationServiceProto";
+option java_package = "com.acme.dispatch.v1";
+
+// Checks dispatch assignments against the rules before anything acts on them.
+service DispatchAssignmentValidationService {
+  // Validates a dispatch assignment.
+  rpc ValidateDispatchAssignment(ValidateDispatchAssignmentRequest) returns (ValidateDispatchAssignmentResponse);
+
+  // Previews a dispatch assignment.
+  rpc PreviewDispatchAssignment(PreviewDispatchAssignmentRequest) returns (PreviewDispatchAssignmentResponse);
+
+  // Checks a dispatch assignment.
+  rpc CheckDispatchAssignmentEligibility(CheckDispatchAssignmentEligibilityRequest) returns (CheckDispatchAssignmentEligibilityResponse);
+
+  // Normalizes a dispatch assignment.
+  rpc NormalizeDispatchAssignment(NormalizeDispatchAssignmentRequest) returns (NormalizeDispatchAssignmentResponse);
+
+  // Explains a dispatch assignment.
+  rpc ExplainDispatchAssignmentDecision(ExplainDispatchAssignmentDecisionRequest) returns (ExplainDispatchAssignmentDecisionResponse);
+
+  // Lints a dispatch assignment.
+  rpc LintDispatchAssignments(LintDispatchAssignmentsRequest) returns (LintDispatchAssignmentsResponse);
+
+  // Returns a dispatch assignment.
+  rpc GetDispatchAssignmentRules(GetDispatchAssignmentRulesRequest) returns (GetDispatchAssignmentRulesResponse);
+}
+
+// The request of `ValidateDispatchAssignment`.
+message ValidateDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  ValidateDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateDispatchAssignment`.
+message ValidateDispatchAssignmentResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  ValidateDispatchAssignmentResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewDispatchAssignment`.
+message PreviewDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  PreviewDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewDispatchAssignment`.
+message PreviewDispatchAssignmentResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  PreviewDispatchAssignmentResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckDispatchAssignmentEligibility`.
+message CheckDispatchAssignmentEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  CheckDispatchAssignmentEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckDispatchAssignmentEligibility`.
+message CheckDispatchAssignmentEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  CheckDispatchAssignmentEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeDispatchAssignment`.
+message NormalizeDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  NormalizeDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeDispatchAssignment`.
+message NormalizeDispatchAssignmentResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  NormalizeDispatchAssignmentResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainDispatchAssignmentDecision`.
+message ExplainDispatchAssignmentDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  ExplainDispatchAssignmentDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainDispatchAssignmentDecision`.
+message ExplainDispatchAssignmentDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  ExplainDispatchAssignmentDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintDispatchAssignments`.
+message LintDispatchAssignmentsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  LintDispatchAssignmentsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintDispatchAssignments`.
+message LintDispatchAssignmentsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  LintDispatchAssignmentsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDispatchAssignmentRules`.
+message GetDispatchAssignmentRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDispatchAssignmentRules`.
+message GetDispatchAssignmentRulesResponse {
+  DispatchAssignment dispatch_assignment = 1;
+  acme.common.v1.OperationResult result = 2;
+}

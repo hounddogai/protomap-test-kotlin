@@ -1,0 +1,136 @@
+package com.acme.transport.customs.broker.slot
+
+import com.acme.transport.customs.cache.TtlCache
+import com.acme.transport.customs.cache.newTtlCache
+import com.acme.transport.customs.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps broker proposals by code. */
+interface BrokerProposalStore {
+    fun find(code: String): BrokerProposal?
+    fun save(item: BrokerProposal)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<BrokerProposal>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryBrokerProposalStore(
+    var items: MutableMap<String, BrokerProposal>,
+    var order: MutableList<String>,
+) : BrokerProposalStore {
+    override fun find(code: String): BrokerProposal? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: BrokerProposal) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<BrokerProposal> {
+        val out = mutableListOf<BrokerProposal>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryBrokerProposalStore(): BrokerProposalStore {
+    return MemoryBrokerProposalStore(mutableMapOf<String, BrokerProposal>(), mutableListOf<String>())
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedBrokerProposalStore(
+    var inner: BrokerProposalStore,
+    var cache: TtlCache<BrokerProposal>,
+    var hits: Int,
+    var misses: Int,
+) : BrokerProposalStore {
+    override fun find(code: String): BrokerProposal? {
+        val hit = (cache.get(code) as BrokerProposal?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: BrokerProposal) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<BrokerProposal> = inner.list()
+}
+
+fun newCachedBrokerProposalStore(inner: BrokerProposalStore, ttl: Int, clock: Clock): BrokerProposalStore {
+    return CachedBrokerProposalStore(
+        inner = inner,
+        cache = newTtlCache<BrokerProposal>(1024, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects broker proposals. Empty fields match all. */
+data class BrokerProposalQuery(
+    var category: String,
+    var minPallets: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: BrokerProposal): Boolean {
+        if (category != "" && normalize(item.category) != normalize(category)) {
+            return false
+        }
+        if (item.pallets < minPallets) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<BrokerProposal>): MutableList<BrokerProposal> {
+        val matched = filter(items) { candidate: BrokerProposal -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findBrokerProposals(store: BrokerProposalStore, query: BrokerProposalQuery): MutableList<BrokerProposal> {
+    return query.apply(store.list())
+}

@@ -1,0 +1,335 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "DockCalculationServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Computes the figures of a dock, such as totals, taxes, and estimates.
+service DockCalculationService {
+  // Calculates a dock.
+  rpc CalculateDock(CalculateDockRequest) returns (CalculateDockResponse);
+
+  // Estimates a dock.
+  rpc EstimateDock(EstimateDockRequest) returns (EstimateDockResponse);
+
+  // Quotes a dock.
+  rpc QuoteDock(QuoteDockRequest) returns (QuoteDockResponse);
+
+  // Compares a dock.
+  rpc CompareDockOptions(CompareDockOptionsRequest) returns (CompareDockOptionsResponse);
+
+  // Recalculates a dock.
+  rpc RecalculateDocks(RecalculateDocksRequest) returns (RecalculateDocksResponse);
+
+  // Simulates a dock.
+  rpc SimulateDock(SimulateDockRequest) returns (SimulateDockResponse);
+
+  // Explains a dock.
+  rpc ExplainDockCalculation(ExplainDockCalculationRequest) returns (ExplainDockCalculationResponse);
+
+  // Returns a dock.
+  rpc GetDockRates(GetDockRatesRequest) returns (GetDockRatesResponse);
+}
+
+// The request of `CalculateDock`.
+message CalculateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  CalculateDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CalculateDock`.
+message CalculateDockResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CalculateDockResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  CalculateDockResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EstimateDock`.
+message EstimateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  EstimateDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EstimateDock`.
+message EstimateDockResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated EstimateDockResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  EstimateDockResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `QuoteDock`.
+message QuoteDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  QuoteDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `QuoteDock`.
+message QuoteDockResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated QuoteDockResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  QuoteDockResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CompareDockOptions`.
+message CompareDockOptionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  CompareDockOptionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareDockOptions`.
+message CompareDockOptionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CompareDockOptionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  CompareDockOptionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecalculateDocks`.
+message RecalculateDocksRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  RecalculateDocksRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecalculateDocks`.
+message RecalculateDocksResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated RecalculateDocksResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  RecalculateDocksResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SimulateDock`.
+message SimulateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  SimulateDockRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SimulateDock`.
+message SimulateDockResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated SimulateDockResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Dock dock = 1;
+  SimulateDockResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainDockCalculation`.
+message ExplainDockCalculationRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ExplainDockCalculationRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainDockCalculation`.
+message ExplainDockCalculationResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ExplainDockCalculationResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDockRates`.
+message GetDockRatesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDockRates`.
+message GetDockRatesResponse {
+  Dock dock = 1;
+  acme.common.v1.OperationResult result = 2;
+}

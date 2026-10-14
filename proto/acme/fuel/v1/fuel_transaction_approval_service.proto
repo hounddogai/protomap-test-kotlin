@@ -1,0 +1,295 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelTransactionApprovalServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Routes fuel transactions through approval, with escalation and delegation.
+service FuelTransactionApprovalService {
+  // Submits a fuel transaction.
+  rpc SubmitFuelTransaction(SubmitFuelTransactionRequest) returns (SubmitFuelTransactionResponse);
+
+  // Approves a fuel transaction.
+  rpc ApproveFuelTransaction(ApproveFuelTransactionRequest) returns (ApproveFuelTransactionResponse);
+
+  // Escalates a fuel transaction.
+  rpc EscalateFuelTransaction(EscalateFuelTransactionRequest) returns (EscalateFuelTransactionResponse);
+
+  // Lists fuel transactions a page at a time.
+  rpc ListPendingFuelTransactions(ListPendingFuelTransactionsRequest) returns (ListPendingFuelTransactionsResponse);
+
+  // Delegates a fuel transaction.
+  rpc DelegateFuelTransactionApproval(DelegateFuelTransactionApprovalRequest) returns (DelegateFuelTransactionApprovalResponse);
+
+  // Recalls a fuel transaction.
+  rpc RecallFuelTransaction(RecallFuelTransactionRequest) returns (RecallFuelTransactionResponse);
+
+  // Returns a fuel transaction.
+  rpc GetFuelTransactionApprovalStatus(GetFuelTransactionApprovalStatusRequest) returns (GetFuelTransactionApprovalStatusResponse);
+
+  // Comments a fuel transaction.
+  rpc CommentFuelTransactionApproval(CommentFuelTransactionApprovalRequest) returns (CommentFuelTransactionApprovalResponse);
+}
+
+// The request of `SubmitFuelTransaction`.
+message SubmitFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  SubmitFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitFuelTransaction`.
+message SubmitFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  SubmitFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveFuelTransaction`.
+message ApproveFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ApproveFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveFuelTransaction`.
+message ApproveFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ApproveFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateFuelTransaction`.
+message EscalateFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  EscalateFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateFuelTransaction`.
+message EscalateFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  EscalateFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingFuelTransactions`.
+message ListPendingFuelTransactionsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelTransactionStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingFuelTransactionsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingFuelTransactions`.
+message ListPendingFuelTransactionsResponse {
+  repeated FuelTransaction fuel_transactions = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateFuelTransactionApproval`.
+message DelegateFuelTransactionApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  DelegateFuelTransactionApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateFuelTransactionApproval`.
+message DelegateFuelTransactionApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  DelegateFuelTransactionApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallFuelTransaction`.
+message RecallFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  RecallFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallFuelTransaction`.
+message RecallFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  RecallFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelTransactionApprovalStatus`.
+message GetFuelTransactionApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelTransactionApprovalStatus`.
+message GetFuelTransactionApprovalStatusResponse {
+  FuelTransaction fuel_transaction = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentFuelTransactionApproval`.
+message CommentFuelTransactionApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  CommentFuelTransactionApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentFuelTransactionApproval`.
+message CommentFuelTransactionApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  CommentFuelTransactionApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

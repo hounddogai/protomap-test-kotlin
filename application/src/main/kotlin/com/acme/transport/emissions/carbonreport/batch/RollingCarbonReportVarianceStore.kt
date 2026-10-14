@@ -1,0 +1,139 @@
+package com.acme.transport.emissions.carbonreport.batch
+
+import com.acme.transport.emissions.cache.TtlCache
+import com.acme.transport.emissions.cache.newTtlCache
+import com.acme.transport.emissions.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps rolling carbon report variances by code. */
+interface RollingCarbonReportVarianceStore {
+    fun find(code: String): RollingCarbonReportVariance?
+    fun save(item: RollingCarbonReportVariance)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<RollingCarbonReportVariance>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryRollingCarbonReportVarianceStore(
+    var items: MutableMap<String, RollingCarbonReportVariance>,
+    var order: MutableList<String>,
+) : RollingCarbonReportVarianceStore {
+    override fun find(code: String): RollingCarbonReportVariance? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: RollingCarbonReportVariance) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<RollingCarbonReportVariance> {
+        val out = mutableListOf<RollingCarbonReportVariance>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryRollingCarbonReportVarianceStore(): RollingCarbonReportVarianceStore {
+    return MemoryRollingCarbonReportVarianceStore(
+        mutableMapOf<String, RollingCarbonReportVariance>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedRollingCarbonReportVarianceStore(
+    var inner: RollingCarbonReportVarianceStore,
+    var cache: TtlCache<RollingCarbonReportVariance>,
+    var hits: Int,
+    var misses: Int,
+) : RollingCarbonReportVarianceStore {
+    override fun find(code: String): RollingCarbonReportVariance? {
+        val hit = (cache.get(code) as RollingCarbonReportVariance?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: RollingCarbonReportVariance) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<RollingCarbonReportVariance> = inner.list()
+}
+
+fun newCachedRollingCarbonReportVarianceStore(inner: RollingCarbonReportVarianceStore, ttl: Int, clock: Clock): RollingCarbonReportVarianceStore {
+    return CachedRollingCarbonReportVarianceStore(
+        inner = inner,
+        cache = newTtlCache<RollingCarbonReportVariance>(512, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects rolling carbon report variances. Empty fields match all. */
+data class RollingCarbonReportVarianceQuery(
+    var category: String,
+    var minSequence: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: RollingCarbonReportVariance): Boolean {
+        if (category != "" && normalize(item.category) != normalize(category)) {
+            return false
+        }
+        if (item.sequence < minSequence) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<RollingCarbonReportVariance>): MutableList<RollingCarbonReportVariance> {
+        val matched = filter(items) { candidate: RollingCarbonReportVariance -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findRollingCarbonReportVariances(store: RollingCarbonReportVarianceStore, query: RollingCarbonReportVarianceQuery): MutableList<RollingCarbonReportVariance> {
+    return query.apply(store.list())
+}

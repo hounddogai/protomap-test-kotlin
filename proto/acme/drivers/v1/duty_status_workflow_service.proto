@@ -1,0 +1,220 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.drivers.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/drivers/v1/drivers.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Drivers.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/drivers/v1;driversv1";
+option java_multiple_files = true;
+option java_outer_classname = "DutyStatusWorkflowServiceProto";
+option java_package = "com.acme.drivers.v1";
+
+// Runs the long-lived workflow that takes a duty status from start to finish.
+service DutyStatusWorkflowService {
+  // Starts a duty status.
+  rpc StartDutyStatusWorkflow(StartDutyStatusWorkflowRequest) returns (StartDutyStatusWorkflowResponse);
+
+  // Advances a duty status.
+  rpc AdvanceDutyStatusWorkflow(AdvanceDutyStatusWorkflowRequest) returns (AdvanceDutyStatusWorkflowResponse);
+
+  // Retrys a duty status.
+  rpc RetryDutyStatusWorkflow(RetryDutyStatusWorkflowRequest) returns (RetryDutyStatusWorkflowResponse);
+
+  // Pauses a duty status.
+  rpc PauseDutyStatusWorkflow(PauseDutyStatusWorkflowRequest) returns (PauseDutyStatusWorkflowResponse);
+
+  // Returns a duty status.
+  rpc InspectDutyStatusWorkflow(InspectDutyStatusWorkflowRequest) returns (InspectDutyStatusWorkflowResponse);
+
+  // Lists duty statuses a page at a time.
+  rpc ListDutyStatusWorkflows(ListDutyStatusWorkflowsRequest) returns (ListDutyStatusWorkflowsResponse);
+}
+
+// The request of `StartDutyStatusWorkflow`.
+message StartDutyStatusWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  StartDutyStatusWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartDutyStatusWorkflow`.
+message StartDutyStatusWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  StartDutyStatusWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceDutyStatusWorkflow`.
+message AdvanceDutyStatusWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  AdvanceDutyStatusWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceDutyStatusWorkflow`.
+message AdvanceDutyStatusWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  AdvanceDutyStatusWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryDutyStatusWorkflow`.
+message RetryDutyStatusWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  RetryDutyStatusWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryDutyStatusWorkflow`.
+message RetryDutyStatusWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  RetryDutyStatusWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseDutyStatusWorkflow`.
+message PauseDutyStatusWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  PauseDutyStatusWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseDutyStatusWorkflow`.
+message PauseDutyStatusWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  PauseDutyStatusWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectDutyStatusWorkflow`.
+message InspectDutyStatusWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectDutyStatusWorkflow`.
+message InspectDutyStatusWorkflowResponse {
+  DutyStatus duty_status = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListDutyStatusWorkflows`.
+message ListDutyStatusWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DutyStatusStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDutyStatusWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDutyStatusWorkflows`.
+message ListDutyStatusWorkflowsResponse {
+  repeated DutyStatus duty_statuses = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}

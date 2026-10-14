@@ -1,0 +1,134 @@
+package com.acme.transport.network.node.cycle
+
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+import com.acme.transport.network.cache.TtlCache
+import com.acme.transport.network.cache.newTtlCache
+import com.acme.transport.network.clock.Clock
+
+/** Keeps node slots by code. */
+interface NodeSlotStore {
+    fun find(code: String): NodeSlot?
+    fun save(item: NodeSlot)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<NodeSlot>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryNodeSlotStore(
+    var items: MutableMap<String, NodeSlot>,
+    var order: MutableList<String>,
+) : NodeSlotStore {
+    override fun find(code: String): NodeSlot? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: NodeSlot) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<NodeSlot> {
+        val out = mutableListOf<NodeSlot>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryNodeSlotStore(): NodeSlotStore {
+    return MemoryNodeSlotStore(mutableMapOf<String, NodeSlot>(), mutableListOf<String>())
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedNodeSlotStore(
+    var inner: NodeSlotStore,
+    var cache: TtlCache<NodeSlot>,
+    var hits: Int,
+    var misses: Int,
+) : NodeSlotStore {
+    override fun find(code: String): NodeSlot? {
+        val hit = (cache.get(code) as NodeSlot?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: NodeSlot) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<NodeSlot> = inner.list()
+}
+
+fun newCachedNodeSlotStore(inner: NodeSlotStore, ttl: Int, clock: Clock): NodeSlotStore {
+    return CachedNodeSlotStore(
+        inner = inner,
+        cache = newTtlCache<NodeSlot>(512, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects node slots. Empty fields match all. */
+data class NodeSlotQuery(
+    var label: String,
+    var minExpiresAt: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: NodeSlot): Boolean {
+        if (label != "" && normalize(item.label) != normalize(label)) {
+            return false
+        }
+        if (item.expiresAt < minExpiresAt) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<NodeSlot>): MutableList<NodeSlot> {
+        val matched = filter(items) { candidate: NodeSlot -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findNodeSlots(store: NodeSlotStore, query: NodeSlotQuery): MutableList<NodeSlot> = query.apply(store.list())

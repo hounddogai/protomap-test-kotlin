@@ -1,0 +1,258 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "RoutePlanLifecycleServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Moves a route plan between the states of its lifecycle.
+service RoutePlanLifecycleService {
+  // Activates a route plan.
+  rpc ActivateRoutePlan(ActivateRoutePlanRequest) returns (ActivateRoutePlanResponse);
+
+  // Suspends a route plan.
+  rpc SuspendRoutePlan(SuspendRoutePlanRequest) returns (SuspendRoutePlanResponse);
+
+  // Reinstates a route plan.
+  rpc ReinstateRoutePlan(ReinstateRoutePlanRequest) returns (ReinstateRoutePlanResponse);
+
+  // Terminates a route plan.
+  rpc TerminateRoutePlan(TerminateRoutePlanRequest) returns (TerminateRoutePlanResponse);
+
+  // Expires a route plan.
+  rpc ExpireRoutePlan(ExpireRoutePlanRequest) returns (ExpireRoutePlanResponse);
+
+  // Returns a route plan.
+  rpc GetRoutePlanLifecycle(GetRoutePlanLifecycleRequest) returns (GetRoutePlanLifecycleResponse);
+
+  // Schedules a route plan.
+  rpc ScheduleRoutePlanExpiry(ScheduleRoutePlanExpiryRequest) returns (ScheduleRoutePlanExpiryResponse);
+}
+
+// The request of `ActivateRoutePlan`.
+message ActivateRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  ActivateRoutePlanRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateRoutePlan`.
+message ActivateRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ActivateRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendRoutePlan`.
+message SuspendRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  SuspendRoutePlanRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendRoutePlan`.
+message SuspendRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  SuspendRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateRoutePlan`.
+message ReinstateRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  ReinstateRoutePlanRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateRoutePlan`.
+message ReinstateRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ReinstateRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TerminateRoutePlan`.
+message TerminateRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  TerminateRoutePlanRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TerminateRoutePlan`.
+message TerminateRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  TerminateRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExpireRoutePlan`.
+message ExpireRoutePlanRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  ExpireRoutePlanRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ExpireRoutePlan`.
+message ExpireRoutePlanResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ExpireRoutePlanResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetRoutePlanLifecycle`.
+message GetRoutePlanLifecycleRequest {
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetRoutePlanLifecycle`.
+message GetRoutePlanLifecycleResponse {
+  RoutePlan route_plan = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleRoutePlanExpiry`.
+message ScheduleRoutePlanExpiryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  ScheduleRoutePlanExpiryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScheduleRoutePlanExpiry`.
+message ScheduleRoutePlanExpiryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ScheduleRoutePlanExpiryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

@@ -1,0 +1,253 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TelemetryReadingImportServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Takes telemetry readings in bulk from partners and legacy systems.
+service TelemetryReadingImportService {
+  // Takes a stream of telemetry readings and answers once at the end.
+  rpc ImportTelemetryReadings(stream ImportTelemetryReadingsRequest) returns (ImportTelemetryReadingsResponse);
+
+  // Returns a telemetry reading.
+  rpc GetTelemetryReadingImportStatus(GetTelemetryReadingImportStatusRequest) returns (GetTelemetryReadingImportStatusResponse);
+
+  // Cancels a telemetry reading.
+  rpc CancelTelemetryReadingImport(CancelTelemetryReadingImportRequest) returns (CancelTelemetryReadingImportResponse);
+
+  // Validates a telemetry reading.
+  rpc ValidateTelemetryReadingImport(ValidateTelemetryReadingImportRequest) returns (ValidateTelemetryReadingImportResponse);
+
+  // Lists telemetry readings a page at a time.
+  rpc ListTelemetryReadingImports(ListTelemetryReadingImportsRequest) returns (ListTelemetryReadingImportsResponse);
+
+  // Retrys a telemetry reading.
+  rpc RetryTelemetryReadingImport(RetryTelemetryReadingImportRequest) returns (RetryTelemetryReadingImportResponse);
+
+  // Maps a telemetry reading.
+  rpc MapTelemetryReadingImportColumns(MapTelemetryReadingImportColumnsRequest) returns (MapTelemetryReadingImportColumnsResponse);
+}
+
+// The request of `ImportTelemetryReadings`.
+message ImportTelemetryReadingsRequest {
+  // What a stream of records starts with.
+  message StreamHeader {
+    string source = 1;
+    string format = 2;
+    int64 total_records = 3;
+    acme.common.v1.ContactInfo submitted_by = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof chunk {
+    ImportTelemetryReadingsRequest.StreamHeader header = 2;
+    TelemetryReading record = 3;
+  }
+  int64 sequence = 4;
+}
+
+// The response of `ImportTelemetryReadings`.
+message ImportTelemetryReadingsResponse {
+  // A record the import turned down.
+  message Rejection {
+    int64 sequence = 1;
+    string reason = 2;
+    string telemetry_reading_id = 3;
+  }
+
+  int64 accepted = 1;
+  int64 rejected = 2;
+  repeated ImportTelemetryReadingsResponse.Rejection rejections = 3;
+  acme.common.v1.OperationResult result = 4;
+}
+
+// The request of `GetTelemetryReadingImportStatus`.
+message GetTelemetryReadingImportStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTelemetryReadingImportStatus`.
+message GetTelemetryReadingImportStatusResponse {
+  TelemetryReading telemetry_reading = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CancelTelemetryReadingImport`.
+message CancelTelemetryReadingImportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  CancelTelemetryReadingImportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `CancelTelemetryReadingImport`.
+message CancelTelemetryReadingImportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  CancelTelemetryReadingImportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ValidateTelemetryReadingImport`.
+message ValidateTelemetryReadingImportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  ValidateTelemetryReadingImportRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateTelemetryReadingImport`.
+message ValidateTelemetryReadingImportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ValidateTelemetryReadingImportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListTelemetryReadingImports`.
+message ListTelemetryReadingImportsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TelemetryReadingStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListTelemetryReadingImportsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListTelemetryReadingImports`.
+message ListTelemetryReadingImportsResponse {
+  repeated TelemetryReading telemetry_readings = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryTelemetryReadingImport`.
+message RetryTelemetryReadingImportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  RetryTelemetryReadingImportRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryTelemetryReadingImport`.
+message RetryTelemetryReadingImportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  RetryTelemetryReadingImportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `MapTelemetryReadingImportColumns`.
+message MapTelemetryReadingImportColumnsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  MapTelemetryReadingImportColumnsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `MapTelemetryReadingImportColumns`.
+message MapTelemetryReadingImportColumnsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  MapTelemetryReadingImportColumnsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

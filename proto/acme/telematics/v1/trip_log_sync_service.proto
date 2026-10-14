@@ -1,0 +1,246 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TripLogSyncServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Keeps trip logs in step with the systems of record in other regions.
+service TripLogSyncService {
+  // Syncs a trip log.
+  rpc SyncTripLogs(SyncTripLogsRequest) returns (SyncTripLogsResponse);
+
+  // Pushs a trip log.
+  rpc PushTripLog(PushTripLogRequest) returns (PushTripLogResponse);
+
+  // Pulls a trip log.
+  rpc PullTripLogs(PullTripLogsRequest) returns (PullTripLogsResponse);
+
+  // Reconciles a trip log.
+  rpc ReconcileTripLogs(ReconcileTripLogsRequest) returns (ReconcileTripLogsResponse);
+
+  // Exchanges changes of trip logs with a peer.
+  rpc StreamTripLogChanges(stream StreamTripLogChangesRequest) returns (stream StreamTripLogChangesResponse);
+
+  // Returns a trip log.
+  rpc GetTripLogSyncState(GetTripLogSyncStateRequest) returns (GetTripLogSyncStateResponse);
+
+  // Lists trip logs a page at a time.
+  rpc ListTripLogConflicts(ListTripLogConflictsRequest) returns (ListTripLogConflictsResponse);
+}
+
+// The request of `SyncTripLogs`.
+message SyncTripLogsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  SyncTripLogsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SyncTripLogs`.
+message SyncTripLogsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  SyncTripLogsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PushTripLog`.
+message PushTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  PushTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PushTripLog`.
+message PushTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  PushTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PullTripLogs`.
+message PullTripLogsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  PullTripLogsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PullTripLogs`.
+message PullTripLogsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  PullTripLogsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReconcileTripLogs`.
+message ReconcileTripLogsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  ReconcileTripLogsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ReconcileTripLogs`.
+message ReconcileTripLogsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ReconcileTripLogsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `StreamTripLogChanges`.
+message StreamTripLogChangesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    TripLog change = 2;
+    StreamTripLogChangesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `StreamTripLogChanges`.
+message StreamTripLogChangesResponse {
+  TripLog trip_log = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `GetTripLogSyncState`.
+message GetTripLogSyncStateRequest {
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTripLogSyncState`.
+message GetTripLogSyncStateResponse {
+  TripLog trip_log = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListTripLogConflicts`.
+message ListTripLogConflictsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TripLogStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListTripLogConflictsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListTripLogConflicts`.
+message ListTripLogConflictsResponse {
+  repeated TripLog trip_logs = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}

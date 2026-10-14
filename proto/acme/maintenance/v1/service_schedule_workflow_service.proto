@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceScheduleWorkflowServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Runs the long-lived workflow that takes a service schedule from start to finish.
+service ServiceScheduleWorkflowService {
+  // Starts a service schedule.
+  rpc StartServiceScheduleWorkflow(StartServiceScheduleWorkflowRequest) returns (StartServiceScheduleWorkflowResponse);
+
+  // Advances a service schedule.
+  rpc AdvanceServiceScheduleWorkflow(AdvanceServiceScheduleWorkflowRequest) returns (AdvanceServiceScheduleWorkflowResponse);
+
+  // Cancels a service schedule.
+  rpc CancelServiceScheduleWorkflow(CancelServiceScheduleWorkflowRequest) returns (CancelServiceScheduleWorkflowResponse);
+
+  // Retrys a service schedule.
+  rpc RetryServiceScheduleWorkflow(RetryServiceScheduleWorkflowRequest) returns (RetryServiceScheduleWorkflowResponse);
+
+  // Pauses a service schedule.
+  rpc PauseServiceScheduleWorkflow(PauseServiceScheduleWorkflowRequest) returns (PauseServiceScheduleWorkflowResponse);
+
+  // Resumes a service schedule.
+  rpc ResumeServiceScheduleWorkflow(ResumeServiceScheduleWorkflowRequest) returns (ResumeServiceScheduleWorkflowResponse);
+
+  // Returns a service schedule.
+  rpc InspectServiceScheduleWorkflow(InspectServiceScheduleWorkflowRequest) returns (InspectServiceScheduleWorkflowResponse);
+
+  // Lists service schedules a page at a time.
+  rpc ListServiceScheduleWorkflows(ListServiceScheduleWorkflowsRequest) returns (ListServiceScheduleWorkflowsResponse);
+
+  // Signals a service schedule.
+  rpc SignalServiceScheduleWorkflow(SignalServiceScheduleWorkflowRequest) returns (SignalServiceScheduleWorkflowResponse);
+}
+
+// The request of `StartServiceScheduleWorkflow`.
+message StartServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  StartServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartServiceScheduleWorkflow`.
+message StartServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  StartServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceServiceScheduleWorkflow`.
+message AdvanceServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  AdvanceServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceServiceScheduleWorkflow`.
+message AdvanceServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  AdvanceServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelServiceScheduleWorkflow`.
+message CancelServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  CancelServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelServiceScheduleWorkflow`.
+message CancelServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  CancelServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryServiceScheduleWorkflow`.
+message RetryServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  RetryServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryServiceScheduleWorkflow`.
+message RetryServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  RetryServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseServiceScheduleWorkflow`.
+message PauseServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  PauseServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseServiceScheduleWorkflow`.
+message PauseServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  PauseServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeServiceScheduleWorkflow`.
+message ResumeServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  ResumeServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeServiceScheduleWorkflow`.
+message ResumeServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  ResumeServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectServiceScheduleWorkflow`.
+message InspectServiceScheduleWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectServiceScheduleWorkflow`.
+message InspectServiceScheduleWorkflowResponse {
+  ServiceSchedule service_schedule = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListServiceScheduleWorkflows`.
+message ListServiceScheduleWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ServiceScheduleStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListServiceScheduleWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListServiceScheduleWorkflows`.
+message ListServiceScheduleWorkflowsResponse {
+  repeated ServiceSchedule service_schedules = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalServiceScheduleWorkflow`.
+message SignalServiceScheduleWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  SignalServiceScheduleWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalServiceScheduleWorkflow`.
+message SignalServiceScheduleWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  SignalServiceScheduleWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

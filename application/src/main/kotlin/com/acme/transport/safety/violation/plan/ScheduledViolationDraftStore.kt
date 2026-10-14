@@ -1,0 +1,139 @@
+package com.acme.transport.safety.violation.plan
+
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+import com.acme.transport.safety.cache.TtlCache
+import com.acme.transport.safety.cache.newTtlCache
+import com.acme.transport.safety.clock.Clock
+
+/** Keeps scheduled violation drafts by code. */
+interface ScheduledViolationDraftStore {
+    fun find(code: String): ScheduledViolationDraft?
+    fun save(item: ScheduledViolationDraft)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<ScheduledViolationDraft>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryScheduledViolationDraftStore(
+    var items: MutableMap<String, ScheduledViolationDraft>,
+    var order: MutableList<String>,
+) : ScheduledViolationDraftStore {
+    override fun find(code: String): ScheduledViolationDraft? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: ScheduledViolationDraft) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<ScheduledViolationDraft> {
+        val out = mutableListOf<ScheduledViolationDraft>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryScheduledViolationDraftStore(): ScheduledViolationDraftStore {
+    return MemoryScheduledViolationDraftStore(
+        mutableMapOf<String, ScheduledViolationDraft>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedScheduledViolationDraftStore(
+    var inner: ScheduledViolationDraftStore,
+    var cache: TtlCache<ScheduledViolationDraft>,
+    var hits: Int,
+    var misses: Int,
+) : ScheduledViolationDraftStore {
+    override fun find(code: String): ScheduledViolationDraft? {
+        val hit = (cache.get(code) as ScheduledViolationDraft?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: ScheduledViolationDraft) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<ScheduledViolationDraft> = inner.list()
+}
+
+fun newCachedScheduledViolationDraftStore(inner: ScheduledViolationDraftStore, ttl: Int, clock: Clock): ScheduledViolationDraftStore {
+    return CachedScheduledViolationDraftStore(
+        inner = inner,
+        cache = newTtlCache<ScheduledViolationDraft>(64, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects scheduled violation drafts. Empty fields match all. */
+data class ScheduledViolationDraftQuery(
+    var name: String,
+    var minWeight: Double,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: ScheduledViolationDraft): Boolean {
+        if (name != "" && normalize(item.name) != normalize(name)) {
+            return false
+        }
+        if (item.weight < minWeight) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<ScheduledViolationDraft>): MutableList<ScheduledViolationDraft> {
+        val matched = filter(items) { candidate: ScheduledViolationDraft -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findScheduledViolationDrafts(store: ScheduledViolationDraftStore, query: ScheduledViolationDraftQuery): MutableList<ScheduledViolationDraft> {
+    return query.apply(store.list())
+}

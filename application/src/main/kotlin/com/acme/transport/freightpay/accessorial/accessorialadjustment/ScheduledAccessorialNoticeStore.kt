@@ -1,0 +1,139 @@
+package com.acme.transport.freightpay.accessorial.accessorialadjustment
+
+import com.acme.transport.freightpay.cache.TtlCache
+import com.acme.transport.freightpay.cache.newTtlCache
+import com.acme.transport.freightpay.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps scheduled accessorial notices by code. */
+interface ScheduledAccessorialNoticeStore {
+    fun find(code: String): ScheduledAccessorialNotice?
+    fun save(item: ScheduledAccessorialNotice)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<ScheduledAccessorialNotice>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryScheduledAccessorialNoticeStore(
+    var items: MutableMap<String, ScheduledAccessorialNotice>,
+    var order: MutableList<String>,
+) : ScheduledAccessorialNoticeStore {
+    override fun find(code: String): ScheduledAccessorialNotice? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: ScheduledAccessorialNotice) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<ScheduledAccessorialNotice> {
+        val out = mutableListOf<ScheduledAccessorialNotice>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryScheduledAccessorialNoticeStore(): ScheduledAccessorialNoticeStore {
+    return MemoryScheduledAccessorialNoticeStore(
+        mutableMapOf<String, ScheduledAccessorialNotice>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedScheduledAccessorialNoticeStore(
+    var inner: ScheduledAccessorialNoticeStore,
+    var cache: TtlCache<ScheduledAccessorialNotice>,
+    var hits: Int,
+    var misses: Int,
+) : ScheduledAccessorialNoticeStore {
+    override fun find(code: String): ScheduledAccessorialNotice? {
+        val hit = (cache.get(code) as ScheduledAccessorialNotice?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: ScheduledAccessorialNotice) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<ScheduledAccessorialNotice> = inner.list()
+}
+
+fun newCachedScheduledAccessorialNoticeStore(inner: ScheduledAccessorialNoticeStore, ttl: Int, clock: Clock): ScheduledAccessorialNoticeStore {
+    return CachedScheduledAccessorialNoticeStore(
+        inner = inner,
+        cache = newTtlCache<ScheduledAccessorialNotice>(128, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects scheduled accessorial notices. Empty fields match all. */
+data class ScheduledAccessorialNoticeQuery(
+    var channel: String,
+    var minSequence: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: ScheduledAccessorialNotice): Boolean {
+        if (channel != "" && normalize(item.channel) != normalize(channel)) {
+            return false
+        }
+        if (item.sequence < minSequence) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<ScheduledAccessorialNotice>): MutableList<ScheduledAccessorialNotice> {
+        val matched = filter(items) { candidate: ScheduledAccessorialNotice -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findScheduledAccessorialNotices(store: ScheduledAccessorialNoticeStore, query: ScheduledAccessorialNoticeQuery): MutableList<ScheduledAccessorialNotice> {
+    return query.apply(store.list())
+}

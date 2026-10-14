@@ -1,0 +1,14 @@
+package com.acme.transport.lastmile.drop.dropnotice
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class StrictDropPolicyViewTest {
+    @Test
+    fun `shows the status in capitals`() {
+        val item = newStrictDropPolicy("code-368", "name-895")
+        val view = toStrictDropPolicyView(item)
+        assertEquals("${item.status}".uppercase(), view.statusLabel, "status label")
+        assertEquals(2, toStrictDropPolicyViews(mutableListOf<StrictDropPolicy>(item, item)).size, "views")
+    }
+}

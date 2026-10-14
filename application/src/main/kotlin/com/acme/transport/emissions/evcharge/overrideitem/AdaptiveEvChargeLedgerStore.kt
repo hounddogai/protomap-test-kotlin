@@ -1,0 +1,139 @@
+package com.acme.transport.emissions.evcharge.overrideitem
+
+import com.acme.transport.emissions.cache.TtlCache
+import com.acme.transport.emissions.cache.newTtlCache
+import com.acme.transport.emissions.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps adaptive ev charge ledgers by code. */
+interface AdaptiveEvChargeLedgerStore {
+    fun find(code: String): AdaptiveEvChargeLedger?
+    fun save(item: AdaptiveEvChargeLedger)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<AdaptiveEvChargeLedger>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryAdaptiveEvChargeLedgerStore(
+    var items: MutableMap<String, AdaptiveEvChargeLedger>,
+    var order: MutableList<String>,
+) : AdaptiveEvChargeLedgerStore {
+    override fun find(code: String): AdaptiveEvChargeLedger? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: AdaptiveEvChargeLedger) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<AdaptiveEvChargeLedger> {
+        val out = mutableListOf<AdaptiveEvChargeLedger>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryAdaptiveEvChargeLedgerStore(): AdaptiveEvChargeLedgerStore {
+    return MemoryAdaptiveEvChargeLedgerStore(
+        mutableMapOf<String, AdaptiveEvChargeLedger>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedAdaptiveEvChargeLedgerStore(
+    var inner: AdaptiveEvChargeLedgerStore,
+    var cache: TtlCache<AdaptiveEvChargeLedger>,
+    var hits: Int,
+    var misses: Int,
+) : AdaptiveEvChargeLedgerStore {
+    override fun find(code: String): AdaptiveEvChargeLedger? {
+        val hit = (cache.get(code) as AdaptiveEvChargeLedger?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: AdaptiveEvChargeLedger) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<AdaptiveEvChargeLedger> = inner.list()
+}
+
+fun newCachedAdaptiveEvChargeLedgerStore(inner: AdaptiveEvChargeLedgerStore, ttl: Int, clock: Clock): AdaptiveEvChargeLedgerStore {
+    return CachedAdaptiveEvChargeLedgerStore(
+        inner = inner,
+        cache = newTtlCache<AdaptiveEvChargeLedger>(256, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects adaptive ev charge ledgers. Empty fields match all. */
+data class AdaptiveEvChargeLedgerQuery(
+    var channel: String,
+    var minGraceDays: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: AdaptiveEvChargeLedger): Boolean {
+        if (channel != "" && normalize(item.channel) != normalize(channel)) {
+            return false
+        }
+        if (item.graceDays < minGraceDays) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<AdaptiveEvChargeLedger>): MutableList<AdaptiveEvChargeLedger> {
+        val matched = filter(items) { candidate: AdaptiveEvChargeLedger -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findAdaptiveEvChargeLedgers(store: AdaptiveEvChargeLedgerStore, query: AdaptiveEvChargeLedgerQuery): MutableList<AdaptiveEvChargeLedger> {
+    return query.apply(store.list())
+}

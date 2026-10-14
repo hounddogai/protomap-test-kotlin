@@ -1,0 +1,116 @@
+package com.acme.transport.lastmile.proofofdelivery.window
+
+import com.acme.transport.kit.text.normalize
+
+/** A rule a proof of delivery ledger must pass. Check returns its problems, or none. */
+interface ProofOfDeliveryLedgerRule {
+    fun check(item: ProofOfDeliveryLedger): MutableList<String>
+}
+
+data class ProofOfDeliveryLedgerPriorityRangeRule(var min: Int, var max: Int) : ProofOfDeliveryLedgerRule {
+    override fun check(item: ProofOfDeliveryLedger): MutableList<String> {
+        val value = item.priority
+        val problems = mutableListOf<String>()
+        if (value < min) {
+            problems.add("priority $value is below $min")
+        }
+        if (value > max) {
+            problems.add("priority $value is above $max")
+        }
+        return problems
+    }
+}
+
+data class ProofOfDeliveryLedgerCodeLengthRule(var maxLength: Int) : ProofOfDeliveryLedgerRule {
+    override fun check(item: ProofOfDeliveryLedger): MutableList<String> {
+        val size = item.code.length
+        if (size > maxLength) {
+            return mutableListOf<String>("code is $size characters, more than $maxLength")
+        }
+        return mutableListOf<String>()
+    }
+}
+
+data class ProofOfDeliveryLedgerRequiredTitleRule(var message: String) : ProofOfDeliveryLedgerRule {
+    override fun check(item: ProofOfDeliveryLedger): MutableList<String> {
+        if (item.title.trim() == "") {
+            return mutableListOf<String>(message)
+        }
+        return mutableListOf<String>()
+    }
+}
+
+data class ProofOfDeliveryLedgerAllowedCodeRule(var allowed: MutableList<String>) : ProofOfDeliveryLedgerRule {
+    override fun check(item: ProofOfDeliveryLedger): MutableList<String> {
+        if (allowed.size == 0) {
+            return mutableListOf<String>()
+        }
+        if (!allowed.contains(normalize(item.code))) {
+            return mutableListOf<String>("code ${item.code} is blocked")
+        }
+        return mutableListOf<String>()
+    }
+}
+
+data class ProofOfDeliveryLedgerScoreRangeRule(var min: Double, var max: Double) : ProofOfDeliveryLedgerRule {
+    override fun check(item: ProofOfDeliveryLedger): MutableList<String> {
+        val value = item.score
+        if (value < min || value > max) {
+            return mutableListOf<String>("score $value is outside $min to $max")
+        }
+        return mutableListOf<String>()
+    }
+}
+
+data class ProofOfDeliveryLedgerCodePrefixRule(var prefix: String) : ProofOfDeliveryLedgerRule {
+    override fun check(item: ProofOfDeliveryLedger): MutableList<String> {
+        if (!item.code.uppercase().startsWith(prefix.uppercase())) {
+            return mutableListOf<String>("code must start with $prefix")
+        }
+        return mutableListOf<String>()
+    }
+}
+
+/** Runs every rule of a proof of delivery ledger. */
+data class ProofOfDeliveryLedgerValidator(var rules: MutableList<ProofOfDeliveryLedgerRule>) {
+    fun validate(item: ProofOfDeliveryLedger): MutableList<String> {
+        val problems = mutableListOf<String>()
+        for (rule in rules) {
+            for (problem in rule.check(item)) {
+                problems.add(problem)
+            }
+        }
+        return problems
+    }
+
+    fun requireValid(item: ProofOfDeliveryLedger) {
+        val problems = validate(item)
+        if (problems.size > 0) {
+            error("${item.label()} is invalid: ${problems.joinToString("; ")}")
+        }
+    }
+
+    fun validateAll(items: MutableList<ProofOfDeliveryLedger>): MutableMap<String, MutableList<String>> {
+        val report = mutableMapOf<String, MutableList<String>>()
+        for (item in items) {
+            val problems = validate(item)
+            if (problems.size > 0) {
+                report[item.code] = problems
+            }
+        }
+        return report
+    }
+}
+
+fun defaultProofOfDeliveryLedgerValidator(): ProofOfDeliveryLedgerValidator {
+    return ProofOfDeliveryLedgerValidator(
+        mutableListOf<ProofOfDeliveryLedgerRule>(
+            ProofOfDeliveryLedgerPriorityRangeRule(120, 255),
+            ProofOfDeliveryLedgerCodeLengthRule(255),
+            ProofOfDeliveryLedgerRequiredTitleRule("proof of delivery ledger needs a value"),
+            ProofOfDeliveryLedgerAllowedCodeRule(mutableListOf<String>("batched", "tiered")),
+            ProofOfDeliveryLedgerScoreRangeRule(3.5, 4402.7),
+            ProofOfDeliveryLedgerCodePrefixRule("OPS"),
+        ),
+    )
+}

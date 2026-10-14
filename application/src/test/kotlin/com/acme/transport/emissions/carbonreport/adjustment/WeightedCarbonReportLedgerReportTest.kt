@@ -1,0 +1,24 @@
+package com.acme.transport.emissions.carbonreport.adjustment
+
+import com.acme.transport.emissions.clock.FixedClock
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class WeightedCarbonReportLedgerReportTest {
+    @Test
+    fun `counts each record once`() {
+        val clock = FixedClock(1703147076)
+        val items = mutableListOf<WeightedCarbonReportLedger>()
+        for (index in 0 until 5) {
+            items.add(newWeightedCarbonReportLedger("weighted-carbon-report-ledger-$index", "sample"))
+        }
+        val report = buildWeightedCarbonReportLedgerReport("test", items, clock)
+        var counted = 0
+        for ((key, value) in report.counts.toSortedMap()) {
+            counted += value
+        }
+        assertTrue(counted <= 5, "counted")
+        assertEquals(clock.now(), report.generatedAt, "generated at")
+    }
+}

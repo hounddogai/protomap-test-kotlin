@@ -1,0 +1,268 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "YardValidationServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Checks yards against the rules before anything acts on them.
+service YardValidationService {
+  // Validates a yard.
+  rpc ValidateYard(ValidateYardRequest) returns (ValidateYardResponse);
+
+  // Previews a yard.
+  rpc PreviewYard(PreviewYardRequest) returns (PreviewYardResponse);
+
+  // Checks a yard.
+  rpc CheckYardEligibility(CheckYardEligibilityRequest) returns (CheckYardEligibilityResponse);
+
+  // Normalizes a yard.
+  rpc NormalizeYard(NormalizeYardRequest) returns (NormalizeYardResponse);
+
+  // Explains a yard.
+  rpc ExplainYardDecision(ExplainYardDecisionRequest) returns (ExplainYardDecisionResponse);
+
+  // Scores a yard.
+  rpc ScoreYard(ScoreYardRequest) returns (ScoreYardResponse);
+
+  // Returns a yard.
+  rpc GetYardRules(GetYardRulesRequest) returns (GetYardRulesResponse);
+}
+
+// The request of `ValidateYard`.
+message ValidateYardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  ValidateYardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateYard`.
+message ValidateYardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  ValidateYardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewYard`.
+message PreviewYardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  PreviewYardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewYard`.
+message PreviewYardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  PreviewYardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckYardEligibility`.
+message CheckYardEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  CheckYardEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckYardEligibility`.
+message CheckYardEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  CheckYardEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeYard`.
+message NormalizeYardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  NormalizeYardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeYard`.
+message NormalizeYardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  NormalizeYardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainYardDecision`.
+message ExplainYardDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  ExplainYardDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainYardDecision`.
+message ExplainYardDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  ExplainYardDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreYard`.
+message ScoreYardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  ScoreYardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreYard`.
+message ScoreYardResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreYardResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Yard yard = 1;
+  ScoreYardResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetYardRules`.
+message GetYardRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetYardRules`.
+message GetYardRulesResponse {
+  Yard yard = 1;
+  acme.common.v1.OperationResult result = 2;
+}

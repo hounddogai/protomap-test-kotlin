@@ -1,0 +1,243 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TripLogExportServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Exports trip logs to files and other systems.
+service TripLogExportService {
+  // Streams every matching trip log.
+  rpc StreamTripLogExport(StreamTripLogExportRequest) returns (stream StreamTripLogExportResponse);
+
+  // Returns a trip log.
+  rpc GetTripLogExport(GetTripLogExportRequest) returns (GetTripLogExportResponse);
+
+  // Cancels a trip log.
+  rpc CancelTripLogExport(CancelTripLogExportRequest) returns (CancelTripLogExportResponse);
+
+  // Lists trip logs a page at a time.
+  rpc ListTripLogExports(ListTripLogExportsRequest) returns (ListTripLogExportsResponse);
+
+  // Schedules a trip log.
+  rpc ScheduleTripLogExport(ScheduleTripLogExportRequest) returns (ScheduleTripLogExportResponse);
+
+  // Retrys a trip log.
+  rpc RetryTripLogExport(RetryTripLogExportRequest) returns (RetryTripLogExportResponse);
+
+  // Shares a trip log.
+  rpc ShareTripLogExport(ShareTripLogExportRequest) returns (ShareTripLogExportResponse);
+}
+
+// The request of `StreamTripLogExport`.
+message StreamTripLogExportRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TripLogStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  StreamTripLogExportRequest.Filter filter = 2;
+  string format = 3;
+  google.protobuf.FieldMask fields = 4;
+  string destination_uri = 5;
+}
+
+// The response of `StreamTripLogExport`.
+message StreamTripLogExportResponse {
+  TripLog trip_log = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `GetTripLogExport`.
+message GetTripLogExportRequest {
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTripLogExport`.
+message GetTripLogExportResponse {
+  TripLog trip_log = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CancelTripLogExport`.
+message CancelTripLogExportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  CancelTripLogExportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `CancelTripLogExport`.
+message CancelTripLogExportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  CancelTripLogExportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListTripLogExports`.
+message ListTripLogExportsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TripLogStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListTripLogExportsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListTripLogExports`.
+message ListTripLogExportsResponse {
+  repeated TripLog trip_logs = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScheduleTripLogExport`.
+message ScheduleTripLogExportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  ScheduleTripLogExportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ScheduleTripLogExport`.
+message ScheduleTripLogExportResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `RetryTripLogExport`.
+message RetryTripLogExportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  RetryTripLogExportRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryTripLogExport`.
+message RetryTripLogExportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  RetryTripLogExportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ShareTripLogExport`.
+message ShareTripLogExportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    acme.common.v1.ContactInfo recipient = 1;
+    string template_id = 2;
+    map<string, string> variables = 3;
+    google.protobuf.Any payload = 4;
+    string channel = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  ShareTripLogExportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ShareTripLogExport`.
+message ShareTripLogExportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ShareTripLogExportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

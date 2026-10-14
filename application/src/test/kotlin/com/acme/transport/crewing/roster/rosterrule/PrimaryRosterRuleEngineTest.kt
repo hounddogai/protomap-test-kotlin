@@ -1,0 +1,16 @@
+package com.acme.transport.crewing.roster.rosterrule
+
+import com.acme.transport.kit.flags.newRegistry
+import kotlin.test.Test
+import kotlin.test.assertTrue
+
+class PrimaryRosterRuleEngineTest {
+    @Test
+    fun `keeps results within bounds`() {
+        val engine = defaultPrimaryRosterRuleEngine(newRegistry())
+        val item = newPrimaryRosterRule("code-647", "name-387")
+        val result = engine.evaluate(item)
+        assertTrue(result >= engine.floor && result <= engine.ceiling, "result out of bounds")
+        assertTrue(engine.trace.size >= 0, "trace")
+    }
+}

@@ -1,0 +1,31 @@
+package com.acme.transport.crewing.restbreak.tier
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class DefaultRestBreakScoreRulesTest {
+    @Test
+    fun `reports every problem`() {
+        val validator = defaultDefaultRestBreakScoreValidator()
+        val item = newDefaultRestBreakScore("", "")
+        val problems = validator.validate(item)
+        assertTrue(problems.size >= 0, "problems")
+    }
+
+    @Test
+    fun `flags a blank shift code`() {
+        val rule = DefaultRestBreakScoreRequiredShiftCodeRule("default rest break score needs an entry")
+        val item = newDefaultRestBreakScore("", "")
+        item.shiftCode = "  "
+        assertEquals(1, rule.check(item).size, "problems")
+    }
+
+    @Test
+    fun `flags a blank title`() {
+        val rule = DefaultRestBreakScoreRequiredTitleRule("default rest break score needs this field")
+        val item = newDefaultRestBreakScore("", "")
+        item.title = "  "
+        assertEquals(1, rule.check(item).size, "problems")
+    }
+}

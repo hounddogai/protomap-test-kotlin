@@ -1,0 +1,335 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "GeoFenceCalculationServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Computes the figures of a geo fence, such as totals, taxes, and estimates.
+service GeoFenceCalculationService {
+  // Calculates a geo fence.
+  rpc CalculateGeoFence(CalculateGeoFenceRequest) returns (CalculateGeoFenceResponse);
+
+  // Estimates a geo fence.
+  rpc EstimateGeoFence(EstimateGeoFenceRequest) returns (EstimateGeoFenceResponse);
+
+  // Quotes a geo fence.
+  rpc QuoteGeoFence(QuoteGeoFenceRequest) returns (QuoteGeoFenceResponse);
+
+  // Compares a geo fence.
+  rpc CompareGeoFenceOptions(CompareGeoFenceOptionsRequest) returns (CompareGeoFenceOptionsResponse);
+
+  // Recalculates a geo fence.
+  rpc RecalculateGeoFences(RecalculateGeoFencesRequest) returns (RecalculateGeoFencesResponse);
+
+  // Simulates a geo fence.
+  rpc SimulateGeoFence(SimulateGeoFenceRequest) returns (SimulateGeoFenceResponse);
+
+  // Explains a geo fence.
+  rpc ExplainGeoFenceCalculation(ExplainGeoFenceCalculationRequest) returns (ExplainGeoFenceCalculationResponse);
+
+  // Returns a geo fence.
+  rpc GetGeoFenceRates(GetGeoFenceRatesRequest) returns (GetGeoFenceRatesResponse);
+}
+
+// The request of `CalculateGeoFence`.
+message CalculateGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  CalculateGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CalculateGeoFence`.
+message CalculateGeoFenceResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CalculateGeoFenceResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  GeoFence geo_fence = 1;
+  CalculateGeoFenceResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EstimateGeoFence`.
+message EstimateGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  EstimateGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EstimateGeoFence`.
+message EstimateGeoFenceResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated EstimateGeoFenceResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  GeoFence geo_fence = 1;
+  EstimateGeoFenceResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `QuoteGeoFence`.
+message QuoteGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  QuoteGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `QuoteGeoFence`.
+message QuoteGeoFenceResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated QuoteGeoFenceResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  GeoFence geo_fence = 1;
+  QuoteGeoFenceResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CompareGeoFenceOptions`.
+message CompareGeoFenceOptionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  CompareGeoFenceOptionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareGeoFenceOptions`.
+message CompareGeoFenceOptionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CompareGeoFenceOptionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  GeoFence geo_fence = 1;
+  CompareGeoFenceOptionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecalculateGeoFences`.
+message RecalculateGeoFencesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  RecalculateGeoFencesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecalculateGeoFences`.
+message RecalculateGeoFencesResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated RecalculateGeoFencesResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  GeoFence geo_fence = 1;
+  RecalculateGeoFencesResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SimulateGeoFence`.
+message SimulateGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  SimulateGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SimulateGeoFence`.
+message SimulateGeoFenceResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated SimulateGeoFenceResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  GeoFence geo_fence = 1;
+  SimulateGeoFenceResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainGeoFenceCalculation`.
+message ExplainGeoFenceCalculationRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  ExplainGeoFenceCalculationRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainGeoFenceCalculation`.
+message ExplainGeoFenceCalculationResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  ExplainGeoFenceCalculationResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetGeoFenceRates`.
+message GetGeoFenceRatesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetGeoFenceRates`.
+message GetGeoFenceRatesResponse {
+  GeoFence geo_fence = 1;
+  acme.common.v1.OperationResult result = 2;
+}

@@ -1,0 +1,136 @@
+package com.acme.transport.customs.declaration.overrideitem
+
+import com.acme.transport.customs.cache.TtlCache
+import com.acme.transport.customs.cache.newTtlCache
+import com.acme.transport.customs.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps declaration scores by code. */
+interface DeclarationScoreStore {
+    fun find(code: String): DeclarationScore?
+    fun save(item: DeclarationScore)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<DeclarationScore>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryDeclarationScoreStore(
+    var items: MutableMap<String, DeclarationScore>,
+    var order: MutableList<String>,
+) : DeclarationScoreStore {
+    override fun find(code: String): DeclarationScore? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: DeclarationScore) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<DeclarationScore> {
+        val out = mutableListOf<DeclarationScore>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryDeclarationScoreStore(): DeclarationScoreStore {
+    return MemoryDeclarationScoreStore(mutableMapOf<String, DeclarationScore>(), mutableListOf<String>())
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedDeclarationScoreStore(
+    var inner: DeclarationScoreStore,
+    var cache: TtlCache<DeclarationScore>,
+    var hits: Int,
+    var misses: Int,
+) : DeclarationScoreStore {
+    override fun find(code: String): DeclarationScore? {
+        val hit = (cache.get(code) as DeclarationScore?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: DeclarationScore) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<DeclarationScore> = inner.list()
+}
+
+fun newCachedDeclarationScoreStore(inner: DeclarationScoreStore, ttl: Int, clock: Clock): DeclarationScoreStore {
+    return CachedDeclarationScoreStore(
+        inner = inner,
+        cache = newTtlCache<DeclarationScore>(64, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects declaration scores. Empty fields match all. */
+data class DeclarationScoreQuery(
+    var title: String,
+    var minCost: Double,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: DeclarationScore): Boolean {
+        if (title != "" && normalize(item.title) != normalize(title)) {
+            return false
+        }
+        if (item.cost < minCost) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<DeclarationScore>): MutableList<DeclarationScore> {
+        val matched = filter(items) { candidate: DeclarationScore -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findDeclarationScores(store: DeclarationScoreStore, query: DeclarationScoreQuery): MutableList<DeclarationScore> {
+    return query.apply(store.list())
+}

@@ -1,0 +1,136 @@
+package com.acme.transport.fleetops.defect.defectrecord
+
+import com.acme.transport.fleetops.cache.TtlCache
+import com.acme.transport.fleetops.cache.newTtlCache
+import com.acme.transport.fleetops.clock.Clock
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+
+/** Keeps primary defect targets by code. */
+interface PrimaryDefectTargetStore {
+    fun find(code: String): PrimaryDefectTarget?
+    fun save(item: PrimaryDefectTarget)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<PrimaryDefectTarget>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryPrimaryDefectTargetStore(
+    var items: MutableMap<String, PrimaryDefectTarget>,
+    var order: MutableList<String>,
+) : PrimaryDefectTargetStore {
+    override fun find(code: String): PrimaryDefectTarget? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: PrimaryDefectTarget) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<PrimaryDefectTarget> {
+        val out = mutableListOf<PrimaryDefectTarget>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryPrimaryDefectTargetStore(): PrimaryDefectTargetStore {
+    return MemoryPrimaryDefectTargetStore(mutableMapOf<String, PrimaryDefectTarget>(), mutableListOf<String>())
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedPrimaryDefectTargetStore(
+    var inner: PrimaryDefectTargetStore,
+    var cache: TtlCache<PrimaryDefectTarget>,
+    var hits: Int,
+    var misses: Int,
+) : PrimaryDefectTargetStore {
+    override fun find(code: String): PrimaryDefectTarget? {
+        val hit = (cache.get(code) as PrimaryDefectTarget?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: PrimaryDefectTarget) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<PrimaryDefectTarget> = inner.list()
+}
+
+fun newCachedPrimaryDefectTargetStore(inner: PrimaryDefectTargetStore, ttl: Int, clock: Clock): PrimaryDefectTargetStore {
+    return CachedPrimaryDefectTargetStore(
+        inner = inner,
+        cache = newTtlCache<PrimaryDefectTarget>(128, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects primary defect targets. Empty fields match all. */
+data class PrimaryDefectTargetQuery(
+    var lane: String,
+    var minOdometer: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: PrimaryDefectTarget): Boolean {
+        if (lane != "" && normalize(item.lane) != normalize(lane)) {
+            return false
+        }
+        if (item.odometer < minOdometer) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<PrimaryDefectTarget>): MutableList<PrimaryDefectTarget> {
+        val matched = filter(items) { candidate: PrimaryDefectTarget -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findPrimaryDefectTargets(store: PrimaryDefectTargetStore, query: PrimaryDefectTargetQuery): MutableList<PrimaryDefectTarget> {
+    return query.apply(store.list())
+}

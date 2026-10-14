@@ -1,0 +1,228 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.deliveries.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/deliveries/v1/deliveries.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Deliveries.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/deliveries/v1;deliveriesv1";
+option java_multiple_files = true;
+option java_outer_classname = "DeliveryApprovalServiceProto";
+option java_package = "com.acme.deliveries.v1";
+
+// Routes deliveries through approval, with escalation and delegation.
+service DeliveryApprovalService {
+  // Submits a delivery.
+  rpc SubmitDelivery(SubmitDeliveryRequest) returns (SubmitDeliveryResponse);
+
+  // Approves a delivery.
+  rpc ApproveDelivery(ApproveDeliveryRequest) returns (ApproveDeliveryResponse);
+
+  // Rejects a delivery.
+  rpc RejectDelivery(RejectDeliveryRequest) returns (RejectDeliveryResponse);
+
+  // Delegates a delivery.
+  rpc DelegateDeliveryApproval(DelegateDeliveryApprovalRequest) returns (DelegateDeliveryApprovalResponse);
+
+  // Returns a delivery.
+  rpc GetDeliveryApprovalStatus(GetDeliveryApprovalStatusRequest) returns (GetDeliveryApprovalStatusResponse);
+
+  // Comments a delivery.
+  rpc CommentDeliveryApproval(CommentDeliveryApprovalRequest) returns (CommentDeliveryApprovalResponse);
+}
+
+// The request of `SubmitDelivery`.
+message SubmitDeliveryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_id = 2;
+  Delivery delivery = 3;
+  SubmitDeliveryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDelivery`.
+message SubmitDeliveryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Delivery delivery = 1;
+  SubmitDeliveryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDelivery`.
+message ApproveDeliveryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_id = 2;
+  Delivery delivery = 3;
+  ApproveDeliveryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDelivery`.
+message ApproveDeliveryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Delivery delivery = 1;
+  ApproveDeliveryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDelivery`.
+message RejectDeliveryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_id = 2;
+  Delivery delivery = 3;
+  RejectDeliveryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDelivery`.
+message RejectDeliveryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Delivery delivery = 1;
+  RejectDeliveryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDeliveryApproval`.
+message DelegateDeliveryApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_id = 2;
+  Delivery delivery = 3;
+  DelegateDeliveryApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDeliveryApproval`.
+message DelegateDeliveryApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Delivery delivery = 1;
+  DelegateDeliveryApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDeliveryApprovalStatus`.
+message GetDeliveryApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string delivery_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDeliveryApprovalStatus`.
+message GetDeliveryApprovalStatusResponse {
+  Delivery delivery = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentDeliveryApproval`.
+message CommentDeliveryApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_id = 2;
+  Delivery delivery = 3;
+  CommentDeliveryApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentDeliveryApproval`.
+message CommentDeliveryApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Delivery delivery = 1;
+  CommentDeliveryApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

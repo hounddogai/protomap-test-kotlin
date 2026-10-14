@@ -1,0 +1,241 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "YardMoveWorkflowServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Runs the long-lived workflow that takes a yard move from start to finish.
+service YardMoveWorkflowService {
+  // Starts a yard move.
+  rpc StartYardMoveWorkflow(StartYardMoveWorkflowRequest) returns (StartYardMoveWorkflowResponse);
+
+  // Advances a yard move.
+  rpc AdvanceYardMoveWorkflow(AdvanceYardMoveWorkflowRequest) returns (AdvanceYardMoveWorkflowResponse);
+
+  // Cancels a yard move.
+  rpc CancelYardMoveWorkflow(CancelYardMoveWorkflowRequest) returns (CancelYardMoveWorkflowResponse);
+
+  // Pauses a yard move.
+  rpc PauseYardMoveWorkflow(PauseYardMoveWorkflowRequest) returns (PauseYardMoveWorkflowResponse);
+
+  // Lists yard moves a page at a time.
+  rpc ListYardMoveWorkflows(ListYardMoveWorkflowsRequest) returns (ListYardMoveWorkflowsResponse);
+
+  // Signals a yard move.
+  rpc SignalYardMoveWorkflow(SignalYardMoveWorkflowRequest) returns (SignalYardMoveWorkflowResponse);
+}
+
+// The request of `StartYardMoveWorkflow`.
+message StartYardMoveWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  StartYardMoveWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartYardMoveWorkflow`.
+message StartYardMoveWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  StartYardMoveWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceYardMoveWorkflow`.
+message AdvanceYardMoveWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  AdvanceYardMoveWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceYardMoveWorkflow`.
+message AdvanceYardMoveWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  AdvanceYardMoveWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelYardMoveWorkflow`.
+message CancelYardMoveWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  CancelYardMoveWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelYardMoveWorkflow`.
+message CancelYardMoveWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  CancelYardMoveWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseYardMoveWorkflow`.
+message PauseYardMoveWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  PauseYardMoveWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseYardMoveWorkflow`.
+message PauseYardMoveWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  PauseYardMoveWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListYardMoveWorkflows`.
+message ListYardMoveWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated YardMoveStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListYardMoveWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListYardMoveWorkflows`.
+message ListYardMoveWorkflowsResponse {
+  repeated YardMove yard_moves = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalYardMoveWorkflow`.
+message SignalYardMoveWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  SignalYardMoveWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalYardMoveWorkflow`.
+message SignalYardMoveWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  SignalYardMoveWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

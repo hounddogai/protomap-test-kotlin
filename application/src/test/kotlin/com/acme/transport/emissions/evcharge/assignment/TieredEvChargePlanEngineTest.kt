@@ -1,0 +1,16 @@
+package com.acme.transport.emissions.evcharge.assignment
+
+import com.acme.transport.kit.flags.newRegistry
+import kotlin.test.Test
+import kotlin.test.assertTrue
+
+class TieredEvChargePlanEngineTest {
+    @Test
+    fun `keeps results within bounds`() {
+        val engine = defaultTieredEvChargePlanEngine(newRegistry())
+        val item = newTieredEvChargePlan("code-957", "title-506")
+        val result = engine.price(item)
+        assertTrue(result >= engine.floor && result <= engine.ceiling, "result out of bounds")
+        assertTrue(engine.trace.size >= 0, "trace")
+    }
+}

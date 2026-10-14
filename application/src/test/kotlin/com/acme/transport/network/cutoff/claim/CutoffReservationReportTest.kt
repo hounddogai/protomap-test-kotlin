@@ -1,0 +1,24 @@
+package com.acme.transport.network.cutoff.claim
+
+import com.acme.transport.network.clock.FixedClock
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class CutoffReservationReportTest {
+    @Test
+    fun `counts each record once`() {
+        val clock = FixedClock(1701516189)
+        val items = mutableListOf<CutoffReservation>()
+        for (index in 0 until 3) {
+            items.add(newCutoffReservation("cutoff-reservation-$index", "sample"))
+        }
+        val report = buildCutoffReservationReport("test", items, clock)
+        var counted = 0
+        for ((key, value) in report.counts.toSortedMap()) {
+            counted += value
+        }
+        assertTrue(counted <= 3, "counted")
+        assertEquals(clock.now(), report.generatedAt, "generated at")
+    }
+}

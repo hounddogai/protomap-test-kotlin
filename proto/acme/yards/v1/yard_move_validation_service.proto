@@ -1,0 +1,268 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "YardMoveValidationServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Checks yard moves against the rules before anything acts on them.
+service YardMoveValidationService {
+  // Validates a yard move.
+  rpc ValidateYardMove(ValidateYardMoveRequest) returns (ValidateYardMoveResponse);
+
+  // Previews a yard move.
+  rpc PreviewYardMove(PreviewYardMoveRequest) returns (PreviewYardMoveResponse);
+
+  // Checks a yard move.
+  rpc CheckYardMoveEligibility(CheckYardMoveEligibilityRequest) returns (CheckYardMoveEligibilityResponse);
+
+  // Normalizes a yard move.
+  rpc NormalizeYardMove(NormalizeYardMoveRequest) returns (NormalizeYardMoveResponse);
+
+  // Explains a yard move.
+  rpc ExplainYardMoveDecision(ExplainYardMoveDecisionRequest) returns (ExplainYardMoveDecisionResponse);
+
+  // Scores a yard move.
+  rpc ScoreYardMove(ScoreYardMoveRequest) returns (ScoreYardMoveResponse);
+
+  // Returns a yard move.
+  rpc GetYardMoveRules(GetYardMoveRulesRequest) returns (GetYardMoveRulesResponse);
+}
+
+// The request of `ValidateYardMove`.
+message ValidateYardMoveRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  ValidateYardMoveRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateYardMove`.
+message ValidateYardMoveResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  ValidateYardMoveResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewYardMove`.
+message PreviewYardMoveRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  PreviewYardMoveRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewYardMove`.
+message PreviewYardMoveResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  PreviewYardMoveResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckYardMoveEligibility`.
+message CheckYardMoveEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  CheckYardMoveEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckYardMoveEligibility`.
+message CheckYardMoveEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  CheckYardMoveEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeYardMove`.
+message NormalizeYardMoveRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  NormalizeYardMoveRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeYardMove`.
+message NormalizeYardMoveResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  NormalizeYardMoveResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainYardMoveDecision`.
+message ExplainYardMoveDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  ExplainYardMoveDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainYardMoveDecision`.
+message ExplainYardMoveDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  YardMove yard_move = 1;
+  ExplainYardMoveDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreYardMove`.
+message ScoreYardMoveRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  YardMove yard_move = 3;
+  ScoreYardMoveRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreYardMove`.
+message ScoreYardMoveResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreYardMoveResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  YardMove yard_move = 1;
+  ScoreYardMoveResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetYardMoveRules`.
+message GetYardMoveRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string yard_move_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetYardMoveRules`.
+message GetYardMoveRulesResponse {
+  YardMove yard_move = 1;
+  acme.common.v1.OperationResult result = 2;
+}

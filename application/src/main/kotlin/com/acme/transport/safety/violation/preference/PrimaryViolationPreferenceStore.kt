@@ -1,0 +1,139 @@
+package com.acme.transport.safety.violation.preference
+
+import com.acme.transport.kit.collections.filter
+import com.acme.transport.kit.collections.take
+import com.acme.transport.kit.text.normalize
+import com.acme.transport.safety.cache.TtlCache
+import com.acme.transport.safety.cache.newTtlCache
+import com.acme.transport.safety.clock.Clock
+
+/** Keeps primary violation preferences by code. */
+interface PrimaryViolationPreferenceStore {
+    fun find(code: String): PrimaryViolationPreference?
+    fun save(item: PrimaryViolationPreference)
+    fun remove(code: String): Boolean
+    fun list(): MutableList<PrimaryViolationPreference>
+}
+
+/** Keeps records in memory, in the order they were first saved. */
+data class MemoryPrimaryViolationPreferenceStore(
+    var items: MutableMap<String, PrimaryViolationPreference>,
+    var order: MutableList<String>,
+) : PrimaryViolationPreferenceStore {
+    override fun find(code: String): PrimaryViolationPreference? {
+        val found = items[code] ?: return null
+        return found
+    }
+
+    override fun save(item: PrimaryViolationPreference) {
+        if (!items.containsKey(item.code)) {
+            order.add(item.code)
+        }
+        items[item.code] = item
+    }
+
+    override fun remove(code: String): Boolean {
+        if (!items.containsKey(code)) {
+            return false
+        }
+        items.remove(code)
+        val kept = mutableListOf<String>()
+        for (existing in order) {
+            if (existing != code) {
+                kept.add(existing)
+            }
+        }
+        order = kept
+        return true
+    }
+
+    override fun list(): MutableList<PrimaryViolationPreference> {
+        val out = mutableListOf<PrimaryViolationPreference>()
+        for (key in order) {
+            val found = items[key] ?: continue
+            out.add(found)
+        }
+        return out
+    }
+}
+
+fun newMemoryPrimaryViolationPreferenceStore(): PrimaryViolationPreferenceStore {
+    return MemoryPrimaryViolationPreferenceStore(
+        mutableMapOf<String, PrimaryViolationPreference>(),
+        mutableListOf<String>(),
+    )
+}
+
+/** Serves reads from a short-lived cache in front of another store. */
+data class CachedPrimaryViolationPreferenceStore(
+    var inner: PrimaryViolationPreferenceStore,
+    var cache: TtlCache<PrimaryViolationPreference>,
+    var hits: Int,
+    var misses: Int,
+) : PrimaryViolationPreferenceStore {
+    override fun find(code: String): PrimaryViolationPreference? {
+        val hit = (cache.get(code) as PrimaryViolationPreference?)
+        if (hit == null) {
+            misses += 1
+            val found = inner.find(code) ?: return null
+            cache.put(code, found)
+            return found
+        }
+        hits += 1
+        return hit
+    }
+
+    override fun save(item: PrimaryViolationPreference) {
+        inner.save(item)
+        cache.put(item.code, item)
+    }
+
+    override fun remove(code: String): Boolean {
+        // A cached copy expires on its own; reads after a removal may still see it until then.
+        return inner.remove(code)
+    }
+
+    override fun list(): MutableList<PrimaryViolationPreference> = inner.list()
+}
+
+fun newCachedPrimaryViolationPreferenceStore(inner: PrimaryViolationPreferenceStore, ttl: Int, clock: Clock): PrimaryViolationPreferenceStore {
+    return CachedPrimaryViolationPreferenceStore(
+        inner = inner,
+        cache = newTtlCache<PrimaryViolationPreference>(64, ttl, clock),
+        hits = 0,
+        misses = 0,
+    )
+}
+
+/** Selects primary violation preferences. Empty fields match all. */
+data class PrimaryViolationPreferenceQuery(
+    var unit: String,
+    var minPriority: Int,
+    var statuses: MutableList<String>,
+    var limit: Int,
+) {
+    fun matches(item: PrimaryViolationPreference): Boolean {
+        if (unit != "" && normalize(item.unit) != normalize(unit)) {
+            return false
+        }
+        if (item.priority < minPriority) {
+            return false
+        }
+        if (statuses.size > 0 && !statuses.contains("${item.status}")) {
+            return false
+        }
+        return true
+    }
+
+    fun apply(items: MutableList<PrimaryViolationPreference>): MutableList<PrimaryViolationPreference> {
+        val matched = filter(items) { candidate: PrimaryViolationPreference -> matches(candidate) }
+        if (limit > 0 && matched.size > limit) {
+            return take(matched, limit)
+        }
+        return matched
+    }
+}
+
+fun findPrimaryViolationPreferences(store: PrimaryViolationPreferenceStore, query: PrimaryViolationPreferenceQuery): MutableList<PrimaryViolationPreference> {
+    return query.apply(store.list())
+}

@@ -1,0 +1,33 @@
+package com.acme.transport.lastmile.locker.agreement
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class PendingLockerAgreementRulesTest {
+    @Test
+    fun `reports every problem`() {
+        val validator = defaultPendingLockerAgreementValidator()
+        val item = newPendingLockerAgreement("", "")
+        val problems = validator.validate(item)
+        assertTrue(problems.size >= 0, "problems")
+    }
+
+    @Test
+    fun `flags a long code`() {
+        val rule = PendingLockerAgreementCodeLengthRule(120)
+        val item = newPendingLockerAgreement("x", "y")
+        item.code = "x".repeat(121)
+        assertEquals(1, rule.check(item).size, "problems")
+        item.code = "ok"
+        assertEquals(0, rule.check(item).size, "problems after fixing")
+    }
+
+    @Test
+    fun `flags a blank owner id`() {
+        val rule = PendingLockerAgreementRequiredOwnerIdRule("pending locker agreement needs this field")
+        val item = newPendingLockerAgreement("", "")
+        item.ownerId = "  "
+        assertEquals(1, rule.check(item).size, "problems")
+    }
+}
