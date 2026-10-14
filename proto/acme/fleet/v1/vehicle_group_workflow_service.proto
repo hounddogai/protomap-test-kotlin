@@ -1,0 +1,296 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fleet.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fleet/v1/fleet.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fleet.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fleet/v1;fleetv1";
+option java_multiple_files = true;
+option java_outer_classname = "VehicleGroupWorkflowServiceProto";
+option java_package = "com.acme.fleet.v1";
+
+// Runs the long-lived workflow that takes a vehicle group from start to finish.
+service VehicleGroupWorkflowService {
+  // Starts a vehicle group.
+  rpc StartVehicleGroupWorkflow(StartVehicleGroupWorkflowRequest) returns (StartVehicleGroupWorkflowResponse);
+
+  // Advances a vehicle group.
+  rpc AdvanceVehicleGroupWorkflow(AdvanceVehicleGroupWorkflowRequest) returns (AdvanceVehicleGroupWorkflowResponse);
+
+  // Retrys a vehicle group.
+  rpc RetryVehicleGroupWorkflow(RetryVehicleGroupWorkflowRequest) returns (RetryVehicleGroupWorkflowResponse);
+
+  // Pauses a vehicle group.
+  rpc PauseVehicleGroupWorkflow(PauseVehicleGroupWorkflowRequest) returns (PauseVehicleGroupWorkflowResponse);
+
+  // Resumes a vehicle group.
+  rpc ResumeVehicleGroupWorkflow(ResumeVehicleGroupWorkflowRequest) returns (ResumeVehicleGroupWorkflowResponse);
+
+  // Returns a vehicle group.
+  rpc InspectVehicleGroupWorkflow(InspectVehicleGroupWorkflowRequest) returns (InspectVehicleGroupWorkflowResponse);
+
+  // Lists vehicle groups a page at a time.
+  rpc ListVehicleGroupWorkflows(ListVehicleGroupWorkflowsRequest) returns (ListVehicleGroupWorkflowsResponse);
+
+  // Signals a vehicle group.
+  rpc SignalVehicleGroupWorkflow(SignalVehicleGroupWorkflowRequest) returns (SignalVehicleGroupWorkflowResponse);
+}
+
+// The request of `StartVehicleGroupWorkflow`.
+message StartVehicleGroupWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  StartVehicleGroupWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartVehicleGroupWorkflow`.
+message StartVehicleGroupWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  StartVehicleGroupWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceVehicleGroupWorkflow`.
+message AdvanceVehicleGroupWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  AdvanceVehicleGroupWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceVehicleGroupWorkflow`.
+message AdvanceVehicleGroupWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  AdvanceVehicleGroupWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryVehicleGroupWorkflow`.
+message RetryVehicleGroupWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  RetryVehicleGroupWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryVehicleGroupWorkflow`.
+message RetryVehicleGroupWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  RetryVehicleGroupWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseVehicleGroupWorkflow`.
+message PauseVehicleGroupWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  PauseVehicleGroupWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseVehicleGroupWorkflow`.
+message PauseVehicleGroupWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  PauseVehicleGroupWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeVehicleGroupWorkflow`.
+message ResumeVehicleGroupWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  ResumeVehicleGroupWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeVehicleGroupWorkflow`.
+message ResumeVehicleGroupWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  ResumeVehicleGroupWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectVehicleGroupWorkflow`.
+message InspectVehicleGroupWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectVehicleGroupWorkflow`.
+message InspectVehicleGroupWorkflowResponse {
+  VehicleGroup vehicle_group = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListVehicleGroupWorkflows`.
+message ListVehicleGroupWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListVehicleGroupWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListVehicleGroupWorkflows`.
+message ListVehicleGroupWorkflowsResponse {
+  repeated VehicleGroup vehicle_groups = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalVehicleGroupWorkflow`.
+message SignalVehicleGroupWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  SignalVehicleGroupWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalVehicleGroupWorkflow`.
+message SignalVehicleGroupWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  SignalVehicleGroupWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

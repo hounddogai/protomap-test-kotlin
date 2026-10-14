@@ -1,0 +1,183 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "StopQueryServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Answers read-only questions about stops, for screens and reports.
+service StopQueryService {
+  // Returns a stop.
+  rpc LookupStop(LookupStopRequest) returns (LookupStopResponse);
+
+  // Lists stops a page at a time.
+  rpc BrowseStops(BrowseStopsRequest) returns (BrowseStopsResponse);
+
+  // Lists stops a page at a time.
+  rpc FindStops(FindStopsRequest) returns (FindStopsResponse);
+
+  // Counts stops by status.
+  rpc CountStops(CountStopsRequest) returns (CountStopsResponse);
+
+  // Returns several stops at once.
+  rpc ResolveStops(ResolveStopsRequest) returns (ResolveStopsResponse);
+
+  // Lists stops a page at a time.
+  rpc SuggestStops(SuggestStopsRequest) returns (SuggestStopsResponse);
+
+  // Returns a stop.
+  rpc PeekStop(PeekStopRequest) returns (PeekStopResponse);
+}
+
+// The request of `LookupStop`.
+message LookupStopRequest {
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `LookupStop`.
+message LookupStopResponse {
+  Stop stop = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `BrowseStops`.
+message BrowseStopsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated StopStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  BrowseStopsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `BrowseStops`.
+message BrowseStopsResponse {
+  repeated Stop stops = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `FindStops`.
+message FindStopsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated StopStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  FindStopsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `FindStops`.
+message FindStopsResponse {
+  repeated Stop stops = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountStops`.
+message CountStopsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated StopStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountStopsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountStops`.
+message CountStopsResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResolveStops`.
+message ResolveStopsRequest {
+  acme.common.v1.RequestContext context = 1;
+  repeated string stop_ids = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `ResolveStops`.
+message ResolveStopsResponse {
+  repeated Stop stops = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuggestStops`.
+message SuggestStopsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated StopStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  SuggestStopsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `SuggestStops`.
+message SuggestStopsResponse {
+  repeated Stop stops = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PeekStop`.
+message PeekStopRequest {
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `PeekStop`.
+message PeekStopResponse {
+  Stop stop = 1;
+  acme.common.v1.OperationResult result = 2;
+}

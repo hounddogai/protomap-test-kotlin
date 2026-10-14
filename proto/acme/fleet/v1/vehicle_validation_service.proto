@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fleet.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fleet/v1/fleet.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fleet.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fleet/v1;fleetv1";
+option java_multiple_files = true;
+option java_outer_classname = "VehicleValidationServiceProto";
+option java_package = "com.acme.fleet.v1";
+
+// Checks vehicles against the rules before anything acts on them.
+service VehicleValidationService {
+  // Validates a vehicle.
+  rpc ValidateVehicle(ValidateVehicleRequest) returns (ValidateVehicleResponse);
+
+  // Previews a vehicle.
+  rpc PreviewVehicle(PreviewVehicleRequest) returns (PreviewVehicleResponse);
+
+  // Checks a vehicle.
+  rpc CheckVehicleEligibility(CheckVehicleEligibilityRequest) returns (CheckVehicleEligibilityResponse);
+
+  // Normalizes a vehicle.
+  rpc NormalizeVehicle(NormalizeVehicleRequest) returns (NormalizeVehicleResponse);
+
+  // Explains a vehicle.
+  rpc ExplainVehicleDecision(ExplainVehicleDecisionRequest) returns (ExplainVehicleDecisionResponse);
+
+  // Scores a vehicle.
+  rpc ScoreVehicle(ScoreVehicleRequest) returns (ScoreVehicleResponse);
+
+  // Lints a vehicle.
+  rpc LintVehicles(LintVehiclesRequest) returns (LintVehiclesResponse);
+
+  // Returns a vehicle.
+  rpc GetVehicleRules(GetVehicleRulesRequest) returns (GetVehicleRulesResponse);
+}
+
+// The request of `ValidateVehicle`.
+message ValidateVehicleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  ValidateVehicleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateVehicle`.
+message ValidateVehicleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Vehicle vehicle = 1;
+  ValidateVehicleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewVehicle`.
+message PreviewVehicleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  PreviewVehicleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewVehicle`.
+message PreviewVehicleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Vehicle vehicle = 1;
+  PreviewVehicleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckVehicleEligibility`.
+message CheckVehicleEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  CheckVehicleEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckVehicleEligibility`.
+message CheckVehicleEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Vehicle vehicle = 1;
+  CheckVehicleEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeVehicle`.
+message NormalizeVehicleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  NormalizeVehicleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeVehicle`.
+message NormalizeVehicleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Vehicle vehicle = 1;
+  NormalizeVehicleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainVehicleDecision`.
+message ExplainVehicleDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  ExplainVehicleDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainVehicleDecision`.
+message ExplainVehicleDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Vehicle vehicle = 1;
+  ExplainVehicleDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreVehicle`.
+message ScoreVehicleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  ScoreVehicleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreVehicle`.
+message ScoreVehicleResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreVehicleResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Vehicle vehicle = 1;
+  ScoreVehicleResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintVehicles`.
+message LintVehiclesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  Vehicle vehicle = 3;
+  LintVehiclesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintVehicles`.
+message LintVehiclesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Vehicle vehicle = 1;
+  LintVehiclesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetVehicleRules`.
+message GetVehicleRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetVehicleRules`.
+message GetVehicleRulesResponse {
+  Vehicle vehicle = 1;
+  acme.common.v1.OperationResult result = 2;
+}

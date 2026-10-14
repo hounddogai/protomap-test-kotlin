@@ -1,0 +1,295 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "StopApprovalServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Routes stops through approval, with escalation and delegation.
+service StopApprovalService {
+  // Submits a stop.
+  rpc SubmitStop(SubmitStopRequest) returns (SubmitStopResponse);
+
+  // Approves a stop.
+  rpc ApproveStop(ApproveStopRequest) returns (ApproveStopResponse);
+
+  // Rejects a stop.
+  rpc RejectStop(RejectStopRequest) returns (RejectStopResponse);
+
+  // Escalates a stop.
+  rpc EscalateStop(EscalateStopRequest) returns (EscalateStopResponse);
+
+  // Lists stops a page at a time.
+  rpc ListPendingStops(ListPendingStopsRequest) returns (ListPendingStopsResponse);
+
+  // Delegates a stop.
+  rpc DelegateStopApproval(DelegateStopApprovalRequest) returns (DelegateStopApprovalResponse);
+
+  // Recalls a stop.
+  rpc RecallStop(RecallStopRequest) returns (RecallStopResponse);
+
+  // Returns a stop.
+  rpc GetStopApprovalStatus(GetStopApprovalStatusRequest) returns (GetStopApprovalStatusResponse);
+}
+
+// The request of `SubmitStop`.
+message SubmitStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  SubmitStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitStop`.
+message SubmitStopResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  SubmitStopResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveStop`.
+message ApproveStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  ApproveStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveStop`.
+message ApproveStopResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  ApproveStopResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectStop`.
+message RejectStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  RejectStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectStop`.
+message RejectStopResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  RejectStopResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateStop`.
+message EscalateStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  EscalateStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateStop`.
+message EscalateStopResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  EscalateStopResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingStops`.
+message ListPendingStopsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated StopStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingStopsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingStops`.
+message ListPendingStopsResponse {
+  repeated Stop stops = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateStopApproval`.
+message DelegateStopApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  DelegateStopApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateStopApproval`.
+message DelegateStopApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  DelegateStopApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallStop`.
+message RecallStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  RecallStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallStop`.
+message RecallStopResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  RecallStopResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetStopApprovalStatus`.
+message GetStopApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetStopApprovalStatus`.
+message GetStopApprovalStatusResponse {
+  Stop stop = 1;
+  acme.common.v1.OperationResult result = 2;
+}

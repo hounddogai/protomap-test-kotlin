@@ -1,0 +1,277 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelCardLifecycleServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Moves a fuel card between the states of its lifecycle.
+service FuelCardLifecycleService {
+  // Activates a fuel card.
+  rpc ActivateFuelCard(ActivateFuelCardRequest) returns (ActivateFuelCardResponse);
+
+  // Suspends a fuel card.
+  rpc SuspendFuelCard(SuspendFuelCardRequest) returns (SuspendFuelCardResponse);
+
+  // Reinstates a fuel card.
+  rpc ReinstateFuelCard(ReinstateFuelCardRequest) returns (ReinstateFuelCardResponse);
+
+  // Terminates a fuel card.
+  rpc TerminateFuelCard(TerminateFuelCardRequest) returns (TerminateFuelCardResponse);
+
+  // Renews a fuel card.
+  rpc RenewFuelCard(RenewFuelCardRequest) returns (RenewFuelCardResponse);
+
+  // Expires a fuel card.
+  rpc ExpireFuelCard(ExpireFuelCardRequest) returns (ExpireFuelCardResponse);
+
+  // Schedules a fuel card.
+  rpc ScheduleFuelCardExpiry(ScheduleFuelCardExpiryRequest) returns (ScheduleFuelCardExpiryResponse);
+}
+
+// The request of `ActivateFuelCard`.
+message ActivateFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  ActivateFuelCardRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateFuelCard`.
+message ActivateFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ActivateFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendFuelCard`.
+message SuspendFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  SuspendFuelCardRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendFuelCard`.
+message SuspendFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  SuspendFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateFuelCard`.
+message ReinstateFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  ReinstateFuelCardRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateFuelCard`.
+message ReinstateFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ReinstateFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TerminateFuelCard`.
+message TerminateFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  TerminateFuelCardRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TerminateFuelCard`.
+message TerminateFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  TerminateFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RenewFuelCard`.
+message RenewFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  RenewFuelCardRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `RenewFuelCard`.
+message RenewFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  RenewFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExpireFuelCard`.
+message ExpireFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  ExpireFuelCardRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ExpireFuelCard`.
+message ExpireFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ExpireFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScheduleFuelCardExpiry`.
+message ScheduleFuelCardExpiryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  ScheduleFuelCardExpiryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScheduleFuelCardExpiry`.
+message ScheduleFuelCardExpiryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ScheduleFuelCardExpiryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

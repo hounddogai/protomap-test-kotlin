@@ -1,0 +1,284 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "GeoFenceSyncServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Keeps geo fences in step with the systems of record in other regions.
+service GeoFenceSyncService {
+  // Syncs a geo fence.
+  rpc SyncGeoFences(SyncGeoFencesRequest) returns (SyncGeoFencesResponse);
+
+  // Pushs a geo fence.
+  rpc PushGeoFence(PushGeoFenceRequest) returns (PushGeoFenceResponse);
+
+  // Pulls a geo fence.
+  rpc PullGeoFences(PullGeoFencesRequest) returns (PullGeoFencesResponse);
+
+  // Reconciles a geo fence.
+  rpc ReconcileGeoFences(ReconcileGeoFencesRequest) returns (ReconcileGeoFencesResponse);
+
+  // Exchanges changes of geo fences with a peer.
+  rpc StreamGeoFenceChanges(stream StreamGeoFenceChangesRequest) returns (stream StreamGeoFenceChangesResponse);
+
+  // Resolves a geo fence.
+  rpc ResolveGeoFenceConflict(ResolveGeoFenceConflictRequest) returns (ResolveGeoFenceConflictResponse);
+
+  // Returns a geo fence.
+  rpc GetGeoFenceSyncState(GetGeoFenceSyncStateRequest) returns (GetGeoFenceSyncStateResponse);
+
+  // Lists geo fences a page at a time.
+  rpc ListGeoFenceConflicts(ListGeoFenceConflictsRequest) returns (ListGeoFenceConflictsResponse);
+}
+
+// The request of `SyncGeoFences`.
+message SyncGeoFencesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  SyncGeoFencesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SyncGeoFences`.
+message SyncGeoFencesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  SyncGeoFencesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PushGeoFence`.
+message PushGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  PushGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PushGeoFence`.
+message PushGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  PushGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PullGeoFences`.
+message PullGeoFencesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  PullGeoFencesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PullGeoFences`.
+message PullGeoFencesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  PullGeoFencesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReconcileGeoFences`.
+message ReconcileGeoFencesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  ReconcileGeoFencesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ReconcileGeoFences`.
+message ReconcileGeoFencesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  ReconcileGeoFencesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `StreamGeoFenceChanges`.
+message StreamGeoFenceChangesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    GeoFence change = 2;
+    StreamGeoFenceChangesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `StreamGeoFenceChanges`.
+message StreamGeoFenceChangesResponse {
+  GeoFence geo_fence = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ResolveGeoFenceConflict`.
+message ResolveGeoFenceConflictRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  ResolveGeoFenceConflictRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResolveGeoFenceConflict`.
+message ResolveGeoFenceConflictResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  ResolveGeoFenceConflictResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetGeoFenceSyncState`.
+message GetGeoFenceSyncStateRequest {
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetGeoFenceSyncState`.
+message GetGeoFenceSyncStateResponse {
+  GeoFence geo_fence = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListGeoFenceConflicts`.
+message ListGeoFenceConflictsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated GeoFenceStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListGeoFenceConflictsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListGeoFenceConflicts`.
+message ListGeoFenceConflictsResponse {
+  repeated GeoFence geo_fences = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}

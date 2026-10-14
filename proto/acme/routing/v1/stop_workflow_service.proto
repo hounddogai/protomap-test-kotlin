@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "StopWorkflowServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Runs the long-lived workflow that takes a stop from start to finish.
+service StopWorkflowService {
+  // Starts a stop.
+  rpc StartStopWorkflow(StartStopWorkflowRequest) returns (StartStopWorkflowResponse);
+
+  // Advances a stop.
+  rpc AdvanceStopWorkflow(AdvanceStopWorkflowRequest) returns (AdvanceStopWorkflowResponse);
+
+  // Cancels a stop.
+  rpc CancelStopWorkflow(CancelStopWorkflowRequest) returns (CancelStopWorkflowResponse);
+
+  // Retrys a stop.
+  rpc RetryStopWorkflow(RetryStopWorkflowRequest) returns (RetryStopWorkflowResponse);
+
+  // Pauses a stop.
+  rpc PauseStopWorkflow(PauseStopWorkflowRequest) returns (PauseStopWorkflowResponse);
+
+  // Resumes a stop.
+  rpc ResumeStopWorkflow(ResumeStopWorkflowRequest) returns (ResumeStopWorkflowResponse);
+
+  // Returns a stop.
+  rpc InspectStopWorkflow(InspectStopWorkflowRequest) returns (InspectStopWorkflowResponse);
+
+  // Lists stops a page at a time.
+  rpc ListStopWorkflows(ListStopWorkflowsRequest) returns (ListStopWorkflowsResponse);
+
+  // Signals a stop.
+  rpc SignalStopWorkflow(SignalStopWorkflowRequest) returns (SignalStopWorkflowResponse);
+}
+
+// The request of `StartStopWorkflow`.
+message StartStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  StartStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartStopWorkflow`.
+message StartStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  StartStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceStopWorkflow`.
+message AdvanceStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  AdvanceStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceStopWorkflow`.
+message AdvanceStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  AdvanceStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelStopWorkflow`.
+message CancelStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  CancelStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelStopWorkflow`.
+message CancelStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  CancelStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryStopWorkflow`.
+message RetryStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  RetryStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryStopWorkflow`.
+message RetryStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  RetryStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseStopWorkflow`.
+message PauseStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  PauseStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseStopWorkflow`.
+message PauseStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  PauseStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeStopWorkflow`.
+message ResumeStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  ResumeStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeStopWorkflow`.
+message ResumeStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  ResumeStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectStopWorkflow`.
+message InspectStopWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectStopWorkflow`.
+message InspectStopWorkflowResponse {
+  Stop stop = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListStopWorkflows`.
+message ListStopWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated StopStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListStopWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListStopWorkflows`.
+message ListStopWorkflowsResponse {
+  repeated Stop stops = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalStopWorkflow`.
+message SignalStopWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  SignalStopWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalStopWorkflow`.
+message SignalStopWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  SignalStopWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

@@ -1,0 +1,231 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelTransactionValidationServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Checks fuel transactions against the rules before anything acts on them.
+service FuelTransactionValidationService {
+  // Validates a fuel transaction.
+  rpc ValidateFuelTransaction(ValidateFuelTransactionRequest) returns (ValidateFuelTransactionResponse);
+
+  // Previews a fuel transaction.
+  rpc PreviewFuelTransaction(PreviewFuelTransactionRequest) returns (PreviewFuelTransactionResponse);
+
+  // Normalizes a fuel transaction.
+  rpc NormalizeFuelTransaction(NormalizeFuelTransactionRequest) returns (NormalizeFuelTransactionResponse);
+
+  // Explains a fuel transaction.
+  rpc ExplainFuelTransactionDecision(ExplainFuelTransactionDecisionRequest) returns (ExplainFuelTransactionDecisionResponse);
+
+  // Scores a fuel transaction.
+  rpc ScoreFuelTransaction(ScoreFuelTransactionRequest) returns (ScoreFuelTransactionResponse);
+
+  // Returns a fuel transaction.
+  rpc GetFuelTransactionRules(GetFuelTransactionRulesRequest) returns (GetFuelTransactionRulesResponse);
+}
+
+// The request of `ValidateFuelTransaction`.
+message ValidateFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ValidateFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateFuelTransaction`.
+message ValidateFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ValidateFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewFuelTransaction`.
+message PreviewFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  PreviewFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewFuelTransaction`.
+message PreviewFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  PreviewFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeFuelTransaction`.
+message NormalizeFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  NormalizeFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeFuelTransaction`.
+message NormalizeFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  NormalizeFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainFuelTransactionDecision`.
+message ExplainFuelTransactionDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ExplainFuelTransactionDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainFuelTransactionDecision`.
+message ExplainFuelTransactionDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ExplainFuelTransactionDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreFuelTransaction`.
+message ScoreFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ScoreFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreFuelTransaction`.
+message ScoreFuelTransactionResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreFuelTransactionResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ScoreFuelTransactionResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelTransactionRules`.
+message GetFuelTransactionRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelTransactionRules`.
+message GetFuelTransactionRulesResponse {
+  FuelTransaction fuel_transaction = 1;
+  acme.common.v1.OperationResult result = 2;
+}

@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.dispatch.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/dispatch/v1/dispatch.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Dispatch.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/dispatch/v1;dispatchv1";
+option java_multiple_files = true;
+option java_outer_classname = "ZoneValidationServiceProto";
+option java_package = "com.acme.dispatch.v1";
+
+// Checks zones against the rules before anything acts on them.
+service ZoneValidationService {
+  // Validates a zone.
+  rpc ValidateZone(ValidateZoneRequest) returns (ValidateZoneResponse);
+
+  // Previews a zone.
+  rpc PreviewZone(PreviewZoneRequest) returns (PreviewZoneResponse);
+
+  // Checks a zone.
+  rpc CheckZoneEligibility(CheckZoneEligibilityRequest) returns (CheckZoneEligibilityResponse);
+
+  // Normalizes a zone.
+  rpc NormalizeZone(NormalizeZoneRequest) returns (NormalizeZoneResponse);
+
+  // Explains a zone.
+  rpc ExplainZoneDecision(ExplainZoneDecisionRequest) returns (ExplainZoneDecisionResponse);
+
+  // Scores a zone.
+  rpc ScoreZone(ScoreZoneRequest) returns (ScoreZoneResponse);
+
+  // Lints a zone.
+  rpc LintZones(LintZonesRequest) returns (LintZonesResponse);
+
+  // Returns a zone.
+  rpc GetZoneRules(GetZoneRulesRequest) returns (GetZoneRulesResponse);
+}
+
+// The request of `ValidateZone`.
+message ValidateZoneRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  ValidateZoneRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateZone`.
+message ValidateZoneResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  ValidateZoneResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewZone`.
+message PreviewZoneRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  PreviewZoneRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewZone`.
+message PreviewZoneResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  PreviewZoneResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckZoneEligibility`.
+message CheckZoneEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  CheckZoneEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckZoneEligibility`.
+message CheckZoneEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  CheckZoneEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeZone`.
+message NormalizeZoneRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  NormalizeZoneRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeZone`.
+message NormalizeZoneResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  NormalizeZoneResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainZoneDecision`.
+message ExplainZoneDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  ExplainZoneDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainZoneDecision`.
+message ExplainZoneDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  ExplainZoneDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreZone`.
+message ScoreZoneRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  ScoreZoneRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreZone`.
+message ScoreZoneResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreZoneResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Zone zone = 1;
+  ScoreZoneResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintZones`.
+message LintZonesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  LintZonesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintZones`.
+message LintZonesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  LintZonesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetZoneRules`.
+message GetZoneRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetZoneRules`.
+message GetZoneRulesResponse {
+  Zone zone = 1;
+  acme.common.v1.OperationResult result = 2;
+}

@@ -1,0 +1,267 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.dispatch.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/dispatch/v1/dispatch.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Dispatch.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/dispatch/v1;dispatchv1";
+option java_multiple_files = true;
+option java_outer_classname = "ZoneWorkflowServiceProto";
+option java_package = "com.acme.dispatch.v1";
+
+// Runs the long-lived workflow that takes a zone from start to finish.
+service ZoneWorkflowService {
+  // Starts a zone.
+  rpc StartZoneWorkflow(StartZoneWorkflowRequest) returns (StartZoneWorkflowResponse);
+
+  // Advances a zone.
+  rpc AdvanceZoneWorkflow(AdvanceZoneWorkflowRequest) returns (AdvanceZoneWorkflowResponse);
+
+  // Cancels a zone.
+  rpc CancelZoneWorkflow(CancelZoneWorkflowRequest) returns (CancelZoneWorkflowResponse);
+
+  // Pauses a zone.
+  rpc PauseZoneWorkflow(PauseZoneWorkflowRequest) returns (PauseZoneWorkflowResponse);
+
+  // Resumes a zone.
+  rpc ResumeZoneWorkflow(ResumeZoneWorkflowRequest) returns (ResumeZoneWorkflowResponse);
+
+  // Returns a zone.
+  rpc InspectZoneWorkflow(InspectZoneWorkflowRequest) returns (InspectZoneWorkflowResponse);
+
+  // Signals a zone.
+  rpc SignalZoneWorkflow(SignalZoneWorkflowRequest) returns (SignalZoneWorkflowResponse);
+}
+
+// The request of `StartZoneWorkflow`.
+message StartZoneWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  StartZoneWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartZoneWorkflow`.
+message StartZoneWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  StartZoneWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceZoneWorkflow`.
+message AdvanceZoneWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  AdvanceZoneWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceZoneWorkflow`.
+message AdvanceZoneWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  AdvanceZoneWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelZoneWorkflow`.
+message CancelZoneWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  CancelZoneWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelZoneWorkflow`.
+message CancelZoneWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  CancelZoneWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseZoneWorkflow`.
+message PauseZoneWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  PauseZoneWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseZoneWorkflow`.
+message PauseZoneWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  PauseZoneWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeZoneWorkflow`.
+message ResumeZoneWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  ResumeZoneWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeZoneWorkflow`.
+message ResumeZoneWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  ResumeZoneWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectZoneWorkflow`.
+message InspectZoneWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectZoneWorkflow`.
+message InspectZoneWorkflowResponse {
+  Zone zone = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `SignalZoneWorkflow`.
+message SignalZoneWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string zone_id = 2;
+  Zone zone = 3;
+  SignalZoneWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalZoneWorkflow`.
+message SignalZoneWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Zone zone = 1;
+  SignalZoneWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

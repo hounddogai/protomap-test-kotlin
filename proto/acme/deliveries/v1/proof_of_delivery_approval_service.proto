@@ -1,0 +1,257 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.deliveries.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/deliveries/v1/deliveries.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Deliveries.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/deliveries/v1;deliveriesv1";
+option java_multiple_files = true;
+option java_outer_classname = "ProofOfDeliveryApprovalServiceProto";
+option java_package = "com.acme.deliveries.v1";
+
+// Routes proof of deliveries through approval, with escalation and delegation.
+service ProofOfDeliveryApprovalService {
+  // Submits a proof of delivery.
+  rpc SubmitProofOfDelivery(SubmitProofOfDeliveryRequest) returns (SubmitProofOfDeliveryResponse);
+
+  // Approves a proof of delivery.
+  rpc ApproveProofOfDelivery(ApproveProofOfDeliveryRequest) returns (ApproveProofOfDeliveryResponse);
+
+  // Escalates a proof of delivery.
+  rpc EscalateProofOfDelivery(EscalateProofOfDeliveryRequest) returns (EscalateProofOfDeliveryResponse);
+
+  // Lists proof of deliveries a page at a time.
+  rpc ListPendingProofOfDeliveries(ListPendingProofOfDeliveriesRequest) returns (ListPendingProofOfDeliveriesResponse);
+
+  // Delegates a proof of delivery.
+  rpc DelegateProofOfDeliveryApproval(DelegateProofOfDeliveryApprovalRequest) returns (DelegateProofOfDeliveryApprovalResponse);
+
+  // Returns a proof of delivery.
+  rpc GetProofOfDeliveryApprovalStatus(GetProofOfDeliveryApprovalStatusRequest) returns (GetProofOfDeliveryApprovalStatusResponse);
+
+  // Comments a proof of delivery.
+  rpc CommentProofOfDeliveryApproval(CommentProofOfDeliveryApprovalRequest) returns (CommentProofOfDeliveryApprovalResponse);
+}
+
+// The request of `SubmitProofOfDelivery`.
+message SubmitProofOfDeliveryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  SubmitProofOfDeliveryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitProofOfDelivery`.
+message SubmitProofOfDeliveryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  SubmitProofOfDeliveryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveProofOfDelivery`.
+message ApproveProofOfDeliveryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  ApproveProofOfDeliveryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveProofOfDelivery`.
+message ApproveProofOfDeliveryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  ApproveProofOfDeliveryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateProofOfDelivery`.
+message EscalateProofOfDeliveryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  EscalateProofOfDeliveryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateProofOfDelivery`.
+message EscalateProofOfDeliveryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  EscalateProofOfDeliveryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingProofOfDeliveries`.
+message ListPendingProofOfDeliveriesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingProofOfDeliveriesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingProofOfDeliveries`.
+message ListPendingProofOfDeliveriesResponse {
+  repeated ProofOfDelivery proof_of_deliveries = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateProofOfDeliveryApproval`.
+message DelegateProofOfDeliveryApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  DelegateProofOfDeliveryApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateProofOfDeliveryApproval`.
+message DelegateProofOfDeliveryApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  DelegateProofOfDeliveryApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetProofOfDeliveryApprovalStatus`.
+message GetProofOfDeliveryApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetProofOfDeliveryApprovalStatus`.
+message GetProofOfDeliveryApprovalStatusResponse {
+  ProofOfDelivery proof_of_delivery = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentProofOfDeliveryApproval`.
+message CommentProofOfDeliveryApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  CommentProofOfDeliveryApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentProofOfDeliveryApproval`.
+message CommentProofOfDeliveryApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  CommentProofOfDeliveryApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

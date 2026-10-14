@@ -1,0 +1,335 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelPolicyCalculationServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Computes the figures of a fuel policy, such as totals, taxes, and estimates.
+service FuelPolicyCalculationService {
+  // Calculates a fuel policy.
+  rpc CalculateFuelPolicy(CalculateFuelPolicyRequest) returns (CalculateFuelPolicyResponse);
+
+  // Estimates a fuel policy.
+  rpc EstimateFuelPolicy(EstimateFuelPolicyRequest) returns (EstimateFuelPolicyResponse);
+
+  // Quotes a fuel policy.
+  rpc QuoteFuelPolicy(QuoteFuelPolicyRequest) returns (QuoteFuelPolicyResponse);
+
+  // Compares a fuel policy.
+  rpc CompareFuelPolicyOptions(CompareFuelPolicyOptionsRequest) returns (CompareFuelPolicyOptionsResponse);
+
+  // Recalculates a fuel policy.
+  rpc RecalculateFuelPolicies(RecalculateFuelPoliciesRequest) returns (RecalculateFuelPoliciesResponse);
+
+  // Simulates a fuel policy.
+  rpc SimulateFuelPolicy(SimulateFuelPolicyRequest) returns (SimulateFuelPolicyResponse);
+
+  // Explains a fuel policy.
+  rpc ExplainFuelPolicyCalculation(ExplainFuelPolicyCalculationRequest) returns (ExplainFuelPolicyCalculationResponse);
+
+  // Returns a fuel policy.
+  rpc GetFuelPolicyRates(GetFuelPolicyRatesRequest) returns (GetFuelPolicyRatesResponse);
+}
+
+// The request of `CalculateFuelPolicy`.
+message CalculateFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  CalculateFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CalculateFuelPolicy`.
+message CalculateFuelPolicyResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CalculateFuelPolicyResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  CalculateFuelPolicyResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EstimateFuelPolicy`.
+message EstimateFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  EstimateFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EstimateFuelPolicy`.
+message EstimateFuelPolicyResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated EstimateFuelPolicyResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  EstimateFuelPolicyResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `QuoteFuelPolicy`.
+message QuoteFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  QuoteFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `QuoteFuelPolicy`.
+message QuoteFuelPolicyResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated QuoteFuelPolicyResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  QuoteFuelPolicyResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CompareFuelPolicyOptions`.
+message CompareFuelPolicyOptionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  CompareFuelPolicyOptionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareFuelPolicyOptions`.
+message CompareFuelPolicyOptionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CompareFuelPolicyOptionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  CompareFuelPolicyOptionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecalculateFuelPolicies`.
+message RecalculateFuelPoliciesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  RecalculateFuelPoliciesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecalculateFuelPolicies`.
+message RecalculateFuelPoliciesResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated RecalculateFuelPoliciesResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  RecalculateFuelPoliciesResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SimulateFuelPolicy`.
+message SimulateFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  SimulateFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SimulateFuelPolicy`.
+message SimulateFuelPolicyResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated SimulateFuelPolicyResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  SimulateFuelPolicyResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainFuelPolicyCalculation`.
+message ExplainFuelPolicyCalculationRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  ExplainFuelPolicyCalculationRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainFuelPolicyCalculation`.
+message ExplainFuelPolicyCalculationResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ExplainFuelPolicyCalculationResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelPolicyRates`.
+message GetFuelPolicyRatesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelPolicyRates`.
+message GetFuelPolicyRatesResponse {
+  FuelPolicy fuel_policy = 1;
+  acme.common.v1.OperationResult result = 2;
+}

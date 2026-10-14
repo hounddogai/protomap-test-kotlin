@@ -1,0 +1,246 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelCardSyncServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Keeps fuel cards in step with the systems of record in other regions.
+service FuelCardSyncService {
+  // Syncs a fuel card.
+  rpc SyncFuelCards(SyncFuelCardsRequest) returns (SyncFuelCardsResponse);
+
+  // Pushs a fuel card.
+  rpc PushFuelCard(PushFuelCardRequest) returns (PushFuelCardResponse);
+
+  // Pulls a fuel card.
+  rpc PullFuelCards(PullFuelCardsRequest) returns (PullFuelCardsResponse);
+
+  // Exchanges changes of fuel cards with a peer.
+  rpc StreamFuelCardChanges(stream StreamFuelCardChangesRequest) returns (stream StreamFuelCardChangesResponse);
+
+  // Resolves a fuel card.
+  rpc ResolveFuelCardConflict(ResolveFuelCardConflictRequest) returns (ResolveFuelCardConflictResponse);
+
+  // Returns a fuel card.
+  rpc GetFuelCardSyncState(GetFuelCardSyncStateRequest) returns (GetFuelCardSyncStateResponse);
+
+  // Lists fuel cards a page at a time.
+  rpc ListFuelCardConflicts(ListFuelCardConflictsRequest) returns (ListFuelCardConflictsResponse);
+}
+
+// The request of `SyncFuelCards`.
+message SyncFuelCardsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  SyncFuelCardsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SyncFuelCards`.
+message SyncFuelCardsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  SyncFuelCardsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PushFuelCard`.
+message PushFuelCardRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  PushFuelCardRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PushFuelCard`.
+message PushFuelCardResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  PushFuelCardResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PullFuelCards`.
+message PullFuelCardsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  PullFuelCardsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PullFuelCards`.
+message PullFuelCardsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  PullFuelCardsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `StreamFuelCardChanges`.
+message StreamFuelCardChangesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    FuelCard change = 2;
+    StreamFuelCardChangesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `StreamFuelCardChanges`.
+message StreamFuelCardChangesResponse {
+  FuelCard fuel_card = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ResolveFuelCardConflict`.
+message ResolveFuelCardConflictRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  FuelCard fuel_card = 3;
+  ResolveFuelCardConflictRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResolveFuelCardConflict`.
+message ResolveFuelCardConflictResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelCard fuel_card = 1;
+  ResolveFuelCardConflictResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelCardSyncState`.
+message GetFuelCardSyncStateRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_card_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelCardSyncState`.
+message GetFuelCardSyncStateResponse {
+  FuelCard fuel_card = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListFuelCardConflicts`.
+message ListFuelCardConflictsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelCardStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListFuelCardConflictsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListFuelCardConflicts`.
+message ListFuelCardConflictsResponse {
+  repeated FuelCard fuel_cards = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}

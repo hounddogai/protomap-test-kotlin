@@ -1,0 +1,292 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "StopCalculationServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Computes the figures of a stop, such as totals, taxes, and estimates.
+service StopCalculationService {
+  // Calculates a stop.
+  rpc CalculateStop(CalculateStopRequest) returns (CalculateStopResponse);
+
+  // Estimates a stop.
+  rpc EstimateStop(EstimateStopRequest) returns (EstimateStopResponse);
+
+  // Quotes a stop.
+  rpc QuoteStop(QuoteStopRequest) returns (QuoteStopResponse);
+
+  // Compares a stop.
+  rpc CompareStopOptions(CompareStopOptionsRequest) returns (CompareStopOptionsResponse);
+
+  // Simulates a stop.
+  rpc SimulateStop(SimulateStopRequest) returns (SimulateStopResponse);
+
+  // Explains a stop.
+  rpc ExplainStopCalculation(ExplainStopCalculationRequest) returns (ExplainStopCalculationResponse);
+
+  // Returns a stop.
+  rpc GetStopRates(GetStopRatesRequest) returns (GetStopRatesResponse);
+}
+
+// The request of `CalculateStop`.
+message CalculateStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  CalculateStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CalculateStop`.
+message CalculateStopResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CalculateStopResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Stop stop = 1;
+  CalculateStopResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EstimateStop`.
+message EstimateStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  EstimateStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EstimateStop`.
+message EstimateStopResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated EstimateStopResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Stop stop = 1;
+  EstimateStopResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `QuoteStop`.
+message QuoteStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  QuoteStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `QuoteStop`.
+message QuoteStopResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated QuoteStopResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Stop stop = 1;
+  QuoteStopResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CompareStopOptions`.
+message CompareStopOptionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  CompareStopOptionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareStopOptions`.
+message CompareStopOptionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CompareStopOptionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Stop stop = 1;
+  CompareStopOptionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SimulateStop`.
+message SimulateStopRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  SimulateStopRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SimulateStop`.
+message SimulateStopResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated SimulateStopResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Stop stop = 1;
+  SimulateStopResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainStopCalculation`.
+message ExplainStopCalculationRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  Stop stop = 3;
+  ExplainStopCalculationRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainStopCalculation`.
+message ExplainStopCalculationResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Stop stop = 1;
+  ExplainStopCalculationResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetStopRates`.
+message GetStopRatesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string stop_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetStopRates`.
+message GetStopRatesResponse {
+  Stop stop = 1;
+  acme.common.v1.OperationResult result = 2;
+}

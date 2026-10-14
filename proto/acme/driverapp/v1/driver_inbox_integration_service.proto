@@ -1,0 +1,226 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverInboxIntegrationServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// Connects external systems that send driver inbox events.
+service DriverInboxIntegrationService {
+  // Connects a driver inbox.
+  rpc ConnectDriverInboxSource(ConnectDriverInboxSourceRequest) returns (ConnectDriverInboxSourceResponse);
+
+  // Disconnects a driver inbox.
+  rpc DisconnectDriverInboxSource(DisconnectDriverInboxSourceRequest) returns (DisconnectDriverInboxSourceResponse);
+
+  // Takes a stream of driver inboxes and answers once at the end.
+  rpc IngestDriverInboxEvents(stream IngestDriverInboxEventsRequest) returns (IngestDriverInboxEventsResponse);
+
+  // Exchanges changes of driver inboxes with a peer.
+  rpc RelayDriverInboxMessages(stream RelayDriverInboxMessagesRequest) returns (stream RelayDriverInboxMessagesResponse);
+
+  // Lists driver inboxes a page at a time.
+  rpc ListDriverInboxSources(ListDriverInboxSourcesRequest) returns (ListDriverInboxSourcesResponse);
+
+  // Tests a driver inbox.
+  rpc TestDriverInboxConnection(TestDriverInboxConnectionRequest) returns (TestDriverInboxConnectionResponse);
+}
+
+// The request of `ConnectDriverInboxSource`.
+message ConnectDriverInboxSourceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  ConnectDriverInboxSourceRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ConnectDriverInboxSource`.
+message ConnectDriverInboxSourceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  ConnectDriverInboxSourceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DisconnectDriverInboxSource`.
+message DisconnectDriverInboxSourceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DisconnectDriverInboxSourceRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `DisconnectDriverInboxSource`.
+message DisconnectDriverInboxSourceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  DisconnectDriverInboxSourceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `IngestDriverInboxEvents`.
+message IngestDriverInboxEventsRequest {
+  // What a stream of records starts with.
+  message StreamHeader {
+    string source = 1;
+    string format = 2;
+    int64 total_records = 3;
+    acme.common.v1.ContactInfo submitted_by = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof chunk {
+    IngestDriverInboxEventsRequest.StreamHeader header = 2;
+    DriverInbox record = 3;
+  }
+  int64 sequence = 4;
+}
+
+// The response of `IngestDriverInboxEvents`.
+message IngestDriverInboxEventsResponse {
+  // A record the import turned down.
+  message Rejection {
+    int64 sequence = 1;
+    string reason = 2;
+    string driver_inbox_id = 3;
+  }
+
+  int64 accepted = 1;
+  int64 rejected = 2;
+  repeated IngestDriverInboxEventsResponse.Rejection rejections = 3;
+  acme.common.v1.OperationResult result = 4;
+}
+
+// The request of `RelayDriverInboxMessages`.
+message RelayDriverInboxMessagesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    DriverInbox change = 2;
+    RelayDriverInboxMessagesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `RelayDriverInboxMessages`.
+message RelayDriverInboxMessagesResponse {
+  DriverInbox driver_inbox = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ListDriverInboxSources`.
+message ListDriverInboxSourcesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDriverInboxSourcesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDriverInboxSources`.
+message ListDriverInboxSourcesResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TestDriverInboxConnection`.
+message TestDriverInboxConnectionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  TestDriverInboxConnectionRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TestDriverInboxConnection`.
+message TestDriverInboxConnectionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  TestDriverInboxConnectionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

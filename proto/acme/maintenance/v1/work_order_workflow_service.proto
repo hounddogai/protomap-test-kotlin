@@ -1,0 +1,296 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "WorkOrderWorkflowServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Runs the long-lived workflow that takes a work order from start to finish.
+service WorkOrderWorkflowService {
+  // Starts a work order.
+  rpc StartWorkOrderWorkflow(StartWorkOrderWorkflowRequest) returns (StartWorkOrderWorkflowResponse);
+
+  // Advances a work order.
+  rpc AdvanceWorkOrderWorkflow(AdvanceWorkOrderWorkflowRequest) returns (AdvanceWorkOrderWorkflowResponse);
+
+  // Retrys a work order.
+  rpc RetryWorkOrderWorkflow(RetryWorkOrderWorkflowRequest) returns (RetryWorkOrderWorkflowResponse);
+
+  // Pauses a work order.
+  rpc PauseWorkOrderWorkflow(PauseWorkOrderWorkflowRequest) returns (PauseWorkOrderWorkflowResponse);
+
+  // Resumes a work order.
+  rpc ResumeWorkOrderWorkflow(ResumeWorkOrderWorkflowRequest) returns (ResumeWorkOrderWorkflowResponse);
+
+  // Returns a work order.
+  rpc InspectWorkOrderWorkflow(InspectWorkOrderWorkflowRequest) returns (InspectWorkOrderWorkflowResponse);
+
+  // Lists work orders a page at a time.
+  rpc ListWorkOrderWorkflows(ListWorkOrderWorkflowsRequest) returns (ListWorkOrderWorkflowsResponse);
+
+  // Signals a work order.
+  rpc SignalWorkOrderWorkflow(SignalWorkOrderWorkflowRequest) returns (SignalWorkOrderWorkflowResponse);
+}
+
+// The request of `StartWorkOrderWorkflow`.
+message StartWorkOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  StartWorkOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartWorkOrderWorkflow`.
+message StartWorkOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  StartWorkOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceWorkOrderWorkflow`.
+message AdvanceWorkOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  AdvanceWorkOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceWorkOrderWorkflow`.
+message AdvanceWorkOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  AdvanceWorkOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryWorkOrderWorkflow`.
+message RetryWorkOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  RetryWorkOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryWorkOrderWorkflow`.
+message RetryWorkOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  RetryWorkOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseWorkOrderWorkflow`.
+message PauseWorkOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  PauseWorkOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseWorkOrderWorkflow`.
+message PauseWorkOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  PauseWorkOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeWorkOrderWorkflow`.
+message ResumeWorkOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  ResumeWorkOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeWorkOrderWorkflow`.
+message ResumeWorkOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ResumeWorkOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectWorkOrderWorkflow`.
+message InspectWorkOrderWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectWorkOrderWorkflow`.
+message InspectWorkOrderWorkflowResponse {
+  WorkOrder work_order = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListWorkOrderWorkflows`.
+message ListWorkOrderWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated WorkOrderStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListWorkOrderWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListWorkOrderWorkflows`.
+message ListWorkOrderWorkflowsResponse {
+  repeated WorkOrder work_orders = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalWorkOrderWorkflow`.
+message SignalWorkOrderWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  SignalWorkOrderWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalWorkOrderWorkflow`.
+message SignalWorkOrderWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  SignalWorkOrderWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

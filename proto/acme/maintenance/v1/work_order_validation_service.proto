@@ -1,0 +1,231 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "WorkOrderValidationServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Checks work orders against the rules before anything acts on them.
+service WorkOrderValidationService {
+  // Validates a work order.
+  rpc ValidateWorkOrder(ValidateWorkOrderRequest) returns (ValidateWorkOrderResponse);
+
+  // Previews a work order.
+  rpc PreviewWorkOrder(PreviewWorkOrderRequest) returns (PreviewWorkOrderResponse);
+
+  // Normalizes a work order.
+  rpc NormalizeWorkOrder(NormalizeWorkOrderRequest) returns (NormalizeWorkOrderResponse);
+
+  // Explains a work order.
+  rpc ExplainWorkOrderDecision(ExplainWorkOrderDecisionRequest) returns (ExplainWorkOrderDecisionResponse);
+
+  // Scores a work order.
+  rpc ScoreWorkOrder(ScoreWorkOrderRequest) returns (ScoreWorkOrderResponse);
+
+  // Returns a work order.
+  rpc GetWorkOrderRules(GetWorkOrderRulesRequest) returns (GetWorkOrderRulesResponse);
+}
+
+// The request of `ValidateWorkOrder`.
+message ValidateWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  ValidateWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateWorkOrder`.
+message ValidateWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ValidateWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewWorkOrder`.
+message PreviewWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  PreviewWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewWorkOrder`.
+message PreviewWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  PreviewWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeWorkOrder`.
+message NormalizeWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  NormalizeWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeWorkOrder`.
+message NormalizeWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  NormalizeWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainWorkOrderDecision`.
+message ExplainWorkOrderDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  ExplainWorkOrderDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainWorkOrderDecision`.
+message ExplainWorkOrderDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ExplainWorkOrderDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreWorkOrder`.
+message ScoreWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  ScoreWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreWorkOrder`.
+message ScoreWorkOrderResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreWorkOrderResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  WorkOrder work_order = 1;
+  ScoreWorkOrderResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetWorkOrderRules`.
+message GetWorkOrderRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetWorkOrderRules`.
+message GetWorkOrderRulesResponse {
+  WorkOrder work_order = 1;
+  acme.common.v1.OperationResult result = 2;
+}

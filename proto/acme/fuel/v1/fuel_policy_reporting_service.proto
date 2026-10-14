@@ -1,0 +1,243 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelPolicyReportingServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Builds and schedules reports about fuel policies.
+service FuelPolicyReportingService {
+  // Generates a fuel policy.
+  rpc GenerateFuelPolicyReport(GenerateFuelPolicyReportRequest) returns (GenerateFuelPolicyReportResponse);
+
+  // Returns a fuel policy.
+  rpc FetchFuelPolicyReport(FetchFuelPolicyReportRequest) returns (FetchFuelPolicyReportResponse);
+
+  // Schedules a fuel policy.
+  rpc ScheduleFuelPolicyReport(ScheduleFuelPolicyReportRequest) returns (ScheduleFuelPolicyReportResponse);
+
+  // Streams the changes of fuel policies as they happen.
+  rpc StreamFuelPolicyMetrics(StreamFuelPolicyMetricsRequest) returns (stream StreamFuelPolicyMetricsResponse);
+
+  // Lists fuel policies a page at a time.
+  rpc ListFuelPolicyReports(ListFuelPolicyReportsRequest) returns (ListFuelPolicyReportsResponse);
+
+  // Shares a fuel policy.
+  rpc ShareFuelPolicyReport(ShareFuelPolicyReportRequest) returns (ShareFuelPolicyReportResponse);
+
+  // Counts fuel policies by status.
+  rpc CountFuelPolicyTotals(CountFuelPolicyTotalsRequest) returns (CountFuelPolicyTotalsResponse);
+
+  // Deletes a fuel policy.
+  rpc DeleteFuelPolicyReport(DeleteFuelPolicyReportRequest) returns (DeleteFuelPolicyReportResponse);
+}
+
+// The request of `GenerateFuelPolicyReport`.
+message GenerateFuelPolicyReportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  GenerateFuelPolicyReportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `GenerateFuelPolicyReport`.
+message GenerateFuelPolicyReportResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `FetchFuelPolicyReport`.
+message FetchFuelPolicyReportRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `FetchFuelPolicyReport`.
+message FetchFuelPolicyReportResponse {
+  FuelPolicy fuel_policy = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleFuelPolicyReport`.
+message ScheduleFuelPolicyReportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  ScheduleFuelPolicyReportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ScheduleFuelPolicyReport`.
+message ScheduleFuelPolicyReportResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `StreamFuelPolicyMetrics`.
+message StreamFuelPolicyMetricsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelPolicyStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  StreamFuelPolicyMetricsRequest.Filter filter = 2;
+  google.protobuf.Timestamp since = 3;
+  int32 max_events = 4;
+  acme.common.v1.ContactInfo subscriber = 5;
+}
+
+// The response of `StreamFuelPolicyMetrics`.
+message StreamFuelPolicyMetricsResponse {
+  FuelPolicy fuel_policy = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ListFuelPolicyReports`.
+message ListFuelPolicyReportsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelPolicyStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListFuelPolicyReportsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListFuelPolicyReports`.
+message ListFuelPolicyReportsResponse {
+  repeated FuelPolicy fuel_policies = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ShareFuelPolicyReport`.
+message ShareFuelPolicyReportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    acme.common.v1.ContactInfo recipient = 1;
+    string template_id = 2;
+    map<string, string> variables = 3;
+    google.protobuf.Any payload = 4;
+    string channel = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  ShareFuelPolicyReportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ShareFuelPolicyReport`.
+message ShareFuelPolicyReportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ShareFuelPolicyReportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountFuelPolicyTotals`.
+message CountFuelPolicyTotalsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelPolicyStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountFuelPolicyTotalsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountFuelPolicyTotals`.
+message CountFuelPolicyTotalsResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DeleteFuelPolicyReport`.
+message DeleteFuelPolicyReportRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  string reason = 3;
+  string etag = 4;
+  bool force = 5;
+}
+
+// The response of `DeleteFuelPolicyReport`.
+message DeleteFuelPolicyReportResponse {
+  acme.common.v1.OperationResult result = 1;
+  google.protobuf.Timestamp effective_at = 2;
+}

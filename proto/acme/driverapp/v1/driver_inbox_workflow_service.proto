@@ -1,0 +1,296 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverInboxWorkflowServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// Runs the long-lived workflow that takes a driver inbox from start to finish.
+service DriverInboxWorkflowService {
+  // Starts a driver inbox.
+  rpc StartDriverInboxWorkflow(StartDriverInboxWorkflowRequest) returns (StartDriverInboxWorkflowResponse);
+
+  // Advances a driver inbox.
+  rpc AdvanceDriverInboxWorkflow(AdvanceDriverInboxWorkflowRequest) returns (AdvanceDriverInboxWorkflowResponse);
+
+  // Cancels a driver inbox.
+  rpc CancelDriverInboxWorkflow(CancelDriverInboxWorkflowRequest) returns (CancelDriverInboxWorkflowResponse);
+
+  // Retrys a driver inbox.
+  rpc RetryDriverInboxWorkflow(RetryDriverInboxWorkflowRequest) returns (RetryDriverInboxWorkflowResponse);
+
+  // Resumes a driver inbox.
+  rpc ResumeDriverInboxWorkflow(ResumeDriverInboxWorkflowRequest) returns (ResumeDriverInboxWorkflowResponse);
+
+  // Returns a driver inbox.
+  rpc InspectDriverInboxWorkflow(InspectDriverInboxWorkflowRequest) returns (InspectDriverInboxWorkflowResponse);
+
+  // Lists driver inboxes a page at a time.
+  rpc ListDriverInboxWorkflows(ListDriverInboxWorkflowsRequest) returns (ListDriverInboxWorkflowsResponse);
+
+  // Signals a driver inbox.
+  rpc SignalDriverInboxWorkflow(SignalDriverInboxWorkflowRequest) returns (SignalDriverInboxWorkflowResponse);
+}
+
+// The request of `StartDriverInboxWorkflow`.
+message StartDriverInboxWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  StartDriverInboxWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartDriverInboxWorkflow`.
+message StartDriverInboxWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  StartDriverInboxWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceDriverInboxWorkflow`.
+message AdvanceDriverInboxWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  AdvanceDriverInboxWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceDriverInboxWorkflow`.
+message AdvanceDriverInboxWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  AdvanceDriverInboxWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelDriverInboxWorkflow`.
+message CancelDriverInboxWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  CancelDriverInboxWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelDriverInboxWorkflow`.
+message CancelDriverInboxWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  CancelDriverInboxWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryDriverInboxWorkflow`.
+message RetryDriverInboxWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  RetryDriverInboxWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryDriverInboxWorkflow`.
+message RetryDriverInboxWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  RetryDriverInboxWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeDriverInboxWorkflow`.
+message ResumeDriverInboxWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  ResumeDriverInboxWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeDriverInboxWorkflow`.
+message ResumeDriverInboxWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  ResumeDriverInboxWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectDriverInboxWorkflow`.
+message InspectDriverInboxWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectDriverInboxWorkflow`.
+message InspectDriverInboxWorkflowResponse {
+  DriverInbox driver_inbox = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListDriverInboxWorkflows`.
+message ListDriverInboxWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDriverInboxWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDriverInboxWorkflows`.
+message ListDriverInboxWorkflowsResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalDriverInboxWorkflow`.
+message SignalDriverInboxWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  SignalDriverInboxWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalDriverInboxWorkflow`.
+message SignalDriverInboxWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  SignalDriverInboxWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

@@ -1,0 +1,317 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "DockWorkflowServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Runs the long-lived workflow that takes a dock from start to finish.
+service DockWorkflowService {
+  // Starts a dock.
+  rpc StartDockWorkflow(StartDockWorkflowRequest) returns (StartDockWorkflowResponse);
+
+  // Advances a dock.
+  rpc AdvanceDockWorkflow(AdvanceDockWorkflowRequest) returns (AdvanceDockWorkflowResponse);
+
+  // Cancels a dock.
+  rpc CancelDockWorkflow(CancelDockWorkflowRequest) returns (CancelDockWorkflowResponse);
+
+  // Retrys a dock.
+  rpc RetryDockWorkflow(RetryDockWorkflowRequest) returns (RetryDockWorkflowResponse);
+
+  // Pauses a dock.
+  rpc PauseDockWorkflow(PauseDockWorkflowRequest) returns (PauseDockWorkflowResponse);
+
+  // Resumes a dock.
+  rpc ResumeDockWorkflow(ResumeDockWorkflowRequest) returns (ResumeDockWorkflowResponse);
+
+  // Lists docks a page at a time.
+  rpc ListDockWorkflows(ListDockWorkflowsRequest) returns (ListDockWorkflowsResponse);
+
+  // Signals a dock.
+  rpc SignalDockWorkflow(SignalDockWorkflowRequest) returns (SignalDockWorkflowResponse);
+}
+
+// The request of `StartDockWorkflow`.
+message StartDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  StartDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartDockWorkflow`.
+message StartDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  StartDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceDockWorkflow`.
+message AdvanceDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  AdvanceDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceDockWorkflow`.
+message AdvanceDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  AdvanceDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelDockWorkflow`.
+message CancelDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  CancelDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelDockWorkflow`.
+message CancelDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  CancelDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryDockWorkflow`.
+message RetryDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  RetryDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryDockWorkflow`.
+message RetryDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  RetryDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseDockWorkflow`.
+message PauseDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  PauseDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseDockWorkflow`.
+message PauseDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  PauseDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeDockWorkflow`.
+message ResumeDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ResumeDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeDockWorkflow`.
+message ResumeDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ResumeDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListDockWorkflows`.
+message ListDockWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DockStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDockWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDockWorkflows`.
+message ListDockWorkflowsResponse {
+  repeated Dock docks = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalDockWorkflow`.
+message SignalDockWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  SignalDockWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalDockWorkflow`.
+message SignalDockWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  SignalDockWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

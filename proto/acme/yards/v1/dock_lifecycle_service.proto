@@ -1,0 +1,294 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "DockLifecycleServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Moves a dock between the states of its lifecycle.
+service DockLifecycleService {
+  // Activates a dock.
+  rpc ActivateDock(ActivateDockRequest) returns (ActivateDockResponse);
+
+  // Suspends a dock.
+  rpc SuspendDock(SuspendDockRequest) returns (SuspendDockResponse);
+
+  // Reinstates a dock.
+  rpc ReinstateDock(ReinstateDockRequest) returns (ReinstateDockResponse);
+
+  // Terminates a dock.
+  rpc TerminateDock(TerminateDockRequest) returns (TerminateDockResponse);
+
+  // Renews a dock.
+  rpc RenewDock(RenewDockRequest) returns (RenewDockResponse);
+
+  // Expires a dock.
+  rpc ExpireDock(ExpireDockRequest) returns (ExpireDockResponse);
+
+  // Returns a dock.
+  rpc GetDockLifecycle(GetDockLifecycleRequest) returns (GetDockLifecycleResponse);
+
+  // Schedules a dock.
+  rpc ScheduleDockExpiry(ScheduleDockExpiryRequest) returns (ScheduleDockExpiryResponse);
+}
+
+// The request of `ActivateDock`.
+message ActivateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  ActivateDockRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateDock`.
+message ActivateDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ActivateDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendDock`.
+message SuspendDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  SuspendDockRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendDock`.
+message SuspendDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  SuspendDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateDock`.
+message ReinstateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  ReinstateDockRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateDock`.
+message ReinstateDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ReinstateDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TerminateDock`.
+message TerminateDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  TerminateDockRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TerminateDock`.
+message TerminateDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  TerminateDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RenewDock`.
+message RenewDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  RenewDockRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `RenewDock`.
+message RenewDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  RenewDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExpireDock`.
+message ExpireDockRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  ExpireDockRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ExpireDock`.
+message ExpireDockResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ExpireDockResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDockLifecycle`.
+message GetDockLifecycleRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDockLifecycle`.
+message GetDockLifecycleResponse {
+  Dock dock = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleDockExpiry`.
+message ScheduleDockExpiryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dock_id = 2;
+  Dock dock = 3;
+  ScheduleDockExpiryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScheduleDockExpiry`.
+message ScheduleDockExpiryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Dock dock = 1;
+  ScheduleDockExpiryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

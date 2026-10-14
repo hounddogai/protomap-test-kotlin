@@ -1,0 +1,229 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "GeoFenceWorkflowServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Runs the long-lived workflow that takes a geo fence from start to finish.
+service GeoFenceWorkflowService {
+  // Starts a geo fence.
+  rpc StartGeoFenceWorkflow(StartGeoFenceWorkflowRequest) returns (StartGeoFenceWorkflowResponse);
+
+  // Advances a geo fence.
+  rpc AdvanceGeoFenceWorkflow(AdvanceGeoFenceWorkflowRequest) returns (AdvanceGeoFenceWorkflowResponse);
+
+  // Cancels a geo fence.
+  rpc CancelGeoFenceWorkflow(CancelGeoFenceWorkflowRequest) returns (CancelGeoFenceWorkflowResponse);
+
+  // Retrys a geo fence.
+  rpc RetryGeoFenceWorkflow(RetryGeoFenceWorkflowRequest) returns (RetryGeoFenceWorkflowResponse);
+
+  // Returns a geo fence.
+  rpc InspectGeoFenceWorkflow(InspectGeoFenceWorkflowRequest) returns (InspectGeoFenceWorkflowResponse);
+
+  // Signals a geo fence.
+  rpc SignalGeoFenceWorkflow(SignalGeoFenceWorkflowRequest) returns (SignalGeoFenceWorkflowResponse);
+}
+
+// The request of `StartGeoFenceWorkflow`.
+message StartGeoFenceWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  StartGeoFenceWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartGeoFenceWorkflow`.
+message StartGeoFenceWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  StartGeoFenceWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceGeoFenceWorkflow`.
+message AdvanceGeoFenceWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  AdvanceGeoFenceWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceGeoFenceWorkflow`.
+message AdvanceGeoFenceWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  AdvanceGeoFenceWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelGeoFenceWorkflow`.
+message CancelGeoFenceWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  CancelGeoFenceWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelGeoFenceWorkflow`.
+message CancelGeoFenceWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  CancelGeoFenceWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryGeoFenceWorkflow`.
+message RetryGeoFenceWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  RetryGeoFenceWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryGeoFenceWorkflow`.
+message RetryGeoFenceWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  RetryGeoFenceWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectGeoFenceWorkflow`.
+message InspectGeoFenceWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectGeoFenceWorkflow`.
+message InspectGeoFenceWorkflowResponse {
+  GeoFence geo_fence = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `SignalGeoFenceWorkflow`.
+message SignalGeoFenceWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  SignalGeoFenceWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalGeoFenceWorkflow`.
+message SignalGeoFenceWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  SignalGeoFenceWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

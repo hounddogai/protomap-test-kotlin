@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.yards.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/yards/v1/yards.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Yards.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/yards/v1;yardsv1";
+option java_multiple_files = true;
+option java_outer_classname = "YardWorkflowServiceProto";
+option java_package = "com.acme.yards.v1";
+
+// Runs the long-lived workflow that takes a yard from start to finish.
+service YardWorkflowService {
+  // Starts a yard.
+  rpc StartYardWorkflow(StartYardWorkflowRequest) returns (StartYardWorkflowResponse);
+
+  // Advances a yard.
+  rpc AdvanceYardWorkflow(AdvanceYardWorkflowRequest) returns (AdvanceYardWorkflowResponse);
+
+  // Cancels a yard.
+  rpc CancelYardWorkflow(CancelYardWorkflowRequest) returns (CancelYardWorkflowResponse);
+
+  // Retrys a yard.
+  rpc RetryYardWorkflow(RetryYardWorkflowRequest) returns (RetryYardWorkflowResponse);
+
+  // Pauses a yard.
+  rpc PauseYardWorkflow(PauseYardWorkflowRequest) returns (PauseYardWorkflowResponse);
+
+  // Resumes a yard.
+  rpc ResumeYardWorkflow(ResumeYardWorkflowRequest) returns (ResumeYardWorkflowResponse);
+
+  // Returns a yard.
+  rpc InspectYardWorkflow(InspectYardWorkflowRequest) returns (InspectYardWorkflowResponse);
+
+  // Lists yards a page at a time.
+  rpc ListYardWorkflows(ListYardWorkflowsRequest) returns (ListYardWorkflowsResponse);
+
+  // Signals a yard.
+  rpc SignalYardWorkflow(SignalYardWorkflowRequest) returns (SignalYardWorkflowResponse);
+}
+
+// The request of `StartYardWorkflow`.
+message StartYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  StartYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartYardWorkflow`.
+message StartYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  StartYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceYardWorkflow`.
+message AdvanceYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  AdvanceYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceYardWorkflow`.
+message AdvanceYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  AdvanceYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelYardWorkflow`.
+message CancelYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  CancelYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelYardWorkflow`.
+message CancelYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  CancelYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryYardWorkflow`.
+message RetryYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  RetryYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryYardWorkflow`.
+message RetryYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  RetryYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseYardWorkflow`.
+message PauseYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  PauseYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseYardWorkflow`.
+message PauseYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  PauseYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeYardWorkflow`.
+message ResumeYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  ResumeYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeYardWorkflow`.
+message ResumeYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  ResumeYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectYardWorkflow`.
+message InspectYardWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectYardWorkflow`.
+message InspectYardWorkflowResponse {
+  Yard yard = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListYardWorkflows`.
+message ListYardWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated YardStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListYardWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListYardWorkflows`.
+message ListYardWorkflowsResponse {
+  repeated Yard yards = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalYardWorkflow`.
+message SignalYardWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string yard_id = 2;
+  Yard yard = 3;
+  SignalYardWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalYardWorkflow`.
+message SignalYardWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Yard yard = 1;
+  SignalYardWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

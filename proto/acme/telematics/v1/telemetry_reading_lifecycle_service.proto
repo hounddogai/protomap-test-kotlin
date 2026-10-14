@@ -1,0 +1,258 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TelemetryReadingLifecycleServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Moves a telemetry reading between the states of its lifecycle.
+service TelemetryReadingLifecycleService {
+  // Activates a telemetry reading.
+  rpc ActivateTelemetryReading(ActivateTelemetryReadingRequest) returns (ActivateTelemetryReadingResponse);
+
+  // Suspends a telemetry reading.
+  rpc SuspendTelemetryReading(SuspendTelemetryReadingRequest) returns (SuspendTelemetryReadingResponse);
+
+  // Reinstates a telemetry reading.
+  rpc ReinstateTelemetryReading(ReinstateTelemetryReadingRequest) returns (ReinstateTelemetryReadingResponse);
+
+  // Terminates a telemetry reading.
+  rpc TerminateTelemetryReading(TerminateTelemetryReadingRequest) returns (TerminateTelemetryReadingResponse);
+
+  // Renews a telemetry reading.
+  rpc RenewTelemetryReading(RenewTelemetryReadingRequest) returns (RenewTelemetryReadingResponse);
+
+  // Returns a telemetry reading.
+  rpc GetTelemetryReadingLifecycle(GetTelemetryReadingLifecycleRequest) returns (GetTelemetryReadingLifecycleResponse);
+
+  // Schedules a telemetry reading.
+  rpc ScheduleTelemetryReadingExpiry(ScheduleTelemetryReadingExpiryRequest) returns (ScheduleTelemetryReadingExpiryResponse);
+}
+
+// The request of `ActivateTelemetryReading`.
+message ActivateTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  ActivateTelemetryReadingRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateTelemetryReading`.
+message ActivateTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ActivateTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendTelemetryReading`.
+message SuspendTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  SuspendTelemetryReadingRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendTelemetryReading`.
+message SuspendTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  SuspendTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateTelemetryReading`.
+message ReinstateTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  ReinstateTelemetryReadingRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateTelemetryReading`.
+message ReinstateTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ReinstateTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TerminateTelemetryReading`.
+message TerminateTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TerminateTelemetryReadingRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TerminateTelemetryReading`.
+message TerminateTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  TerminateTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RenewTelemetryReading`.
+message RenewTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  RenewTelemetryReadingRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `RenewTelemetryReading`.
+message RenewTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  RenewTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetTelemetryReadingLifecycle`.
+message GetTelemetryReadingLifecycleRequest {
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTelemetryReadingLifecycle`.
+message GetTelemetryReadingLifecycleResponse {
+  TelemetryReading telemetry_reading = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleTelemetryReadingExpiry`.
+message ScheduleTelemetryReadingExpiryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  ScheduleTelemetryReadingExpiryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScheduleTelemetryReadingExpiry`.
+message ScheduleTelemetryReadingExpiryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ScheduleTelemetryReadingExpiryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

@@ -1,0 +1,267 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelTransactionSyncServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Keeps fuel transactions in step with the systems of record in other regions.
+service FuelTransactionSyncService {
+  // Syncs a fuel transaction.
+  rpc SyncFuelTransactions(SyncFuelTransactionsRequest) returns (SyncFuelTransactionsResponse);
+
+  // Pushs a fuel transaction.
+  rpc PushFuelTransaction(PushFuelTransactionRequest) returns (PushFuelTransactionResponse);
+
+  // Pulls a fuel transaction.
+  rpc PullFuelTransactions(PullFuelTransactionsRequest) returns (PullFuelTransactionsResponse);
+
+  // Reconciles a fuel transaction.
+  rpc ReconcileFuelTransactions(ReconcileFuelTransactionsRequest) returns (ReconcileFuelTransactionsResponse);
+
+  // Exchanges changes of fuel transactions with a peer.
+  rpc StreamFuelTransactionChanges(stream StreamFuelTransactionChangesRequest) returns (stream StreamFuelTransactionChangesResponse);
+
+  // Resolves a fuel transaction.
+  rpc ResolveFuelTransactionConflict(ResolveFuelTransactionConflictRequest) returns (ResolveFuelTransactionConflictResponse);
+
+  // Lists fuel transactions a page at a time.
+  rpc ListFuelTransactionConflicts(ListFuelTransactionConflictsRequest) returns (ListFuelTransactionConflictsResponse);
+}
+
+// The request of `SyncFuelTransactions`.
+message SyncFuelTransactionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  SyncFuelTransactionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SyncFuelTransactions`.
+message SyncFuelTransactionsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  SyncFuelTransactionsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PushFuelTransaction`.
+message PushFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  PushFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PushFuelTransaction`.
+message PushFuelTransactionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  PushFuelTransactionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PullFuelTransactions`.
+message PullFuelTransactionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  PullFuelTransactionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PullFuelTransactions`.
+message PullFuelTransactionsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  PullFuelTransactionsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReconcileFuelTransactions`.
+message ReconcileFuelTransactionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ReconcileFuelTransactionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ReconcileFuelTransactions`.
+message ReconcileFuelTransactionsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ReconcileFuelTransactionsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `StreamFuelTransactionChanges`.
+message StreamFuelTransactionChangesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    FuelTransaction change = 2;
+    StreamFuelTransactionChangesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `StreamFuelTransactionChanges`.
+message StreamFuelTransactionChangesResponse {
+  FuelTransaction fuel_transaction = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ResolveFuelTransactionConflict`.
+message ResolveFuelTransactionConflictRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string cursor = 1;
+    bytes payload = 2;
+    string resolution = 3;
+    string peer_region = 4;
+    string checksum = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ResolveFuelTransactionConflictRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResolveFuelTransactionConflict`.
+message ResolveFuelTransactionConflictResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ResolveFuelTransactionConflictResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListFuelTransactionConflicts`.
+message ListFuelTransactionConflictsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelTransactionStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListFuelTransactionConflictsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListFuelTransactionConflicts`.
+message ListFuelTransactionConflictsResponse {
+  repeated FuelTransaction fuel_transactions = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
