@@ -1,0 +1,214 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverInboxQueryServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// Answers read-only questions about driver inboxes, for screens and reports.
+service DriverInboxQueryService {
+  // Returns a driver inbox.
+  rpc LookupDriverInbox(LookupDriverInboxRequest) returns (LookupDriverInboxResponse);
+
+  // Lists driver inboxes a page at a time.
+  rpc BrowseDriverInboxes(BrowseDriverInboxesRequest) returns (BrowseDriverInboxesResponse);
+
+  // Lists driver inboxes a page at a time.
+  rpc FindDriverInboxes(FindDriverInboxesRequest) returns (FindDriverInboxesResponse);
+
+  // Counts driver inboxes by status.
+  rpc CountDriverInboxes(CountDriverInboxesRequest) returns (CountDriverInboxesResponse);
+
+  // Returns several driver inboxes at once.
+  rpc ResolveDriverInboxes(ResolveDriverInboxesRequest) returns (ResolveDriverInboxesResponse);
+
+  // Summarizes a driver inbox.
+  rpc SummarizeDriverInboxes(SummarizeDriverInboxesRequest) returns (SummarizeDriverInboxesResponse);
+
+  // Lists driver inboxes a page at a time.
+  rpc SuggestDriverInboxes(SuggestDriverInboxesRequest) returns (SuggestDriverInboxesResponse);
+
+  // Returns a driver inbox.
+  rpc PeekDriverInbox(PeekDriverInboxRequest) returns (PeekDriverInboxResponse);
+}
+
+// The request of `LookupDriverInbox`.
+message LookupDriverInboxRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `LookupDriverInbox`.
+message LookupDriverInboxResponse {
+  DriverInbox driver_inbox = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `BrowseDriverInboxes`.
+message BrowseDriverInboxesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  BrowseDriverInboxesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `BrowseDriverInboxes`.
+message BrowseDriverInboxesResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `FindDriverInboxes`.
+message FindDriverInboxesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  FindDriverInboxesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `FindDriverInboxes`.
+message FindDriverInboxesResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountDriverInboxes`.
+message CountDriverInboxesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountDriverInboxesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountDriverInboxes`.
+message CountDriverInboxesResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResolveDriverInboxes`.
+message ResolveDriverInboxesRequest {
+  acme.common.v1.RequestContext context = 1;
+  repeated string driver_inbox_ids = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `ResolveDriverInboxes`.
+message ResolveDriverInboxesResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SummarizeDriverInboxes`.
+message SummarizeDriverInboxesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  SummarizeDriverInboxesRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SummarizeDriverInboxes`.
+message SummarizeDriverInboxesResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `SuggestDriverInboxes`.
+message SuggestDriverInboxesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  SuggestDriverInboxesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `SuggestDriverInboxes`.
+message SuggestDriverInboxesResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PeekDriverInbox`.
+message PeekDriverInboxRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `PeekDriverInbox`.
+message PeekDriverInboxResponse {
+  DriverInbox driver_inbox = 1;
+  acme.common.v1.OperationResult result = 2;
+}

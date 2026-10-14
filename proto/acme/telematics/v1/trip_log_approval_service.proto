@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TripLogApprovalServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Routes trip logs through approval, with escalation and delegation.
+service TripLogApprovalService {
+  // Submits a trip log.
+  rpc SubmitTripLog(SubmitTripLogRequest) returns (SubmitTripLogResponse);
+
+  // Approves a trip log.
+  rpc ApproveTripLog(ApproveTripLogRequest) returns (ApproveTripLogResponse);
+
+  // Rejects a trip log.
+  rpc RejectTripLog(RejectTripLogRequest) returns (RejectTripLogResponse);
+
+  // Escalates a trip log.
+  rpc EscalateTripLog(EscalateTripLogRequest) returns (EscalateTripLogResponse);
+
+  // Lists trip logs a page at a time.
+  rpc ListPendingTripLogs(ListPendingTripLogsRequest) returns (ListPendingTripLogsResponse);
+
+  // Delegates a trip log.
+  rpc DelegateTripLogApproval(DelegateTripLogApprovalRequest) returns (DelegateTripLogApprovalResponse);
+
+  // Recalls a trip log.
+  rpc RecallTripLog(RecallTripLogRequest) returns (RecallTripLogResponse);
+
+  // Returns a trip log.
+  rpc GetTripLogApprovalStatus(GetTripLogApprovalStatusRequest) returns (GetTripLogApprovalStatusResponse);
+
+  // Comments a trip log.
+  rpc CommentTripLogApproval(CommentTripLogApprovalRequest) returns (CommentTripLogApprovalResponse);
+}
+
+// The request of `SubmitTripLog`.
+message SubmitTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  SubmitTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitTripLog`.
+message SubmitTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  SubmitTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveTripLog`.
+message ApproveTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  ApproveTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveTripLog`.
+message ApproveTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ApproveTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectTripLog`.
+message RejectTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  RejectTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectTripLog`.
+message RejectTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  RejectTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateTripLog`.
+message EscalateTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  EscalateTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateTripLog`.
+message EscalateTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  EscalateTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingTripLogs`.
+message ListPendingTripLogsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TripLogStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingTripLogsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingTripLogs`.
+message ListPendingTripLogsResponse {
+  repeated TripLog trip_logs = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateTripLogApproval`.
+message DelegateTripLogApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  DelegateTripLogApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateTripLogApproval`.
+message DelegateTripLogApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  DelegateTripLogApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallTripLog`.
+message RecallTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  RecallTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallTripLog`.
+message RecallTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  RecallTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetTripLogApprovalStatus`.
+message GetTripLogApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTripLogApprovalStatus`.
+message GetTripLogApprovalStatusResponse {
+  TripLog trip_log = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentTripLogApproval`.
+message CommentTripLogApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  CommentTripLogApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentTripLogApproval`.
+message CommentTripLogApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  CommentTripLogApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

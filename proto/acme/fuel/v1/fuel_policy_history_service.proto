@@ -1,0 +1,232 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelPolicyHistoryServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Keeps every version of a fuel policy and restores earlier ones.
+service FuelPolicyHistoryService {
+  // Records a fuel policy.
+  rpc RecordFuelPolicyVersion(RecordFuelPolicyVersionRequest) returns (RecordFuelPolicyVersionResponse);
+
+  // Lists fuel policies a page at a time.
+  rpc ListFuelPolicyVersions(ListFuelPolicyVersionsRequest) returns (ListFuelPolicyVersionsResponse);
+
+  // Returns a fuel policy.
+  rpc GetFuelPolicyVersion(GetFuelPolicyVersionRequest) returns (GetFuelPolicyVersionResponse);
+
+  // Compares a fuel policy.
+  rpc CompareFuelPolicyVersions(CompareFuelPolicyVersionsRequest) returns (CompareFuelPolicyVersionsResponse);
+
+  // Reverts a fuel policy.
+  rpc RevertFuelPolicy(RevertFuelPolicyRequest) returns (RevertFuelPolicyResponse);
+
+  // Annotates a fuel policy.
+  rpc AnnotateFuelPolicyVersion(AnnotateFuelPolicyVersionRequest) returns (AnnotateFuelPolicyVersionResponse);
+
+  // Deletes a fuel policy.
+  rpc PruneFuelPolicyVersions(PruneFuelPolicyVersionsRequest) returns (PruneFuelPolicyVersionsResponse);
+}
+
+// The request of `RecordFuelPolicyVersion`.
+message RecordFuelPolicyVersionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    int64 version = 1;
+    int64 other_version = 2;
+    bytes snapshot = 3;
+    string author_email = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  RecordFuelPolicyVersionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecordFuelPolicyVersion`.
+message RecordFuelPolicyVersionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  RecordFuelPolicyVersionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListFuelPolicyVersions`.
+message ListFuelPolicyVersionsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelPolicyStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListFuelPolicyVersionsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListFuelPolicyVersions`.
+message ListFuelPolicyVersionsResponse {
+  repeated FuelPolicy fuel_policies = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelPolicyVersion`.
+message GetFuelPolicyVersionRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelPolicyVersion`.
+message GetFuelPolicyVersionResponse {
+  FuelPolicy fuel_policy = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CompareFuelPolicyVersions`.
+message CompareFuelPolicyVersionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    int64 version = 1;
+    int64 other_version = 2;
+    bytes snapshot = 3;
+    string author_email = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  CompareFuelPolicyVersionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareFuelPolicyVersions`.
+message CompareFuelPolicyVersionsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  CompareFuelPolicyVersionsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RevertFuelPolicy`.
+message RevertFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    int64 version = 1;
+    int64 other_version = 2;
+    bytes snapshot = 3;
+    string author_email = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  RevertFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RevertFuelPolicy`.
+message RevertFuelPolicyResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  RevertFuelPolicyResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AnnotateFuelPolicyVersion`.
+message AnnotateFuelPolicyVersionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    int64 version = 1;
+    int64 other_version = 2;
+    bytes snapshot = 3;
+    string author_email = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  AnnotateFuelPolicyVersionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AnnotateFuelPolicyVersion`.
+message AnnotateFuelPolicyVersionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  AnnotateFuelPolicyVersionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PruneFuelPolicyVersions`.
+message PruneFuelPolicyVersionsRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  string reason = 3;
+  string etag = 4;
+  bool force = 5;
+}
+
+// The response of `PruneFuelPolicyVersions`.
+message PruneFuelPolicyVersionsResponse {
+  acme.common.v1.OperationResult result = 1;
+  google.protobuf.Timestamp effective_at = 2;
+}

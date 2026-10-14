@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.drivers.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/drivers/v1/drivers.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Drivers.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/drivers/v1;driversv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverLicenseApprovalServiceProto";
+option java_package = "com.acme.drivers.v1";
+
+// Routes driver licenses through approval, with escalation and delegation.
+service DriverLicenseApprovalService {
+  // Submits a driver license.
+  rpc SubmitDriverLicense(SubmitDriverLicenseRequest) returns (SubmitDriverLicenseResponse);
+
+  // Approves a driver license.
+  rpc ApproveDriverLicense(ApproveDriverLicenseRequest) returns (ApproveDriverLicenseResponse);
+
+  // Rejects a driver license.
+  rpc RejectDriverLicense(RejectDriverLicenseRequest) returns (RejectDriverLicenseResponse);
+
+  // Escalates a driver license.
+  rpc EscalateDriverLicense(EscalateDriverLicenseRequest) returns (EscalateDriverLicenseResponse);
+
+  // Lists driver licenses a page at a time.
+  rpc ListPendingDriverLicenses(ListPendingDriverLicensesRequest) returns (ListPendingDriverLicensesResponse);
+
+  // Delegates a driver license.
+  rpc DelegateDriverLicenseApproval(DelegateDriverLicenseApprovalRequest) returns (DelegateDriverLicenseApprovalResponse);
+
+  // Recalls a driver license.
+  rpc RecallDriverLicense(RecallDriverLicenseRequest) returns (RecallDriverLicenseResponse);
+
+  // Returns a driver license.
+  rpc GetDriverLicenseApprovalStatus(GetDriverLicenseApprovalStatusRequest) returns (GetDriverLicenseApprovalStatusResponse);
+
+  // Comments a driver license.
+  rpc CommentDriverLicenseApproval(CommentDriverLicenseApprovalRequest) returns (CommentDriverLicenseApprovalResponse);
+}
+
+// The request of `SubmitDriverLicense`.
+message SubmitDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  SubmitDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDriverLicense`.
+message SubmitDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  SubmitDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDriverLicense`.
+message ApproveDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  ApproveDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDriverLicense`.
+message ApproveDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  ApproveDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDriverLicense`.
+message RejectDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  RejectDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDriverLicense`.
+message RejectDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  RejectDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateDriverLicense`.
+message EscalateDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  EscalateDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateDriverLicense`.
+message EscalateDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  EscalateDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingDriverLicenses`.
+message ListPendingDriverLicensesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverLicenseStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingDriverLicensesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingDriverLicenses`.
+message ListPendingDriverLicensesResponse {
+  repeated DriverLicense driver_licenses = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDriverLicenseApproval`.
+message DelegateDriverLicenseApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  DelegateDriverLicenseApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDriverLicenseApproval`.
+message DelegateDriverLicenseApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  DelegateDriverLicenseApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallDriverLicense`.
+message RecallDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  RecallDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallDriverLicense`.
+message RecallDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  RecallDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDriverLicenseApprovalStatus`.
+message GetDriverLicenseApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDriverLicenseApprovalStatus`.
+message GetDriverLicenseApprovalStatusResponse {
+  DriverLicense driver_license = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentDriverLicenseApproval`.
+message CommentDriverLicenseApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  CommentDriverLicenseApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentDriverLicenseApproval`.
+message CommentDriverLicenseApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  CommentDriverLicenseApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

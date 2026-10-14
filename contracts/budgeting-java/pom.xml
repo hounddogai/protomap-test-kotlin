@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.acme.transport</groupId>
+    <artifactId>transport-platform</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>api-budgeting-java</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-stub</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-protobuf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.acme.transport</groupId>
+      <artifactId>api-common-java</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.acme.transport</groupId>
+      <artifactId>api-identity-java</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.acme.transport</groupId>
+      <artifactId>api-suppliers-java</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.github.ascopes</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <configuration>
+          <protoc kind="binary-maven"><version>${protobuf.version}</version></protoc>
+          <sourceDirectories><sourceDirectory>${project.basedir}/../../proto</sourceDirectory></sourceDirectories>
+          <includes>
+            <include>acme/budgeting/v1/budget_calculation_service.proto</include>
+            <include>acme/budgeting/v1/budget_service.proto</include>
+            <include>acme/budgeting/v1/budgeting.proto</include>
+            <include>acme/budgeting/v1/refs.proto</include>
+          </includes>
+          <javaEnabled>true</javaEnabled>
+          <kotlinEnabled>false</kotlinEnabled>
+          <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+          <incrementalCompilation>true</incrementalCompilation>
+          <plugins>
+            <plugin kind="binary-maven">
+              <groupId>io.grpc</groupId>
+              <artifactId>protoc-gen-grpc-java</artifactId>
+              <version>${grpc.version}</version>
+            </plugin>
+          </plugins>
+        </configuration>
+        <executions><execution><goals><goal>generate</goal></goals></execution></executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration><fork>true</fork><meminitial>128m</meminitial><maxmem>1536m</maxmem></configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

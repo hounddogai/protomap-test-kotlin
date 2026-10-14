@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverInboxApprovalServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// Routes driver inboxes through approval, with escalation and delegation.
+service DriverInboxApprovalService {
+  // Submits a driver inbox.
+  rpc SubmitDriverInbox(SubmitDriverInboxRequest) returns (SubmitDriverInboxResponse);
+
+  // Approves a driver inbox.
+  rpc ApproveDriverInbox(ApproveDriverInboxRequest) returns (ApproveDriverInboxResponse);
+
+  // Rejects a driver inbox.
+  rpc RejectDriverInbox(RejectDriverInboxRequest) returns (RejectDriverInboxResponse);
+
+  // Escalates a driver inbox.
+  rpc EscalateDriverInbox(EscalateDriverInboxRequest) returns (EscalateDriverInboxResponse);
+
+  // Lists driver inboxes a page at a time.
+  rpc ListPendingDriverInboxes(ListPendingDriverInboxesRequest) returns (ListPendingDriverInboxesResponse);
+
+  // Delegates a driver inbox.
+  rpc DelegateDriverInboxApproval(DelegateDriverInboxApprovalRequest) returns (DelegateDriverInboxApprovalResponse);
+
+  // Recalls a driver inbox.
+  rpc RecallDriverInbox(RecallDriverInboxRequest) returns (RecallDriverInboxResponse);
+
+  // Returns a driver inbox.
+  rpc GetDriverInboxApprovalStatus(GetDriverInboxApprovalStatusRequest) returns (GetDriverInboxApprovalStatusResponse);
+
+  // Comments a driver inbox.
+  rpc CommentDriverInboxApproval(CommentDriverInboxApprovalRequest) returns (CommentDriverInboxApprovalResponse);
+}
+
+// The request of `SubmitDriverInbox`.
+message SubmitDriverInboxRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  SubmitDriverInboxRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDriverInbox`.
+message SubmitDriverInboxResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  SubmitDriverInboxResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDriverInbox`.
+message ApproveDriverInboxRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  ApproveDriverInboxRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDriverInbox`.
+message ApproveDriverInboxResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  ApproveDriverInboxResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDriverInbox`.
+message RejectDriverInboxRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  RejectDriverInboxRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDriverInbox`.
+message RejectDriverInboxResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  RejectDriverInboxResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateDriverInbox`.
+message EscalateDriverInboxRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  EscalateDriverInboxRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateDriverInbox`.
+message EscalateDriverInboxResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  EscalateDriverInboxResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingDriverInboxes`.
+message ListPendingDriverInboxesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverInboxStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingDriverInboxesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingDriverInboxes`.
+message ListPendingDriverInboxesResponse {
+  repeated DriverInbox driver_inboxes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDriverInboxApproval`.
+message DelegateDriverInboxApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  DelegateDriverInboxApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDriverInboxApproval`.
+message DelegateDriverInboxApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  DelegateDriverInboxApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallDriverInbox`.
+message RecallDriverInboxRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  RecallDriverInboxRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallDriverInbox`.
+message RecallDriverInboxResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  RecallDriverInboxResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDriverInboxApprovalStatus`.
+message GetDriverInboxApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDriverInboxApprovalStatus`.
+message GetDriverInboxApprovalStatusResponse {
+  DriverInbox driver_inbox = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentDriverInboxApproval`.
+message CommentDriverInboxApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_inbox_id = 2;
+  DriverInbox driver_inbox = 3;
+  CommentDriverInboxApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentDriverInboxApproval`.
+message CommentDriverInboxApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverInbox driver_inbox = 1;
+  CommentDriverInboxApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

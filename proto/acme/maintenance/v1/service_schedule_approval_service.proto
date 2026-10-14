@@ -1,0 +1,295 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceScheduleApprovalServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Routes service schedules through approval, with escalation and delegation.
+service ServiceScheduleApprovalService {
+  // Submits a service schedule.
+  rpc SubmitServiceSchedule(SubmitServiceScheduleRequest) returns (SubmitServiceScheduleResponse);
+
+  // Approves a service schedule.
+  rpc ApproveServiceSchedule(ApproveServiceScheduleRequest) returns (ApproveServiceScheduleResponse);
+
+  // Escalates a service schedule.
+  rpc EscalateServiceSchedule(EscalateServiceScheduleRequest) returns (EscalateServiceScheduleResponse);
+
+  // Lists service schedules a page at a time.
+  rpc ListPendingServiceSchedules(ListPendingServiceSchedulesRequest) returns (ListPendingServiceSchedulesResponse);
+
+  // Delegates a service schedule.
+  rpc DelegateServiceScheduleApproval(DelegateServiceScheduleApprovalRequest) returns (DelegateServiceScheduleApprovalResponse);
+
+  // Recalls a service schedule.
+  rpc RecallServiceSchedule(RecallServiceScheduleRequest) returns (RecallServiceScheduleResponse);
+
+  // Returns a service schedule.
+  rpc GetServiceScheduleApprovalStatus(GetServiceScheduleApprovalStatusRequest) returns (GetServiceScheduleApprovalStatusResponse);
+
+  // Comments a service schedule.
+  rpc CommentServiceScheduleApproval(CommentServiceScheduleApprovalRequest) returns (CommentServiceScheduleApprovalResponse);
+}
+
+// The request of `SubmitServiceSchedule`.
+message SubmitServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  SubmitServiceScheduleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitServiceSchedule`.
+message SubmitServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  SubmitServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveServiceSchedule`.
+message ApproveServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  ApproveServiceScheduleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveServiceSchedule`.
+message ApproveServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  ApproveServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateServiceSchedule`.
+message EscalateServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  EscalateServiceScheduleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateServiceSchedule`.
+message EscalateServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  EscalateServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingServiceSchedules`.
+message ListPendingServiceSchedulesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ServiceScheduleStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingServiceSchedulesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingServiceSchedules`.
+message ListPendingServiceSchedulesResponse {
+  repeated ServiceSchedule service_schedules = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateServiceScheduleApproval`.
+message DelegateServiceScheduleApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  DelegateServiceScheduleApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateServiceScheduleApproval`.
+message DelegateServiceScheduleApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  DelegateServiceScheduleApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallServiceSchedule`.
+message RecallServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  RecallServiceScheduleRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallServiceSchedule`.
+message RecallServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  RecallServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetServiceScheduleApprovalStatus`.
+message GetServiceScheduleApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetServiceScheduleApprovalStatus`.
+message GetServiceScheduleApprovalStatusResponse {
+  ServiceSchedule service_schedule = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentServiceScheduleApproval`.
+message CommentServiceScheduleApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  CommentServiceScheduleApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentServiceScheduleApproval`.
+message CommentServiceScheduleApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  CommentServiceScheduleApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

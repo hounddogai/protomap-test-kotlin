@@ -1,0 +1,249 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "GeoFenceApprovalServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Routes geo fences through approval, with escalation and delegation.
+service GeoFenceApprovalService {
+  // Submits a geo fence.
+  rpc SubmitGeoFence(SubmitGeoFenceRequest) returns (SubmitGeoFenceResponse);
+
+  // Approves a geo fence.
+  rpc ApproveGeoFence(ApproveGeoFenceRequest) returns (ApproveGeoFenceResponse);
+
+  // Rejects a geo fence.
+  rpc RejectGeoFence(RejectGeoFenceRequest) returns (RejectGeoFenceResponse);
+
+  // Delegates a geo fence.
+  rpc DelegateGeoFenceApproval(DelegateGeoFenceApprovalRequest) returns (DelegateGeoFenceApprovalResponse);
+
+  // Recalls a geo fence.
+  rpc RecallGeoFence(RecallGeoFenceRequest) returns (RecallGeoFenceResponse);
+
+  // Comments a geo fence.
+  rpc CommentGeoFenceApproval(CommentGeoFenceApprovalRequest) returns (CommentGeoFenceApprovalResponse);
+}
+
+// The request of `SubmitGeoFence`.
+message SubmitGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  SubmitGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitGeoFence`.
+message SubmitGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  SubmitGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveGeoFence`.
+message ApproveGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  ApproveGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveGeoFence`.
+message ApproveGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  ApproveGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectGeoFence`.
+message RejectGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  RejectGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectGeoFence`.
+message RejectGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  RejectGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateGeoFenceApproval`.
+message DelegateGeoFenceApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  DelegateGeoFenceApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateGeoFenceApproval`.
+message DelegateGeoFenceApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  DelegateGeoFenceApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallGeoFence`.
+message RecallGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  RecallGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallGeoFence`.
+message RecallGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  RecallGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CommentGeoFenceApproval`.
+message CommentGeoFenceApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  CommentGeoFenceApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentGeoFenceApproval`.
+message CommentGeoFenceApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  CommentGeoFenceApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

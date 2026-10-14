@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.drivers.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/drivers/v1/drivers.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Drivers.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/drivers/v1;driversv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverLicenseValidationServiceProto";
+option java_package = "com.acme.drivers.v1";
+
+// Checks driver licenses against the rules before anything acts on them.
+service DriverLicenseValidationService {
+  // Validates a driver license.
+  rpc ValidateDriverLicense(ValidateDriverLicenseRequest) returns (ValidateDriverLicenseResponse);
+
+  // Previews a driver license.
+  rpc PreviewDriverLicense(PreviewDriverLicenseRequest) returns (PreviewDriverLicenseResponse);
+
+  // Checks a driver license.
+  rpc CheckDriverLicenseEligibility(CheckDriverLicenseEligibilityRequest) returns (CheckDriverLicenseEligibilityResponse);
+
+  // Normalizes a driver license.
+  rpc NormalizeDriverLicense(NormalizeDriverLicenseRequest) returns (NormalizeDriverLicenseResponse);
+
+  // Explains a driver license.
+  rpc ExplainDriverLicenseDecision(ExplainDriverLicenseDecisionRequest) returns (ExplainDriverLicenseDecisionResponse);
+
+  // Scores a driver license.
+  rpc ScoreDriverLicense(ScoreDriverLicenseRequest) returns (ScoreDriverLicenseResponse);
+
+  // Lints a driver license.
+  rpc LintDriverLicenses(LintDriverLicensesRequest) returns (LintDriverLicensesResponse);
+
+  // Returns a driver license.
+  rpc GetDriverLicenseRules(GetDriverLicenseRulesRequest) returns (GetDriverLicenseRulesResponse);
+}
+
+// The request of `ValidateDriverLicense`.
+message ValidateDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  ValidateDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateDriverLicense`.
+message ValidateDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  ValidateDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewDriverLicense`.
+message PreviewDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  PreviewDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewDriverLicense`.
+message PreviewDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  PreviewDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckDriverLicenseEligibility`.
+message CheckDriverLicenseEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  CheckDriverLicenseEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckDriverLicenseEligibility`.
+message CheckDriverLicenseEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  CheckDriverLicenseEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeDriverLicense`.
+message NormalizeDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  NormalizeDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeDriverLicense`.
+message NormalizeDriverLicenseResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  NormalizeDriverLicenseResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainDriverLicenseDecision`.
+message ExplainDriverLicenseDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  ExplainDriverLicenseDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainDriverLicenseDecision`.
+message ExplainDriverLicenseDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  ExplainDriverLicenseDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreDriverLicense`.
+message ScoreDriverLicenseRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  ScoreDriverLicenseRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreDriverLicense`.
+message ScoreDriverLicenseResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreDriverLicenseResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DriverLicense driver_license = 1;
+  ScoreDriverLicenseResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintDriverLicenses`.
+message LintDriverLicensesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  DriverLicense driver_license = 3;
+  LintDriverLicensesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintDriverLicenses`.
+message LintDriverLicensesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverLicense driver_license = 1;
+  LintDriverLicensesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDriverLicenseRules`.
+message GetDriverLicenseRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_license_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDriverLicenseRules`.
+message GetDriverLicenseRulesResponse {
+  DriverLicense driver_license = 1;
+  acme.common.v1.OperationResult result = 2;
+}

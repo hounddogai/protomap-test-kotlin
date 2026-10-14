@@ -1,0 +1,258 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceScheduleLifecycleServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Moves a service schedule between the states of its lifecycle.
+service ServiceScheduleLifecycleService {
+  // Activates a service schedule.
+  rpc ActivateServiceSchedule(ActivateServiceScheduleRequest) returns (ActivateServiceScheduleResponse);
+
+  // Suspends a service schedule.
+  rpc SuspendServiceSchedule(SuspendServiceScheduleRequest) returns (SuspendServiceScheduleResponse);
+
+  // Reinstates a service schedule.
+  rpc ReinstateServiceSchedule(ReinstateServiceScheduleRequest) returns (ReinstateServiceScheduleResponse);
+
+  // Terminates a service schedule.
+  rpc TerminateServiceSchedule(TerminateServiceScheduleRequest) returns (TerminateServiceScheduleResponse);
+
+  // Renews a service schedule.
+  rpc RenewServiceSchedule(RenewServiceScheduleRequest) returns (RenewServiceScheduleResponse);
+
+  // Returns a service schedule.
+  rpc GetServiceScheduleLifecycle(GetServiceScheduleLifecycleRequest) returns (GetServiceScheduleLifecycleResponse);
+
+  // Schedules a service schedule.
+  rpc ScheduleServiceScheduleExpiry(ScheduleServiceScheduleExpiryRequest) returns (ScheduleServiceScheduleExpiryResponse);
+}
+
+// The request of `ActivateServiceSchedule`.
+message ActivateServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ActivateServiceScheduleRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateServiceSchedule`.
+message ActivateServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  ActivateServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendServiceSchedule`.
+message SuspendServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  SuspendServiceScheduleRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendServiceSchedule`.
+message SuspendServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  SuspendServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateServiceSchedule`.
+message ReinstateServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ReinstateServiceScheduleRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateServiceSchedule`.
+message ReinstateServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  ReinstateServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TerminateServiceSchedule`.
+message TerminateServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  TerminateServiceScheduleRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TerminateServiceSchedule`.
+message TerminateServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  TerminateServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RenewServiceSchedule`.
+message RenewServiceScheduleRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  RenewServiceScheduleRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `RenewServiceSchedule`.
+message RenewServiceScheduleResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  RenewServiceScheduleResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetServiceScheduleLifecycle`.
+message GetServiceScheduleLifecycleRequest {
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetServiceScheduleLifecycle`.
+message GetServiceScheduleLifecycleResponse {
+  ServiceSchedule service_schedule = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleServiceScheduleExpiry`.
+message ScheduleServiceScheduleExpiryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string service_schedule_id = 2;
+  ServiceSchedule service_schedule = 3;
+  ScheduleServiceScheduleExpiryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScheduleServiceScheduleExpiry`.
+message ScheduleServiceScheduleExpiryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ServiceSchedule service_schedule = 1;
+  ScheduleServiceScheduleExpiryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

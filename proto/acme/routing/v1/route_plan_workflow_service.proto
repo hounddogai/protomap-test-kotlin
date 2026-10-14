@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "RoutePlanWorkflowServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Runs the long-lived workflow that takes a route plan from start to finish.
+service RoutePlanWorkflowService {
+  // Starts a route plan.
+  rpc StartRoutePlanWorkflow(StartRoutePlanWorkflowRequest) returns (StartRoutePlanWorkflowResponse);
+
+  // Advances a route plan.
+  rpc AdvanceRoutePlanWorkflow(AdvanceRoutePlanWorkflowRequest) returns (AdvanceRoutePlanWorkflowResponse);
+
+  // Cancels a route plan.
+  rpc CancelRoutePlanWorkflow(CancelRoutePlanWorkflowRequest) returns (CancelRoutePlanWorkflowResponse);
+
+  // Retrys a route plan.
+  rpc RetryRoutePlanWorkflow(RetryRoutePlanWorkflowRequest) returns (RetryRoutePlanWorkflowResponse);
+
+  // Pauses a route plan.
+  rpc PauseRoutePlanWorkflow(PauseRoutePlanWorkflowRequest) returns (PauseRoutePlanWorkflowResponse);
+
+  // Resumes a route plan.
+  rpc ResumeRoutePlanWorkflow(ResumeRoutePlanWorkflowRequest) returns (ResumeRoutePlanWorkflowResponse);
+
+  // Returns a route plan.
+  rpc InspectRoutePlanWorkflow(InspectRoutePlanWorkflowRequest) returns (InspectRoutePlanWorkflowResponse);
+
+  // Lists route plans a page at a time.
+  rpc ListRoutePlanWorkflows(ListRoutePlanWorkflowsRequest) returns (ListRoutePlanWorkflowsResponse);
+
+  // Signals a route plan.
+  rpc SignalRoutePlanWorkflow(SignalRoutePlanWorkflowRequest) returns (SignalRoutePlanWorkflowResponse);
+}
+
+// The request of `StartRoutePlanWorkflow`.
+message StartRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  StartRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartRoutePlanWorkflow`.
+message StartRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  StartRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceRoutePlanWorkflow`.
+message AdvanceRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  AdvanceRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceRoutePlanWorkflow`.
+message AdvanceRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  AdvanceRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelRoutePlanWorkflow`.
+message CancelRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  CancelRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelRoutePlanWorkflow`.
+message CancelRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  CancelRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryRoutePlanWorkflow`.
+message RetryRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  RetryRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryRoutePlanWorkflow`.
+message RetryRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  RetryRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseRoutePlanWorkflow`.
+message PauseRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  PauseRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseRoutePlanWorkflow`.
+message PauseRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  PauseRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeRoutePlanWorkflow`.
+message ResumeRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  ResumeRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeRoutePlanWorkflow`.
+message ResumeRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  ResumeRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectRoutePlanWorkflow`.
+message InspectRoutePlanWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectRoutePlanWorkflow`.
+message InspectRoutePlanWorkflowResponse {
+  RoutePlan route_plan = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListRoutePlanWorkflows`.
+message ListRoutePlanWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated RoutePlanStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListRoutePlanWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListRoutePlanWorkflows`.
+message ListRoutePlanWorkflowsResponse {
+  repeated RoutePlan route_plans = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalRoutePlanWorkflow`.
+message SignalRoutePlanWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_plan_id = 2;
+  RoutePlan route_plan = 3;
+  SignalRoutePlanWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalRoutePlanWorkflow`.
+message SignalRoutePlanWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  RoutePlan route_plan = 1;
+  SignalRoutePlanWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

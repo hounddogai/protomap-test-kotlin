@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TelemetryReadingApprovalServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Routes telemetry readings through approval, with escalation and delegation.
+service TelemetryReadingApprovalService {
+  // Submits a telemetry reading.
+  rpc SubmitTelemetryReading(SubmitTelemetryReadingRequest) returns (SubmitTelemetryReadingResponse);
+
+  // Approves a telemetry reading.
+  rpc ApproveTelemetryReading(ApproveTelemetryReadingRequest) returns (ApproveTelemetryReadingResponse);
+
+  // Rejects a telemetry reading.
+  rpc RejectTelemetryReading(RejectTelemetryReadingRequest) returns (RejectTelemetryReadingResponse);
+
+  // Escalates a telemetry reading.
+  rpc EscalateTelemetryReading(EscalateTelemetryReadingRequest) returns (EscalateTelemetryReadingResponse);
+
+  // Lists telemetry readings a page at a time.
+  rpc ListPendingTelemetryReadings(ListPendingTelemetryReadingsRequest) returns (ListPendingTelemetryReadingsResponse);
+
+  // Delegates a telemetry reading.
+  rpc DelegateTelemetryReadingApproval(DelegateTelemetryReadingApprovalRequest) returns (DelegateTelemetryReadingApprovalResponse);
+
+  // Recalls a telemetry reading.
+  rpc RecallTelemetryReading(RecallTelemetryReadingRequest) returns (RecallTelemetryReadingResponse);
+
+  // Returns a telemetry reading.
+  rpc GetTelemetryReadingApprovalStatus(GetTelemetryReadingApprovalStatusRequest) returns (GetTelemetryReadingApprovalStatusResponse);
+
+  // Comments a telemetry reading.
+  rpc CommentTelemetryReadingApproval(CommentTelemetryReadingApprovalRequest) returns (CommentTelemetryReadingApprovalResponse);
+}
+
+// The request of `SubmitTelemetryReading`.
+message SubmitTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  SubmitTelemetryReadingRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitTelemetryReading`.
+message SubmitTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  SubmitTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveTelemetryReading`.
+message ApproveTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  ApproveTelemetryReadingRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveTelemetryReading`.
+message ApproveTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ApproveTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectTelemetryReading`.
+message RejectTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  RejectTelemetryReadingRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectTelemetryReading`.
+message RejectTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  RejectTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateTelemetryReading`.
+message EscalateTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  EscalateTelemetryReadingRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateTelemetryReading`.
+message EscalateTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  EscalateTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingTelemetryReadings`.
+message ListPendingTelemetryReadingsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TelemetryReadingStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingTelemetryReadingsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingTelemetryReadings`.
+message ListPendingTelemetryReadingsResponse {
+  repeated TelemetryReading telemetry_readings = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateTelemetryReadingApproval`.
+message DelegateTelemetryReadingApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  DelegateTelemetryReadingApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateTelemetryReadingApproval`.
+message DelegateTelemetryReadingApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  DelegateTelemetryReadingApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallTelemetryReading`.
+message RecallTelemetryReadingRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  RecallTelemetryReadingRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallTelemetryReading`.
+message RecallTelemetryReadingResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  RecallTelemetryReadingResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetTelemetryReadingApprovalStatus`.
+message GetTelemetryReadingApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTelemetryReadingApprovalStatus`.
+message GetTelemetryReadingApprovalStatusResponse {
+  TelemetryReading telemetry_reading = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentTelemetryReadingApproval`.
+message CommentTelemetryReadingApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  TelemetryReading telemetry_reading = 3;
+  CommentTelemetryReadingApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentTelemetryReadingApproval`.
+message CommentTelemetryReadingApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  CommentTelemetryReadingApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

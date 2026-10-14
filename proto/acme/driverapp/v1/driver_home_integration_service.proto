@@ -1,0 +1,263 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverHomeIntegrationServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// Connects external systems that send driver home events.
+service DriverHomeIntegrationService {
+  // Connects a driver home.
+  rpc ConnectDriverHomeSource(ConnectDriverHomeSourceRequest) returns (ConnectDriverHomeSourceResponse);
+
+  // Disconnects a driver home.
+  rpc DisconnectDriverHomeSource(DisconnectDriverHomeSourceRequest) returns (DisconnectDriverHomeSourceResponse);
+
+  // Takes a stream of driver homes and answers once at the end.
+  rpc IngestDriverHomeEvents(stream IngestDriverHomeEventsRequest) returns (IngestDriverHomeEventsResponse);
+
+  // Acknowledges a driver home.
+  rpc AcknowledgeDriverHomeEvent(AcknowledgeDriverHomeEventRequest) returns (AcknowledgeDriverHomeEventResponse);
+
+  // Exchanges changes of driver homes with a peer.
+  rpc RelayDriverHomeMessages(stream RelayDriverHomeMessagesRequest) returns (stream RelayDriverHomeMessagesResponse);
+
+  // Lists driver homes a page at a time.
+  rpc ListDriverHomeSources(ListDriverHomeSourcesRequest) returns (ListDriverHomeSourcesResponse);
+
+  // Tests a driver home.
+  rpc TestDriverHomeConnection(TestDriverHomeConnectionRequest) returns (TestDriverHomeConnectionResponse);
+}
+
+// The request of `ConnectDriverHomeSource`.
+message ConnectDriverHomeSourceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  ConnectDriverHomeSourceRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ConnectDriverHomeSource`.
+message ConnectDriverHomeSourceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  ConnectDriverHomeSourceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DisconnectDriverHomeSource`.
+message DisconnectDriverHomeSourceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DisconnectDriverHomeSourceRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `DisconnectDriverHomeSource`.
+message DisconnectDriverHomeSourceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  DisconnectDriverHomeSourceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `IngestDriverHomeEvents`.
+message IngestDriverHomeEventsRequest {
+  // What a stream of records starts with.
+  message StreamHeader {
+    string source = 1;
+    string format = 2;
+    int64 total_records = 3;
+    acme.common.v1.ContactInfo submitted_by = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof chunk {
+    IngestDriverHomeEventsRequest.StreamHeader header = 2;
+    DriverHome record = 3;
+  }
+  int64 sequence = 4;
+}
+
+// The response of `IngestDriverHomeEvents`.
+message IngestDriverHomeEventsResponse {
+  // A record the import turned down.
+  message Rejection {
+    int64 sequence = 1;
+    string reason = 2;
+    string driver_home_id = 3;
+  }
+
+  int64 accepted = 1;
+  int64 rejected = 2;
+  repeated IngestDriverHomeEventsResponse.Rejection rejections = 3;
+  acme.common.v1.OperationResult result = 4;
+}
+
+// The request of `AcknowledgeDriverHomeEvent`.
+message AcknowledgeDriverHomeEventRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  AcknowledgeDriverHomeEventRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `AcknowledgeDriverHomeEvent`.
+message AcknowledgeDriverHomeEventResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  AcknowledgeDriverHomeEventResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RelayDriverHomeMessages`.
+message RelayDriverHomeMessagesRequest {
+  // An acknowledgment of a change the peer sent.
+  message ChangeAck {
+    int64 sequence = 1;
+    string status = 2;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof frame {
+    DriverHome change = 2;
+    RelayDriverHomeMessagesRequest.ChangeAck ack = 3;
+  }
+  string cursor = 4;
+}
+
+// The response of `RelayDriverHomeMessages`.
+message RelayDriverHomeMessagesResponse {
+  DriverHome driver_home = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ListDriverHomeSources`.
+message ListDriverHomeSourcesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverHomeStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDriverHomeSourcesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDriverHomeSources`.
+message ListDriverHomeSourcesResponse {
+  repeated DriverHome driver_homes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `TestDriverHomeConnection`.
+message TestDriverHomeConnectionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string endpoint = 1;
+    google.protobuf.Any envelope = 2;
+    string message_id = 3;
+    string source_system = 4;
+    google.protobuf.Timestamp received_at = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  TestDriverHomeConnectionRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `TestDriverHomeConnection`.
+message TestDriverHomeConnectionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  TestDriverHomeConnectionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

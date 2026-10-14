@@ -1,0 +1,268 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelPolicyValidationServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Checks fuel policies against the rules before anything acts on them.
+service FuelPolicyValidationService {
+  // Validates a fuel policy.
+  rpc ValidateFuelPolicy(ValidateFuelPolicyRequest) returns (ValidateFuelPolicyResponse);
+
+  // Previews a fuel policy.
+  rpc PreviewFuelPolicy(PreviewFuelPolicyRequest) returns (PreviewFuelPolicyResponse);
+
+  // Normalizes a fuel policy.
+  rpc NormalizeFuelPolicy(NormalizeFuelPolicyRequest) returns (NormalizeFuelPolicyResponse);
+
+  // Explains a fuel policy.
+  rpc ExplainFuelPolicyDecision(ExplainFuelPolicyDecisionRequest) returns (ExplainFuelPolicyDecisionResponse);
+
+  // Scores a fuel policy.
+  rpc ScoreFuelPolicy(ScoreFuelPolicyRequest) returns (ScoreFuelPolicyResponse);
+
+  // Lints a fuel policy.
+  rpc LintFuelPolicies(LintFuelPoliciesRequest) returns (LintFuelPoliciesResponse);
+
+  // Returns a fuel policy.
+  rpc GetFuelPolicyRules(GetFuelPolicyRulesRequest) returns (GetFuelPolicyRulesResponse);
+}
+
+// The request of `ValidateFuelPolicy`.
+message ValidateFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  ValidateFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateFuelPolicy`.
+message ValidateFuelPolicyResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ValidateFuelPolicyResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewFuelPolicy`.
+message PreviewFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  PreviewFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewFuelPolicy`.
+message PreviewFuelPolicyResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  PreviewFuelPolicyResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeFuelPolicy`.
+message NormalizeFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  NormalizeFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeFuelPolicy`.
+message NormalizeFuelPolicyResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  NormalizeFuelPolicyResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainFuelPolicyDecision`.
+message ExplainFuelPolicyDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  ExplainFuelPolicyDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainFuelPolicyDecision`.
+message ExplainFuelPolicyDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ExplainFuelPolicyDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreFuelPolicy`.
+message ScoreFuelPolicyRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  ScoreFuelPolicyRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreFuelPolicy`.
+message ScoreFuelPolicyResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreFuelPolicyResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  ScoreFuelPolicyResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintFuelPolicies`.
+message LintFuelPoliciesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  LintFuelPoliciesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintFuelPolicies`.
+message LintFuelPoliciesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  LintFuelPoliciesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelPolicyRules`.
+message GetFuelPolicyRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelPolicyRules`.
+message GetFuelPolicyRulesResponse {
+  FuelPolicy fuel_policy = 1;
+  acme.common.v1.OperationResult result = 2;
+}

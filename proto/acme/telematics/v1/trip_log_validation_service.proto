@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TripLogValidationServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Checks trip logs against the rules before anything acts on them.
+service TripLogValidationService {
+  // Validates a trip log.
+  rpc ValidateTripLog(ValidateTripLogRequest) returns (ValidateTripLogResponse);
+
+  // Previews a trip log.
+  rpc PreviewTripLog(PreviewTripLogRequest) returns (PreviewTripLogResponse);
+
+  // Checks a trip log.
+  rpc CheckTripLogEligibility(CheckTripLogEligibilityRequest) returns (CheckTripLogEligibilityResponse);
+
+  // Normalizes a trip log.
+  rpc NormalizeTripLog(NormalizeTripLogRequest) returns (NormalizeTripLogResponse);
+
+  // Explains a trip log.
+  rpc ExplainTripLogDecision(ExplainTripLogDecisionRequest) returns (ExplainTripLogDecisionResponse);
+
+  // Scores a trip log.
+  rpc ScoreTripLog(ScoreTripLogRequest) returns (ScoreTripLogResponse);
+
+  // Lints a trip log.
+  rpc LintTripLogs(LintTripLogsRequest) returns (LintTripLogsResponse);
+
+  // Returns a trip log.
+  rpc GetTripLogRules(GetTripLogRulesRequest) returns (GetTripLogRulesResponse);
+}
+
+// The request of `ValidateTripLog`.
+message ValidateTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  ValidateTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateTripLog`.
+message ValidateTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ValidateTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewTripLog`.
+message PreviewTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  PreviewTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewTripLog`.
+message PreviewTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  PreviewTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckTripLogEligibility`.
+message CheckTripLogEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  CheckTripLogEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckTripLogEligibility`.
+message CheckTripLogEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  CheckTripLogEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeTripLog`.
+message NormalizeTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  NormalizeTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeTripLog`.
+message NormalizeTripLogResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  NormalizeTripLogResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainTripLogDecision`.
+message ExplainTripLogDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  ExplainTripLogDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainTripLogDecision`.
+message ExplainTripLogDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  ExplainTripLogDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreTripLog`.
+message ScoreTripLogRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  ScoreTripLogRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreTripLog`.
+message ScoreTripLogResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreTripLogResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  TripLog trip_log = 1;
+  ScoreTripLogResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintTripLogs`.
+message LintTripLogsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  TripLog trip_log = 3;
+  LintTripLogsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintTripLogs`.
+message LintTripLogsResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TripLog trip_log = 1;
+  LintTripLogsResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetTripLogRules`.
+message GetTripLogRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string trip_log_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetTripLogRules`.
+message GetTripLogRulesResponse {
+  TripLog trip_log = 1;
+  acme.common.v1.OperationResult result = 2;
+}

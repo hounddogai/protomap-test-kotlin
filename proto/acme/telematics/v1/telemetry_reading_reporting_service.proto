@@ -1,0 +1,243 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/audit.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TelemetryReadingReportingServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Builds and schedules reports about telemetry readings.
+service TelemetryReadingReportingService {
+  // Generates a telemetry reading.
+  rpc GenerateTelemetryReadingReport(GenerateTelemetryReadingReportRequest) returns (GenerateTelemetryReadingReportResponse);
+
+  // Returns a telemetry reading.
+  rpc FetchTelemetryReadingReport(FetchTelemetryReadingReportRequest) returns (FetchTelemetryReadingReportResponse);
+
+  // Schedules a telemetry reading.
+  rpc ScheduleTelemetryReadingReport(ScheduleTelemetryReadingReportRequest) returns (ScheduleTelemetryReadingReportResponse);
+
+  // Streams the changes of telemetry readings as they happen.
+  rpc StreamTelemetryReadingMetrics(StreamTelemetryReadingMetricsRequest) returns (stream StreamTelemetryReadingMetricsResponse);
+
+  // Lists telemetry readings a page at a time.
+  rpc ListTelemetryReadingReports(ListTelemetryReadingReportsRequest) returns (ListTelemetryReadingReportsResponse);
+
+  // Shares a telemetry reading.
+  rpc ShareTelemetryReadingReport(ShareTelemetryReadingReportRequest) returns (ShareTelemetryReadingReportResponse);
+
+  // Counts telemetry readings by status.
+  rpc CountTelemetryReadingTotals(CountTelemetryReadingTotalsRequest) returns (CountTelemetryReadingTotalsResponse);
+
+  // Deletes a telemetry reading.
+  rpc DeleteTelemetryReadingReport(DeleteTelemetryReadingReportRequest) returns (DeleteTelemetryReadingReportResponse);
+}
+
+// The request of `GenerateTelemetryReadingReport`.
+message GenerateTelemetryReadingReportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  GenerateTelemetryReadingReportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `GenerateTelemetryReadingReport`.
+message GenerateTelemetryReadingReportResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `FetchTelemetryReadingReport`.
+message FetchTelemetryReadingReportRequest {
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `FetchTelemetryReadingReport`.
+message FetchTelemetryReadingReportResponse {
+  TelemetryReading telemetry_reading = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleTelemetryReadingReport`.
+message ScheduleTelemetryReadingReportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string format = 1;
+    acme.common.v1.TimeWindow period = 2;
+    repeated string recipient_emails = 3;
+    string cron = 4;
+    map<string, string> filters = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  ScheduleTelemetryReadingReportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ScheduleTelemetryReadingReport`.
+message ScheduleTelemetryReadingReportResponse {
+  string report_id = 1;
+  string download_uri = 2;
+  map<string, string> summary = 3;
+  acme.common.v1.TimeWindow period = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `StreamTelemetryReadingMetrics`.
+message StreamTelemetryReadingMetricsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TelemetryReadingStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  StreamTelemetryReadingMetricsRequest.Filter filter = 2;
+  google.protobuf.Timestamp since = 3;
+  int32 max_events = 4;
+  acme.common.v1.ContactInfo subscriber = 5;
+}
+
+// The response of `StreamTelemetryReadingMetrics`.
+message StreamTelemetryReadingMetricsResponse {
+  TelemetryReading telemetry_reading = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `ListTelemetryReadingReports`.
+message ListTelemetryReadingReportsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TelemetryReadingStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListTelemetryReadingReportsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListTelemetryReadingReports`.
+message ListTelemetryReadingReportsResponse {
+  repeated TelemetryReading telemetry_readings = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ShareTelemetryReadingReport`.
+message ShareTelemetryReadingReportRequest {
+  // What the operation needs besides the record.
+  message Details {
+    acme.common.v1.ContactInfo recipient = 1;
+    string template_id = 2;
+    map<string, string> variables = 3;
+    google.protobuf.Any payload = 4;
+    string channel = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  ShareTelemetryReadingReportRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ShareTelemetryReadingReport`.
+message ShareTelemetryReadingReportResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  TelemetryReading telemetry_reading = 1;
+  ShareTelemetryReadingReportResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CountTelemetryReadingTotals`.
+message CountTelemetryReadingTotalsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated TelemetryReadingStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  CountTelemetryReadingTotalsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `CountTelemetryReadingTotals`.
+message CountTelemetryReadingTotalsResponse {
+  int64 count = 1;
+  map<string, int64> by_status = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DeleteTelemetryReadingReport`.
+message DeleteTelemetryReadingReportRequest {
+  acme.common.v1.RequestContext context = 1;
+  string telemetry_reading_id = 2;
+  string reason = 3;
+  string etag = 4;
+  bool force = 5;
+}
+
+// The response of `DeleteTelemetryReadingReport`.
+message DeleteTelemetryReadingReportResponse {
+  acme.common.v1.OperationResult result = 1;
+  google.protobuf.Timestamp effective_at = 2;
+}

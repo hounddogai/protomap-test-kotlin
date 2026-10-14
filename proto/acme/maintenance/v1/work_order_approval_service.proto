@@ -1,0 +1,295 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "WorkOrderApprovalServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Routes work orders through approval, with escalation and delegation.
+service WorkOrderApprovalService {
+  // Submits a work order.
+  rpc SubmitWorkOrder(SubmitWorkOrderRequest) returns (SubmitWorkOrderResponse);
+
+  // Approves a work order.
+  rpc ApproveWorkOrder(ApproveWorkOrderRequest) returns (ApproveWorkOrderResponse);
+
+  // Escalates a work order.
+  rpc EscalateWorkOrder(EscalateWorkOrderRequest) returns (EscalateWorkOrderResponse);
+
+  // Lists work orders a page at a time.
+  rpc ListPendingWorkOrders(ListPendingWorkOrdersRequest) returns (ListPendingWorkOrdersResponse);
+
+  // Delegates a work order.
+  rpc DelegateWorkOrderApproval(DelegateWorkOrderApprovalRequest) returns (DelegateWorkOrderApprovalResponse);
+
+  // Recalls a work order.
+  rpc RecallWorkOrder(RecallWorkOrderRequest) returns (RecallWorkOrderResponse);
+
+  // Returns a work order.
+  rpc GetWorkOrderApprovalStatus(GetWorkOrderApprovalStatusRequest) returns (GetWorkOrderApprovalStatusResponse);
+
+  // Comments a work order.
+  rpc CommentWorkOrderApproval(CommentWorkOrderApprovalRequest) returns (CommentWorkOrderApprovalResponse);
+}
+
+// The request of `SubmitWorkOrder`.
+message SubmitWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  SubmitWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitWorkOrder`.
+message SubmitWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  SubmitWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveWorkOrder`.
+message ApproveWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  ApproveWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveWorkOrder`.
+message ApproveWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ApproveWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateWorkOrder`.
+message EscalateWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  EscalateWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateWorkOrder`.
+message EscalateWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  EscalateWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingWorkOrders`.
+message ListPendingWorkOrdersRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated WorkOrderStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingWorkOrdersRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingWorkOrders`.
+message ListPendingWorkOrdersResponse {
+  repeated WorkOrder work_orders = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateWorkOrderApproval`.
+message DelegateWorkOrderApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  DelegateWorkOrderApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateWorkOrderApproval`.
+message DelegateWorkOrderApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  DelegateWorkOrderApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallWorkOrder`.
+message RecallWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  RecallWorkOrderRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallWorkOrder`.
+message RecallWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  RecallWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetWorkOrderApprovalStatus`.
+message GetWorkOrderApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetWorkOrderApprovalStatus`.
+message GetWorkOrderApprovalStatusResponse {
+  WorkOrder work_order = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentWorkOrderApproval`.
+message CommentWorkOrderApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  CommentWorkOrderApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentWorkOrderApproval`.
+message CommentWorkOrderApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  CommentWorkOrderApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

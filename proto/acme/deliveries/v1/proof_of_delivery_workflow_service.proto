@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.deliveries.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/deliveries/v1/deliveries.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Deliveries.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/deliveries/v1;deliveriesv1";
+option java_multiple_files = true;
+option java_outer_classname = "ProofOfDeliveryWorkflowServiceProto";
+option java_package = "com.acme.deliveries.v1";
+
+// Runs the long-lived workflow that takes a proof of delivery from start to finish.
+service ProofOfDeliveryWorkflowService {
+  // Starts a proof of delivery.
+  rpc StartProofOfDeliveryWorkflow(StartProofOfDeliveryWorkflowRequest) returns (StartProofOfDeliveryWorkflowResponse);
+
+  // Advances a proof of delivery.
+  rpc AdvanceProofOfDeliveryWorkflow(AdvanceProofOfDeliveryWorkflowRequest) returns (AdvanceProofOfDeliveryWorkflowResponse);
+
+  // Cancels a proof of delivery.
+  rpc CancelProofOfDeliveryWorkflow(CancelProofOfDeliveryWorkflowRequest) returns (CancelProofOfDeliveryWorkflowResponse);
+
+  // Retrys a proof of delivery.
+  rpc RetryProofOfDeliveryWorkflow(RetryProofOfDeliveryWorkflowRequest) returns (RetryProofOfDeliveryWorkflowResponse);
+
+  // Pauses a proof of delivery.
+  rpc PauseProofOfDeliveryWorkflow(PauseProofOfDeliveryWorkflowRequest) returns (PauseProofOfDeliveryWorkflowResponse);
+
+  // Resumes a proof of delivery.
+  rpc ResumeProofOfDeliveryWorkflow(ResumeProofOfDeliveryWorkflowRequest) returns (ResumeProofOfDeliveryWorkflowResponse);
+
+  // Returns a proof of delivery.
+  rpc InspectProofOfDeliveryWorkflow(InspectProofOfDeliveryWorkflowRequest) returns (InspectProofOfDeliveryWorkflowResponse);
+
+  // Lists proof of deliveries a page at a time.
+  rpc ListProofOfDeliveryWorkflows(ListProofOfDeliveryWorkflowsRequest) returns (ListProofOfDeliveryWorkflowsResponse);
+
+  // Signals a proof of delivery.
+  rpc SignalProofOfDeliveryWorkflow(SignalProofOfDeliveryWorkflowRequest) returns (SignalProofOfDeliveryWorkflowResponse);
+}
+
+// The request of `StartProofOfDeliveryWorkflow`.
+message StartProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  StartProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartProofOfDeliveryWorkflow`.
+message StartProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  StartProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceProofOfDeliveryWorkflow`.
+message AdvanceProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  AdvanceProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceProofOfDeliveryWorkflow`.
+message AdvanceProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  AdvanceProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelProofOfDeliveryWorkflow`.
+message CancelProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  CancelProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelProofOfDeliveryWorkflow`.
+message CancelProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  CancelProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryProofOfDeliveryWorkflow`.
+message RetryProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  RetryProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryProofOfDeliveryWorkflow`.
+message RetryProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  RetryProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseProofOfDeliveryWorkflow`.
+message PauseProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  PauseProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseProofOfDeliveryWorkflow`.
+message PauseProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  PauseProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeProofOfDeliveryWorkflow`.
+message ResumeProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  ResumeProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeProofOfDeliveryWorkflow`.
+message ResumeProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  ResumeProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectProofOfDeliveryWorkflow`.
+message InspectProofOfDeliveryWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectProofOfDeliveryWorkflow`.
+message InspectProofOfDeliveryWorkflowResponse {
+  ProofOfDelivery proof_of_delivery = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListProofOfDeliveryWorkflows`.
+message ListProofOfDeliveryWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated ProofOfDeliveryStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListProofOfDeliveryWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListProofOfDeliveryWorkflows`.
+message ListProofOfDeliveryWorkflowsResponse {
+  repeated ProofOfDelivery proof_of_deliveries = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalProofOfDeliveryWorkflow`.
+message SignalProofOfDeliveryWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string proof_of_delivery_id = 2;
+  ProofOfDelivery proof_of_delivery = 3;
+  SignalProofOfDeliveryWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalProofOfDeliveryWorkflow`.
+message SignalProofOfDeliveryWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  ProofOfDelivery proof_of_delivery = 1;
+  SignalProofOfDeliveryWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

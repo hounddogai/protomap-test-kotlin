@@ -1,0 +1,278 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.drivers.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/drivers/v1/drivers.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Drivers.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/drivers/v1;driversv1";
+option java_multiple_files = true;
+option java_outer_classname = "DutyStatusApprovalServiceProto";
+option java_package = "com.acme.drivers.v1";
+
+// Routes duty statuses through approval, with escalation and delegation.
+service DutyStatusApprovalService {
+  // Submits a duty status.
+  rpc SubmitDutyStatus(SubmitDutyStatusRequest) returns (SubmitDutyStatusResponse);
+
+  // Approves a duty status.
+  rpc ApproveDutyStatus(ApproveDutyStatusRequest) returns (ApproveDutyStatusResponse);
+
+  // Rejects a duty status.
+  rpc RejectDutyStatus(RejectDutyStatusRequest) returns (RejectDutyStatusResponse);
+
+  // Lists duty statuses a page at a time.
+  rpc ListPendingDutyStatuses(ListPendingDutyStatusesRequest) returns (ListPendingDutyStatusesResponse);
+
+  // Delegates a duty status.
+  rpc DelegateDutyStatusApproval(DelegateDutyStatusApprovalRequest) returns (DelegateDutyStatusApprovalResponse);
+
+  // Recalls a duty status.
+  rpc RecallDutyStatus(RecallDutyStatusRequest) returns (RecallDutyStatusResponse);
+
+  // Comments a duty status.
+  rpc CommentDutyStatusApproval(CommentDutyStatusApprovalRequest) returns (CommentDutyStatusApprovalResponse);
+}
+
+// The request of `SubmitDutyStatus`.
+message SubmitDutyStatusRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  SubmitDutyStatusRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDutyStatus`.
+message SubmitDutyStatusResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  SubmitDutyStatusResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDutyStatus`.
+message ApproveDutyStatusRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  ApproveDutyStatusRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDutyStatus`.
+message ApproveDutyStatusResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  ApproveDutyStatusResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDutyStatus`.
+message RejectDutyStatusRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  RejectDutyStatusRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDutyStatus`.
+message RejectDutyStatusResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  RejectDutyStatusResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingDutyStatuses`.
+message ListPendingDutyStatusesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DutyStatusStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingDutyStatusesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingDutyStatuses`.
+message ListPendingDutyStatusesResponse {
+  repeated DutyStatus duty_statuses = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDutyStatusApproval`.
+message DelegateDutyStatusApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  DelegateDutyStatusApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDutyStatusApproval`.
+message DelegateDutyStatusApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  DelegateDutyStatusApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallDutyStatus`.
+message RecallDutyStatusRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  RecallDutyStatusRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallDutyStatus`.
+message RecallDutyStatusResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  RecallDutyStatusResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CommentDutyStatusApproval`.
+message CommentDutyStatusApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string duty_status_id = 2;
+  DutyStatus duty_status = 3;
+  CommentDutyStatusApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentDutyStatusApproval`.
+message CommentDutyStatusApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DutyStatus duty_status = 1;
+  CommentDutyStatusApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

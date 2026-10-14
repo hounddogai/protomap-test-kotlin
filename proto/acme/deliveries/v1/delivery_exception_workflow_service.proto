@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.deliveries.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/deliveries/v1/deliveries.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Deliveries.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/deliveries/v1;deliveriesv1";
+option java_multiple_files = true;
+option java_outer_classname = "DeliveryExceptionWorkflowServiceProto";
+option java_package = "com.acme.deliveries.v1";
+
+// Runs the long-lived workflow that takes a delivery exception from start to finish.
+service DeliveryExceptionWorkflowService {
+  // Starts a delivery exception.
+  rpc StartDeliveryExceptionWorkflow(StartDeliveryExceptionWorkflowRequest) returns (StartDeliveryExceptionWorkflowResponse);
+
+  // Advances a delivery exception.
+  rpc AdvanceDeliveryExceptionWorkflow(AdvanceDeliveryExceptionWorkflowRequest) returns (AdvanceDeliveryExceptionWorkflowResponse);
+
+  // Cancels a delivery exception.
+  rpc CancelDeliveryExceptionWorkflow(CancelDeliveryExceptionWorkflowRequest) returns (CancelDeliveryExceptionWorkflowResponse);
+
+  // Retrys a delivery exception.
+  rpc RetryDeliveryExceptionWorkflow(RetryDeliveryExceptionWorkflowRequest) returns (RetryDeliveryExceptionWorkflowResponse);
+
+  // Pauses a delivery exception.
+  rpc PauseDeliveryExceptionWorkflow(PauseDeliveryExceptionWorkflowRequest) returns (PauseDeliveryExceptionWorkflowResponse);
+
+  // Resumes a delivery exception.
+  rpc ResumeDeliveryExceptionWorkflow(ResumeDeliveryExceptionWorkflowRequest) returns (ResumeDeliveryExceptionWorkflowResponse);
+
+  // Returns a delivery exception.
+  rpc InspectDeliveryExceptionWorkflow(InspectDeliveryExceptionWorkflowRequest) returns (InspectDeliveryExceptionWorkflowResponse);
+
+  // Lists delivery exceptions a page at a time.
+  rpc ListDeliveryExceptionWorkflows(ListDeliveryExceptionWorkflowsRequest) returns (ListDeliveryExceptionWorkflowsResponse);
+
+  // Signals a delivery exception.
+  rpc SignalDeliveryExceptionWorkflow(SignalDeliveryExceptionWorkflowRequest) returns (SignalDeliveryExceptionWorkflowResponse);
+}
+
+// The request of `StartDeliveryExceptionWorkflow`.
+message StartDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  StartDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartDeliveryExceptionWorkflow`.
+message StartDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  StartDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceDeliveryExceptionWorkflow`.
+message AdvanceDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  AdvanceDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceDeliveryExceptionWorkflow`.
+message AdvanceDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  AdvanceDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelDeliveryExceptionWorkflow`.
+message CancelDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  CancelDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelDeliveryExceptionWorkflow`.
+message CancelDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  CancelDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryDeliveryExceptionWorkflow`.
+message RetryDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  RetryDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryDeliveryExceptionWorkflow`.
+message RetryDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  RetryDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseDeliveryExceptionWorkflow`.
+message PauseDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  PauseDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseDeliveryExceptionWorkflow`.
+message PauseDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  PauseDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeDeliveryExceptionWorkflow`.
+message ResumeDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  ResumeDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeDeliveryExceptionWorkflow`.
+message ResumeDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  ResumeDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectDeliveryExceptionWorkflow`.
+message InspectDeliveryExceptionWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectDeliveryExceptionWorkflow`.
+message InspectDeliveryExceptionWorkflowResponse {
+  DeliveryException delivery_exception = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListDeliveryExceptionWorkflows`.
+message ListDeliveryExceptionWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DeliveryExceptionStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListDeliveryExceptionWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListDeliveryExceptionWorkflows`.
+message ListDeliveryExceptionWorkflowsResponse {
+  repeated DeliveryException delivery_exceptions = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalDeliveryExceptionWorkflow`.
+message SignalDeliveryExceptionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string delivery_exception_id = 2;
+  DeliveryException delivery_exception = 3;
+  SignalDeliveryExceptionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalDeliveryExceptionWorkflow`.
+message SignalDeliveryExceptionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DeliveryException delivery_exception = 1;
+  SignalDeliveryExceptionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

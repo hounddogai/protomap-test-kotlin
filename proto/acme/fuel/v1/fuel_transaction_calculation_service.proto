@@ -1,0 +1,335 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelTransactionCalculationServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Computes the figures of a fuel transaction, such as totals, taxes, and estimates.
+service FuelTransactionCalculationService {
+  // Calculates a fuel transaction.
+  rpc CalculateFuelTransaction(CalculateFuelTransactionRequest) returns (CalculateFuelTransactionResponse);
+
+  // Estimates a fuel transaction.
+  rpc EstimateFuelTransaction(EstimateFuelTransactionRequest) returns (EstimateFuelTransactionResponse);
+
+  // Quotes a fuel transaction.
+  rpc QuoteFuelTransaction(QuoteFuelTransactionRequest) returns (QuoteFuelTransactionResponse);
+
+  // Compares a fuel transaction.
+  rpc CompareFuelTransactionOptions(CompareFuelTransactionOptionsRequest) returns (CompareFuelTransactionOptionsResponse);
+
+  // Recalculates a fuel transaction.
+  rpc RecalculateFuelTransactions(RecalculateFuelTransactionsRequest) returns (RecalculateFuelTransactionsResponse);
+
+  // Simulates a fuel transaction.
+  rpc SimulateFuelTransaction(SimulateFuelTransactionRequest) returns (SimulateFuelTransactionResponse);
+
+  // Explains a fuel transaction.
+  rpc ExplainFuelTransactionCalculation(ExplainFuelTransactionCalculationRequest) returns (ExplainFuelTransactionCalculationResponse);
+
+  // Returns a fuel transaction.
+  rpc GetFuelTransactionRates(GetFuelTransactionRatesRequest) returns (GetFuelTransactionRatesResponse);
+}
+
+// The request of `CalculateFuelTransaction`.
+message CalculateFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  CalculateFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CalculateFuelTransaction`.
+message CalculateFuelTransactionResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CalculateFuelTransactionResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  CalculateFuelTransactionResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EstimateFuelTransaction`.
+message EstimateFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  EstimateFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EstimateFuelTransaction`.
+message EstimateFuelTransactionResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated EstimateFuelTransactionResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  EstimateFuelTransactionResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `QuoteFuelTransaction`.
+message QuoteFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  QuoteFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `QuoteFuelTransaction`.
+message QuoteFuelTransactionResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated QuoteFuelTransactionResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  QuoteFuelTransactionResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CompareFuelTransactionOptions`.
+message CompareFuelTransactionOptionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  CompareFuelTransactionOptionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareFuelTransactionOptions`.
+message CompareFuelTransactionOptionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CompareFuelTransactionOptionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  CompareFuelTransactionOptionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecalculateFuelTransactions`.
+message RecalculateFuelTransactionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  RecalculateFuelTransactionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecalculateFuelTransactions`.
+message RecalculateFuelTransactionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated RecalculateFuelTransactionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  RecalculateFuelTransactionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SimulateFuelTransaction`.
+message SimulateFuelTransactionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  SimulateFuelTransactionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SimulateFuelTransaction`.
+message SimulateFuelTransactionResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated SimulateFuelTransactionResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  SimulateFuelTransactionResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainFuelTransactionCalculation`.
+message ExplainFuelTransactionCalculationRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ExplainFuelTransactionCalculationRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainFuelTransactionCalculation`.
+message ExplainFuelTransactionCalculationResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ExplainFuelTransactionCalculationResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetFuelTransactionRates`.
+message GetFuelTransactionRatesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetFuelTransactionRates`.
+message GetFuelTransactionRatesResponse {
+  FuelTransaction fuel_transaction = 1;
+  acme.common.v1.OperationResult result = 2;
+}

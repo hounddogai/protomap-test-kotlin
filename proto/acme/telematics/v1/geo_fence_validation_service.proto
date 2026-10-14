@@ -1,0 +1,260 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.telematics.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/telematics/v1/telematics.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Telematics.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/telematics/v1;telematicsv1";
+option java_multiple_files = true;
+option java_outer_classname = "GeoFenceValidationServiceProto";
+option java_package = "com.acme.telematics.v1";
+
+// Checks geo fences against the rules before anything acts on them.
+service GeoFenceValidationService {
+  // Validates a geo fence.
+  rpc ValidateGeoFence(ValidateGeoFenceRequest) returns (ValidateGeoFenceResponse);
+
+  // Previews a geo fence.
+  rpc PreviewGeoFence(PreviewGeoFenceRequest) returns (PreviewGeoFenceResponse);
+
+  // Checks a geo fence.
+  rpc CheckGeoFenceEligibility(CheckGeoFenceEligibilityRequest) returns (CheckGeoFenceEligibilityResponse);
+
+  // Normalizes a geo fence.
+  rpc NormalizeGeoFence(NormalizeGeoFenceRequest) returns (NormalizeGeoFenceResponse);
+
+  // Explains a geo fence.
+  rpc ExplainGeoFenceDecision(ExplainGeoFenceDecisionRequest) returns (ExplainGeoFenceDecisionResponse);
+
+  // Lints a geo fence.
+  rpc LintGeoFences(LintGeoFencesRequest) returns (LintGeoFencesResponse);
+
+  // Returns a geo fence.
+  rpc GetGeoFenceRules(GetGeoFenceRulesRequest) returns (GetGeoFenceRulesResponse);
+}
+
+// The request of `ValidateGeoFence`.
+message ValidateGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  ValidateGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateGeoFence`.
+message ValidateGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  ValidateGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewGeoFence`.
+message PreviewGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  PreviewGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewGeoFence`.
+message PreviewGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  PreviewGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckGeoFenceEligibility`.
+message CheckGeoFenceEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  CheckGeoFenceEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckGeoFenceEligibility`.
+message CheckGeoFenceEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  CheckGeoFenceEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeGeoFence`.
+message NormalizeGeoFenceRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  NormalizeGeoFenceRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeGeoFence`.
+message NormalizeGeoFenceResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  NormalizeGeoFenceResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainGeoFenceDecision`.
+message ExplainGeoFenceDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  ExplainGeoFenceDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainGeoFenceDecision`.
+message ExplainGeoFenceDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  ExplainGeoFenceDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintGeoFences`.
+message LintGeoFencesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  GeoFence geo_fence = 3;
+  LintGeoFencesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintGeoFences`.
+message LintGeoFencesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  GeoFence geo_fence = 1;
+  LintGeoFencesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetGeoFenceRules`.
+message GetGeoFenceRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string geo_fence_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetGeoFenceRules`.
+message GetGeoFenceRulesResponse {
+  GeoFence geo_fence = 1;
+  acme.common.v1.OperationResult result = 2;
+}

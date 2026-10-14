@@ -1,0 +1,334 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelTransactionWorkflowServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Runs the long-lived workflow that takes a fuel transaction from start to finish.
+service FuelTransactionWorkflowService {
+  // Starts a fuel transaction.
+  rpc StartFuelTransactionWorkflow(StartFuelTransactionWorkflowRequest) returns (StartFuelTransactionWorkflowResponse);
+
+  // Advances a fuel transaction.
+  rpc AdvanceFuelTransactionWorkflow(AdvanceFuelTransactionWorkflowRequest) returns (AdvanceFuelTransactionWorkflowResponse);
+
+  // Cancels a fuel transaction.
+  rpc CancelFuelTransactionWorkflow(CancelFuelTransactionWorkflowRequest) returns (CancelFuelTransactionWorkflowResponse);
+
+  // Retrys a fuel transaction.
+  rpc RetryFuelTransactionWorkflow(RetryFuelTransactionWorkflowRequest) returns (RetryFuelTransactionWorkflowResponse);
+
+  // Pauses a fuel transaction.
+  rpc PauseFuelTransactionWorkflow(PauseFuelTransactionWorkflowRequest) returns (PauseFuelTransactionWorkflowResponse);
+
+  // Resumes a fuel transaction.
+  rpc ResumeFuelTransactionWorkflow(ResumeFuelTransactionWorkflowRequest) returns (ResumeFuelTransactionWorkflowResponse);
+
+  // Returns a fuel transaction.
+  rpc InspectFuelTransactionWorkflow(InspectFuelTransactionWorkflowRequest) returns (InspectFuelTransactionWorkflowResponse);
+
+  // Lists fuel transactions a page at a time.
+  rpc ListFuelTransactionWorkflows(ListFuelTransactionWorkflowsRequest) returns (ListFuelTransactionWorkflowsResponse);
+
+  // Signals a fuel transaction.
+  rpc SignalFuelTransactionWorkflow(SignalFuelTransactionWorkflowRequest) returns (SignalFuelTransactionWorkflowResponse);
+}
+
+// The request of `StartFuelTransactionWorkflow`.
+message StartFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  StartFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartFuelTransactionWorkflow`.
+message StartFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  StartFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceFuelTransactionWorkflow`.
+message AdvanceFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  AdvanceFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceFuelTransactionWorkflow`.
+message AdvanceFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  AdvanceFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelFuelTransactionWorkflow`.
+message CancelFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  CancelFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelFuelTransactionWorkflow`.
+message CancelFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  CancelFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryFuelTransactionWorkflow`.
+message RetryFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  RetryFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryFuelTransactionWorkflow`.
+message RetryFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  RetryFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PauseFuelTransactionWorkflow`.
+message PauseFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  PauseFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PauseFuelTransactionWorkflow`.
+message PauseFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  PauseFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ResumeFuelTransactionWorkflow`.
+message ResumeFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  ResumeFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ResumeFuelTransactionWorkflow`.
+message ResumeFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  ResumeFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectFuelTransactionWorkflow`.
+message InspectFuelTransactionWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectFuelTransactionWorkflow`.
+message InspectFuelTransactionWorkflowResponse {
+  FuelTransaction fuel_transaction = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ListFuelTransactionWorkflows`.
+message ListFuelTransactionWorkflowsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated FuelTransactionStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListFuelTransactionWorkflowsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListFuelTransactionWorkflows`.
+message ListFuelTransactionWorkflowsResponse {
+  repeated FuelTransaction fuel_transactions = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SignalFuelTransactionWorkflow`.
+message SignalFuelTransactionWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_transaction_id = 2;
+  FuelTransaction fuel_transaction = 3;
+  SignalFuelTransactionWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalFuelTransactionWorkflow`.
+message SignalFuelTransactionWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelTransaction fuel_transaction = 1;
+  SignalFuelTransactionWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

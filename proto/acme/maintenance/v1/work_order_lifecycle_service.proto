@@ -1,0 +1,258 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.maintenance.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/identity/v1/refs.proto";
+import "acme/maintenance/v1/maintenance.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Maintenance.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/maintenance/v1;maintenancev1";
+option java_multiple_files = true;
+option java_outer_classname = "WorkOrderLifecycleServiceProto";
+option java_package = "com.acme.maintenance.v1";
+
+// Moves a work order between the states of its lifecycle.
+service WorkOrderLifecycleService {
+  // Activates a work order.
+  rpc ActivateWorkOrder(ActivateWorkOrderRequest) returns (ActivateWorkOrderResponse);
+
+  // Suspends a work order.
+  rpc SuspendWorkOrder(SuspendWorkOrderRequest) returns (SuspendWorkOrderResponse);
+
+  // Reinstates a work order.
+  rpc ReinstateWorkOrder(ReinstateWorkOrderRequest) returns (ReinstateWorkOrderResponse);
+
+  // Renews a work order.
+  rpc RenewWorkOrder(RenewWorkOrderRequest) returns (RenewWorkOrderResponse);
+
+  // Expires a work order.
+  rpc ExpireWorkOrder(ExpireWorkOrderRequest) returns (ExpireWorkOrderResponse);
+
+  // Returns a work order.
+  rpc GetWorkOrderLifecycle(GetWorkOrderLifecycleRequest) returns (GetWorkOrderLifecycleResponse);
+
+  // Schedules a work order.
+  rpc ScheduleWorkOrderExpiry(ScheduleWorkOrderExpiryRequest) returns (ScheduleWorkOrderExpiryResponse);
+}
+
+// The request of `ActivateWorkOrder`.
+message ActivateWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  ActivateWorkOrderRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ActivateWorkOrder`.
+message ActivateWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ActivateWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SuspendWorkOrder`.
+message SuspendWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  SuspendWorkOrderRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `SuspendWorkOrder`.
+message SuspendWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  SuspendWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ReinstateWorkOrder`.
+message ReinstateWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  ReinstateWorkOrderRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ReinstateWorkOrder`.
+message ReinstateWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ReinstateWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RenewWorkOrder`.
+message RenewWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  RenewWorkOrderRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `RenewWorkOrder`.
+message RenewWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  RenewWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExpireWorkOrder`.
+message ExpireWorkOrderRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string reason_code = 1;
+    google.protobuf.Timestamp effective_at = 2;
+    acme.identity.v1.UserRef new_owner = 3;
+    acme.common.v1.ContactInfo notify_contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  ExpireWorkOrderRequest.Details details = 3;
+  string reason = 4;
+  map<string, string> annotations = 5;
+}
+
+// The response of `ExpireWorkOrder`.
+message ExpireWorkOrderResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ExpireWorkOrderResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetWorkOrderLifecycle`.
+message GetWorkOrderLifecycleRequest {
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetWorkOrderLifecycle`.
+message GetWorkOrderLifecycleResponse {
+  WorkOrder work_order = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ScheduleWorkOrderExpiry`.
+message ScheduleWorkOrderExpiryRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string work_order_id = 2;
+  WorkOrder work_order = 3;
+  ScheduleWorkOrderExpiryRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScheduleWorkOrderExpiry`.
+message ScheduleWorkOrderExpiryResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  WorkOrder work_order = 1;
+  ScheduleWorkOrderExpiryResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

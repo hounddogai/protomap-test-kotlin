@@ -1,0 +1,218 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverHomeGatewayServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// The edge API that apps call for driver homes.
+service DriverHomeGatewayService {
+  // Fetchs a driver home.
+  rpc FetchDriverHomeView(FetchDriverHomeViewRequest) returns (FetchDriverHomeViewResponse);
+
+  // Composes a driver home.
+  rpc ComposeDriverHomePage(ComposeDriverHomePageRequest) returns (ComposeDriverHomePageResponse);
+
+  // Submits a driver home.
+  rpc SubmitDriverHomeForm(SubmitDriverHomeFormRequest) returns (SubmitDriverHomeFormResponse);
+
+  // Tracks a driver home.
+  rpc TrackDriverHome(TrackDriverHomeRequest) returns (TrackDriverHomeResponse);
+
+  // Streams the changes of driver homes as they happen.
+  rpc StreamDriverHomeUpdates(StreamDriverHomeUpdatesRequest) returns (stream StreamDriverHomeUpdatesResponse);
+
+  // Takes a stream of driver homes and answers once at the end.
+  rpc UploadDriverHomeAttachments(stream UploadDriverHomeAttachmentsRequest) returns (UploadDriverHomeAttachmentsResponse);
+
+  // Returns a driver home.
+  rpc GetDriverHomeSummary(GetDriverHomeSummaryRequest) returns (GetDriverHomeSummaryResponse);
+}
+
+// The request of `FetchDriverHomeView`.
+message FetchDriverHomeViewRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string device = 1;
+    string locale = 2;
+    acme.common.v1.GeoPoint location = 3;
+    map<string, string> client_hints = 4;
+    string session_id = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  FetchDriverHomeViewRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `FetchDriverHomeView`.
+message FetchDriverHomeViewResponse {
+  DriverHome driver_home = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `ComposeDriverHomePage`.
+message ComposeDriverHomePageRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string device = 1;
+    string locale = 2;
+    acme.common.v1.GeoPoint location = 3;
+    map<string, string> client_hints = 4;
+    string session_id = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  ComposeDriverHomePageRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ComposeDriverHomePage`.
+message ComposeDriverHomePageResponse {
+  DriverHome driver_home = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `SubmitDriverHomeForm`.
+message SubmitDriverHomeFormRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string device = 1;
+    string locale = 2;
+    acme.common.v1.GeoPoint location = 3;
+    map<string, string> client_hints = 4;
+    string session_id = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  SubmitDriverHomeFormRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDriverHomeForm`.
+message SubmitDriverHomeFormResponse {
+  DriverHome driver_home = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `TrackDriverHome`.
+message TrackDriverHomeRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string device = 1;
+    string locale = 2;
+    acme.common.v1.GeoPoint location = 3;
+    map<string, string> client_hints = 4;
+    string session_id = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  TrackDriverHomeRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `TrackDriverHome`.
+message TrackDriverHomeResponse {
+  DriverHome driver_home = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `StreamDriverHomeUpdates`.
+message StreamDriverHomeUpdatesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverHomeStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  StreamDriverHomeUpdatesRequest.Filter filter = 2;
+  google.protobuf.Timestamp since = 3;
+  int32 max_events = 4;
+  acme.common.v1.ContactInfo subscriber = 5;
+}
+
+// The response of `StreamDriverHomeUpdates`.
+message StreamDriverHomeUpdatesResponse {
+  DriverHome driver_home = 1;
+  string change_type = 2;
+  google.protobuf.Timestamp changed_at = 3;
+  int64 sequence = 4;
+  acme.common.v1.OperationResult result = 5;
+}
+
+// The request of `UploadDriverHomeAttachments`.
+message UploadDriverHomeAttachmentsRequest {
+  // What a stream of records starts with.
+  message StreamHeader {
+    string source = 1;
+    string format = 2;
+    int64 total_records = 3;
+    acme.common.v1.ContactInfo submitted_by = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  oneof chunk {
+    UploadDriverHomeAttachmentsRequest.StreamHeader header = 2;
+    DriverHome record = 3;
+  }
+  int64 sequence = 4;
+}
+
+// The response of `UploadDriverHomeAttachments`.
+message UploadDriverHomeAttachmentsResponse {
+  // A record the import turned down.
+  message Rejection {
+    int64 sequence = 1;
+    string reason = 2;
+    string driver_home_id = 3;
+  }
+
+  int64 accepted = 1;
+  int64 rejected = 2;
+  repeated UploadDriverHomeAttachmentsResponse.Rejection rejections = 3;
+  acme.common.v1.OperationResult result = 4;
+}
+
+// The request of `GetDriverHomeSummary`.
+message GetDriverHomeSummaryRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDriverHomeSummary`.
+message GetDriverHomeSummaryResponse {
+  DriverHome driver_home = 1;
+  acme.common.v1.OperationResult result = 2;
+}

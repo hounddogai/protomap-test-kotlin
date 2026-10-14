@@ -1,0 +1,268 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.routing.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/routing/v1/routing.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Routing.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/routing/v1;routingv1";
+option java_multiple_files = true;
+option java_outer_classname = "RouteValidationServiceProto";
+option java_package = "com.acme.routing.v1";
+
+// Checks routes against the rules before anything acts on them.
+service RouteValidationService {
+  // Validates a route.
+  rpc ValidateRoute(ValidateRouteRequest) returns (ValidateRouteResponse);
+
+  // Previews a route.
+  rpc PreviewRoute(PreviewRouteRequest) returns (PreviewRouteResponse);
+
+  // Checks a route.
+  rpc CheckRouteEligibility(CheckRouteEligibilityRequest) returns (CheckRouteEligibilityResponse);
+
+  // Explains a route.
+  rpc ExplainRouteDecision(ExplainRouteDecisionRequest) returns (ExplainRouteDecisionResponse);
+
+  // Scores a route.
+  rpc ScoreRoute(ScoreRouteRequest) returns (ScoreRouteResponse);
+
+  // Lints a route.
+  rpc LintRoutes(LintRoutesRequest) returns (LintRoutesResponse);
+
+  // Returns a route.
+  rpc GetRouteRules(GetRouteRulesRequest) returns (GetRouteRulesResponse);
+}
+
+// The request of `ValidateRoute`.
+message ValidateRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  ValidateRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateRoute`.
+message ValidateRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  ValidateRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewRoute`.
+message PreviewRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  PreviewRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewRoute`.
+message PreviewRouteResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  PreviewRouteResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckRouteEligibility`.
+message CheckRouteEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  CheckRouteEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckRouteEligibility`.
+message CheckRouteEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  CheckRouteEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainRouteDecision`.
+message ExplainRouteDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  ExplainRouteDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainRouteDecision`.
+message ExplainRouteDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  ExplainRouteDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreRoute`.
+message ScoreRouteRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  ScoreRouteRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreRoute`.
+message ScoreRouteResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreRouteResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Route route = 1;
+  ScoreRouteResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintRoutes`.
+message LintRoutesRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  Route route = 3;
+  LintRoutesRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintRoutes`.
+message LintRoutesResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Route route = 1;
+  LintRoutesResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetRouteRules`.
+message GetRouteRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string route_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetRouteRules`.
+message GetRouteRulesResponse {
+  Route route = 1;
+  acme.common.v1.OperationResult result = 2;
+}

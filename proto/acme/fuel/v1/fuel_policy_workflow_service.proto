@@ -1,0 +1,229 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fuel.v1;
+
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/fuel/v1/fuel.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fuel.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fuel/v1;fuelv1";
+option java_multiple_files = true;
+option java_outer_classname = "FuelPolicyWorkflowServiceProto";
+option java_package = "com.acme.fuel.v1";
+
+// Runs the long-lived workflow that takes a fuel policy from start to finish.
+service FuelPolicyWorkflowService {
+  // Starts a fuel policy.
+  rpc StartFuelPolicyWorkflow(StartFuelPolicyWorkflowRequest) returns (StartFuelPolicyWorkflowResponse);
+
+  // Advances a fuel policy.
+  rpc AdvanceFuelPolicyWorkflow(AdvanceFuelPolicyWorkflowRequest) returns (AdvanceFuelPolicyWorkflowResponse);
+
+  // Cancels a fuel policy.
+  rpc CancelFuelPolicyWorkflow(CancelFuelPolicyWorkflowRequest) returns (CancelFuelPolicyWorkflowResponse);
+
+  // Retrys a fuel policy.
+  rpc RetryFuelPolicyWorkflow(RetryFuelPolicyWorkflowRequest) returns (RetryFuelPolicyWorkflowResponse);
+
+  // Returns a fuel policy.
+  rpc InspectFuelPolicyWorkflow(InspectFuelPolicyWorkflowRequest) returns (InspectFuelPolicyWorkflowResponse);
+
+  // Signals a fuel policy.
+  rpc SignalFuelPolicyWorkflow(SignalFuelPolicyWorkflowRequest) returns (SignalFuelPolicyWorkflowResponse);
+}
+
+// The request of `StartFuelPolicyWorkflow`.
+message StartFuelPolicyWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  StartFuelPolicyWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `StartFuelPolicyWorkflow`.
+message StartFuelPolicyWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  StartFuelPolicyWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `AdvanceFuelPolicyWorkflow`.
+message AdvanceFuelPolicyWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  AdvanceFuelPolicyWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `AdvanceFuelPolicyWorkflow`.
+message AdvanceFuelPolicyWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  AdvanceFuelPolicyWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CancelFuelPolicyWorkflow`.
+message CancelFuelPolicyWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  CancelFuelPolicyWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CancelFuelPolicyWorkflow`.
+message CancelFuelPolicyWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  CancelFuelPolicyWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RetryFuelPolicyWorkflow`.
+message RetryFuelPolicyWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  RetryFuelPolicyWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RetryFuelPolicyWorkflow`.
+message RetryFuelPolicyWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  RetryFuelPolicyWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `InspectFuelPolicyWorkflow`.
+message InspectFuelPolicyWorkflowRequest {
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `InspectFuelPolicyWorkflow`.
+message InspectFuelPolicyWorkflowResponse {
+  FuelPolicy fuel_policy = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `SignalFuelPolicyWorkflow`.
+message SignalFuelPolicyWorkflowRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string step = 1;
+    map<string, string> parameters = 2;
+    google.protobuf.Duration timeout = 3;
+    string initiated_by = 4;
+    acme.common.v1.ContactInfo notify = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string fuel_policy_id = 2;
+  FuelPolicy fuel_policy = 3;
+  SignalFuelPolicyWorkflowRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SignalFuelPolicyWorkflow`.
+message SignalFuelPolicyWorkflowResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  FuelPolicy fuel_policy = 1;
+  SignalFuelPolicyWorkflowResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

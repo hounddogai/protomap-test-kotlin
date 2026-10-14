@@ -1,0 +1,305 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.drivers.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/drivers/v1/drivers.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Drivers.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/drivers/v1;driversv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverValidationServiceProto";
+option java_package = "com.acme.drivers.v1";
+
+// Checks drivers against the rules before anything acts on them.
+service DriverValidationService {
+  // Validates a driver.
+  rpc ValidateDriver(ValidateDriverRequest) returns (ValidateDriverResponse);
+
+  // Previews a driver.
+  rpc PreviewDriver(PreviewDriverRequest) returns (PreviewDriverResponse);
+
+  // Checks a driver.
+  rpc CheckDriverEligibility(CheckDriverEligibilityRequest) returns (CheckDriverEligibilityResponse);
+
+  // Normalizes a driver.
+  rpc NormalizeDriver(NormalizeDriverRequest) returns (NormalizeDriverResponse);
+
+  // Explains a driver.
+  rpc ExplainDriverDecision(ExplainDriverDecisionRequest) returns (ExplainDriverDecisionResponse);
+
+  // Scores a driver.
+  rpc ScoreDriver(ScoreDriverRequest) returns (ScoreDriverResponse);
+
+  // Lints a driver.
+  rpc LintDrivers(LintDriversRequest) returns (LintDriversResponse);
+
+  // Returns a driver.
+  rpc GetDriverRules(GetDriverRulesRequest) returns (GetDriverRulesResponse);
+}
+
+// The request of `ValidateDriver`.
+message ValidateDriverRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  ValidateDriverRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ValidateDriver`.
+message ValidateDriverResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Driver driver = 1;
+  ValidateDriverResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `PreviewDriver`.
+message PreviewDriverRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  PreviewDriverRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `PreviewDriver`.
+message PreviewDriverResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Driver driver = 1;
+  PreviewDriverResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CheckDriverEligibility`.
+message CheckDriverEligibilityRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  CheckDriverEligibilityRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CheckDriverEligibility`.
+message CheckDriverEligibilityResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Driver driver = 1;
+  CheckDriverEligibilityResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `NormalizeDriver`.
+message NormalizeDriverRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  NormalizeDriverRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `NormalizeDriver`.
+message NormalizeDriverResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Driver driver = 1;
+  NormalizeDriverResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainDriverDecision`.
+message ExplainDriverDecisionRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  ExplainDriverDecisionRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainDriverDecision`.
+message ExplainDriverDecisionResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Driver driver = 1;
+  ExplainDriverDecisionResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ScoreDriver`.
+message ScoreDriverRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  ScoreDriverRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ScoreDriver`.
+message ScoreDriverResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated ScoreDriverResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  Driver driver = 1;
+  ScoreDriverResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `LintDrivers`.
+message LintDriversRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  Driver driver = 3;
+  LintDriversRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `LintDrivers`.
+message LintDriversResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  Driver driver = 1;
+  LintDriversResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDriverRules`.
+message GetDriverRulesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDriverRules`.
+message GetDriverRulesResponse {
+  Driver driver = 1;
+  acme.common.v1.OperationResult result = 2;
+}

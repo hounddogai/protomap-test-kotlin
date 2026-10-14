@@ -1,0 +1,333 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.fleet.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/fleet/v1/fleet.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Fleet.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/fleet/v1;fleetv1";
+option java_multiple_files = true;
+option java_outer_classname = "VehicleGroupApprovalServiceProto";
+option java_package = "com.acme.fleet.v1";
+
+// Routes vehicle groups through approval, with escalation and delegation.
+service VehicleGroupApprovalService {
+  // Submits a vehicle group.
+  rpc SubmitVehicleGroup(SubmitVehicleGroupRequest) returns (SubmitVehicleGroupResponse);
+
+  // Approves a vehicle group.
+  rpc ApproveVehicleGroup(ApproveVehicleGroupRequest) returns (ApproveVehicleGroupResponse);
+
+  // Rejects a vehicle group.
+  rpc RejectVehicleGroup(RejectVehicleGroupRequest) returns (RejectVehicleGroupResponse);
+
+  // Escalates a vehicle group.
+  rpc EscalateVehicleGroup(EscalateVehicleGroupRequest) returns (EscalateVehicleGroupResponse);
+
+  // Lists vehicle groups a page at a time.
+  rpc ListPendingVehicleGroups(ListPendingVehicleGroupsRequest) returns (ListPendingVehicleGroupsResponse);
+
+  // Delegates a vehicle group.
+  rpc DelegateVehicleGroupApproval(DelegateVehicleGroupApprovalRequest) returns (DelegateVehicleGroupApprovalResponse);
+
+  // Recalls a vehicle group.
+  rpc RecallVehicleGroup(RecallVehicleGroupRequest) returns (RecallVehicleGroupResponse);
+
+  // Returns a vehicle group.
+  rpc GetVehicleGroupApprovalStatus(GetVehicleGroupApprovalStatusRequest) returns (GetVehicleGroupApprovalStatusResponse);
+
+  // Comments a vehicle group.
+  rpc CommentVehicleGroupApproval(CommentVehicleGroupApprovalRequest) returns (CommentVehicleGroupApprovalResponse);
+}
+
+// The request of `SubmitVehicleGroup`.
+message SubmitVehicleGroupRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  SubmitVehicleGroupRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitVehicleGroup`.
+message SubmitVehicleGroupResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  SubmitVehicleGroupResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveVehicleGroup`.
+message ApproveVehicleGroupRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  ApproveVehicleGroupRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveVehicleGroup`.
+message ApproveVehicleGroupResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  ApproveVehicleGroupResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectVehicleGroup`.
+message RejectVehicleGroupRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  RejectVehicleGroupRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectVehicleGroup`.
+message RejectVehicleGroupResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  RejectVehicleGroupResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateVehicleGroup`.
+message EscalateVehicleGroupRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  EscalateVehicleGroupRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateVehicleGroup`.
+message EscalateVehicleGroupResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  EscalateVehicleGroupResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingVehicleGroups`.
+message ListPendingVehicleGroupsRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated VehicleGroupStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingVehicleGroupsRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingVehicleGroups`.
+message ListPendingVehicleGroupsResponse {
+  repeated VehicleGroup vehicle_groups = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateVehicleGroupApproval`.
+message DelegateVehicleGroupApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  DelegateVehicleGroupApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateVehicleGroupApproval`.
+message DelegateVehicleGroupApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  DelegateVehicleGroupApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallVehicleGroup`.
+message RecallVehicleGroupRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  RecallVehicleGroupRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallVehicleGroup`.
+message RecallVehicleGroupResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  RecallVehicleGroupResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetVehicleGroupApprovalStatus`.
+message GetVehicleGroupApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetVehicleGroupApprovalStatus`.
+message GetVehicleGroupApprovalStatusResponse {
+  VehicleGroup vehicle_group = 1;
+  acme.common.v1.OperationResult result = 2;
+}
+
+// The request of `CommentVehicleGroupApproval`.
+message CommentVehicleGroupApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string vehicle_group_id = 2;
+  VehicleGroup vehicle_group = 3;
+  CommentVehicleGroupApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CommentVehicleGroupApproval`.
+message CommentVehicleGroupApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  VehicleGroup vehicle_group = 1;
+  CommentVehicleGroupApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}

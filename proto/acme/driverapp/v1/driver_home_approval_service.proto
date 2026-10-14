@@ -1,0 +1,295 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.driverapp.v1;
+
+import "acme/common/v1/context.proto";
+import "acme/common/v1/operation.proto";
+import "acme/common/v1/paging.proto";
+import "acme/driverapp/v1/driverapp.proto";
+import "acme/identity/v1/refs.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Driverapp.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/driverapp/v1;driverappv1";
+option java_multiple_files = true;
+option java_outer_classname = "DriverHomeApprovalServiceProto";
+option java_package = "com.acme.driverapp.v1";
+
+// Routes driver homes through approval, with escalation and delegation.
+service DriverHomeApprovalService {
+  // Submits a driver home.
+  rpc SubmitDriverHome(SubmitDriverHomeRequest) returns (SubmitDriverHomeResponse);
+
+  // Approves a driver home.
+  rpc ApproveDriverHome(ApproveDriverHomeRequest) returns (ApproveDriverHomeResponse);
+
+  // Rejects a driver home.
+  rpc RejectDriverHome(RejectDriverHomeRequest) returns (RejectDriverHomeResponse);
+
+  // Escalates a driver home.
+  rpc EscalateDriverHome(EscalateDriverHomeRequest) returns (EscalateDriverHomeResponse);
+
+  // Lists driver homes a page at a time.
+  rpc ListPendingDriverHomes(ListPendingDriverHomesRequest) returns (ListPendingDriverHomesResponse);
+
+  // Delegates a driver home.
+  rpc DelegateDriverHomeApproval(DelegateDriverHomeApprovalRequest) returns (DelegateDriverHomeApprovalResponse);
+
+  // Recalls a driver home.
+  rpc RecallDriverHome(RecallDriverHomeRequest) returns (RecallDriverHomeResponse);
+
+  // Returns a driver home.
+  rpc GetDriverHomeApprovalStatus(GetDriverHomeApprovalStatusRequest) returns (GetDriverHomeApprovalStatusResponse);
+}
+
+// The request of `SubmitDriverHome`.
+message SubmitDriverHomeRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  SubmitDriverHomeRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SubmitDriverHome`.
+message SubmitDriverHomeResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  SubmitDriverHomeResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ApproveDriverHome`.
+message ApproveDriverHomeRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  ApproveDriverHomeRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ApproveDriverHome`.
+message ApproveDriverHomeResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  ApproveDriverHomeResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RejectDriverHome`.
+message RejectDriverHomeRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  RejectDriverHomeRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RejectDriverHome`.
+message RejectDriverHomeResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  RejectDriverHomeResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EscalateDriverHome`.
+message EscalateDriverHomeRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  EscalateDriverHomeRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EscalateDriverHome`.
+message EscalateDriverHomeResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  EscalateDriverHomeResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ListPendingDriverHomes`.
+message ListPendingDriverHomesRequest {
+  // Which records to include.
+  message Filter {
+    string query = 1;
+    repeated DriverHomeStatus statuses = 2;
+    google.protobuf.Timestamp created_after = 3;
+    map<string, string> labels = 4;
+    string owner_id = 5;
+    string region = 6;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  acme.common.v1.PageRequest page = 2;
+  ListPendingDriverHomesRequest.Filter filter = 3;
+  string order_by = 4;
+}
+
+// The response of `ListPendingDriverHomes`.
+message ListPendingDriverHomesResponse {
+  repeated DriverHome driver_homes = 1;
+  acme.common.v1.PageInfo page_info = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `DelegateDriverHomeApproval`.
+message DelegateDriverHomeApprovalRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  DelegateDriverHomeApprovalRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `DelegateDriverHomeApproval`.
+message DelegateDriverHomeApprovalResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  DelegateDriverHomeApprovalResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecallDriverHome`.
+message RecallDriverHomeRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string approver_email = 1;
+    string comment = 2;
+    repeated string conditions = 3;
+    google.protobuf.Timestamp effective_at = 4;
+    acme.identity.v1.UserRef approver = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  DriverHome driver_home = 3;
+  RecallDriverHomeRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecallDriverHome`.
+message RecallDriverHomeResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DriverHome driver_home = 1;
+  RecallDriverHomeResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDriverHomeApprovalStatus`.
+message GetDriverHomeApprovalStatusRequest {
+  acme.common.v1.RequestContext context = 1;
+  string driver_home_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDriverHomeApprovalStatus`.
+message GetDriverHomeApprovalStatusResponse {
+  DriverHome driver_home = 1;
+  acme.common.v1.OperationResult result = 2;
+}

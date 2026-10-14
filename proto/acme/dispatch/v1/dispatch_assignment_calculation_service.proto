@@ -1,0 +1,335 @@
+// Copyright 2026 Acme Corp. All rights reserved.
+// Use of this file is governed by the Acme API license in LICENSE.
+
+syntax = "proto3";
+
+package acme.dispatch.v1;
+
+import "acme/common/v1/address.proto";
+import "acme/common/v1/contact.proto";
+import "acme/common/v1/context.proto";
+import "acme/common/v1/money.proto";
+import "acme/common/v1/operation.proto";
+import "acme/dispatch/v1/dispatch.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Acme.Dispatch.V1";
+option go_package = "github.com/hounddogai/protomap-test-golang/gen/acme/dispatch/v1;dispatchv1";
+option java_multiple_files = true;
+option java_outer_classname = "DispatchAssignmentCalculationServiceProto";
+option java_package = "com.acme.dispatch.v1";
+
+// Computes the figures of a dispatch assignment, such as totals, taxes, and estimates.
+service DispatchAssignmentCalculationService {
+  // Calculates a dispatch assignment.
+  rpc CalculateDispatchAssignment(CalculateDispatchAssignmentRequest) returns (CalculateDispatchAssignmentResponse);
+
+  // Estimates a dispatch assignment.
+  rpc EstimateDispatchAssignment(EstimateDispatchAssignmentRequest) returns (EstimateDispatchAssignmentResponse);
+
+  // Quotes a dispatch assignment.
+  rpc QuoteDispatchAssignment(QuoteDispatchAssignmentRequest) returns (QuoteDispatchAssignmentResponse);
+
+  // Compares a dispatch assignment.
+  rpc CompareDispatchAssignmentOptions(CompareDispatchAssignmentOptionsRequest) returns (CompareDispatchAssignmentOptionsResponse);
+
+  // Recalculates a dispatch assignment.
+  rpc RecalculateDispatchAssignments(RecalculateDispatchAssignmentsRequest) returns (RecalculateDispatchAssignmentsResponse);
+
+  // Simulates a dispatch assignment.
+  rpc SimulateDispatchAssignment(SimulateDispatchAssignmentRequest) returns (SimulateDispatchAssignmentResponse);
+
+  // Explains a dispatch assignment.
+  rpc ExplainDispatchAssignmentCalculation(ExplainDispatchAssignmentCalculationRequest) returns (ExplainDispatchAssignmentCalculationResponse);
+
+  // Returns a dispatch assignment.
+  rpc GetDispatchAssignmentRates(GetDispatchAssignmentRatesRequest) returns (GetDispatchAssignmentRatesResponse);
+}
+
+// The request of `CalculateDispatchAssignment`.
+message CalculateDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  CalculateDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CalculateDispatchAssignment`.
+message CalculateDispatchAssignmentResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CalculateDispatchAssignmentResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  CalculateDispatchAssignmentResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `EstimateDispatchAssignment`.
+message EstimateDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  EstimateDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `EstimateDispatchAssignment`.
+message EstimateDispatchAssignmentResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated EstimateDispatchAssignmentResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  EstimateDispatchAssignmentResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `QuoteDispatchAssignment`.
+message QuoteDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  QuoteDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `QuoteDispatchAssignment`.
+message QuoteDispatchAssignmentResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated QuoteDispatchAssignmentResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  QuoteDispatchAssignmentResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `CompareDispatchAssignmentOptions`.
+message CompareDispatchAssignmentOptionsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  CompareDispatchAssignmentOptionsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `CompareDispatchAssignmentOptions`.
+message CompareDispatchAssignmentOptionsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated CompareDispatchAssignmentOptionsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  CompareDispatchAssignmentOptionsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `RecalculateDispatchAssignments`.
+message RecalculateDispatchAssignmentsRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  RecalculateDispatchAssignmentsRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `RecalculateDispatchAssignments`.
+message RecalculateDispatchAssignmentsResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated RecalculateDispatchAssignmentsResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  RecalculateDispatchAssignmentsResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `SimulateDispatchAssignment`.
+message SimulateDispatchAssignmentRequest {
+  // What the operation needs besides the record.
+  message Details {
+    string currency_code = 1;
+    acme.common.v1.PostalAddress destination = 2;
+    repeated string scenario_ids = 3;
+    bool include_breakdown = 4;
+    acme.common.v1.Money budget = 5;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  SimulateDispatchAssignmentRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `SimulateDispatchAssignment`.
+message SimulateDispatchAssignmentResponse {
+  // How a figure was reached.
+  message Breakdown {
+    // One line of a breakdown.
+    message Line {
+      string label = 1;
+      acme.common.v1.Money amount = 2;
+      double rate = 3;
+    }
+
+    acme.common.v1.Money total = 1;
+    repeated SimulateDispatchAssignmentResponse.Breakdown.Line lines = 2;
+    string currency_code = 3;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  SimulateDispatchAssignmentResponse.Breakdown breakdown = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `ExplainDispatchAssignmentCalculation`.
+message ExplainDispatchAssignmentCalculationRequest {
+  // What the operation needs besides the record.
+  message Details {
+    repeated string rules = 1;
+    bool strict = 2;
+    string locale = 3;
+    acme.common.v1.ContactInfo contact = 4;
+  }
+
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  DispatchAssignment dispatch_assignment = 3;
+  ExplainDispatchAssignmentCalculationRequest.Details details = 4;
+  string reason = 5;
+  map<string, string> annotations = 6;
+}
+
+// The response of `ExplainDispatchAssignmentCalculation`.
+message ExplainDispatchAssignmentCalculationResponse {
+  // What the operation decided.
+  message Outcome {
+    string status = 1;
+    string message = 2;
+    string reference_id = 3;
+    repeated string next_steps = 4;
+    google.protobuf.Timestamp effective_at = 5;
+  }
+
+  DispatchAssignment dispatch_assignment = 1;
+  ExplainDispatchAssignmentCalculationResponse.Outcome outcome = 2;
+  acme.common.v1.OperationResult result = 3;
+}
+
+// The request of `GetDispatchAssignmentRates`.
+message GetDispatchAssignmentRatesRequest {
+  acme.common.v1.RequestContext context = 1;
+  string dispatch_assignment_id = 2;
+  google.protobuf.FieldMask read_mask = 3;
+}
+
+// The response of `GetDispatchAssignmentRates`.
+message GetDispatchAssignmentRatesResponse {
+  DispatchAssignment dispatch_assignment = 1;
+  acme.common.v1.OperationResult result = 2;
+}
